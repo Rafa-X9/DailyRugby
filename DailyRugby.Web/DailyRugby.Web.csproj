@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DailyRugby.Domain\DailyRugby.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
