@@ -2,9 +2,9 @@
 
 public sealed class Championship
 {
-    public Guid Id { get; }
-    public string Name { get; } = string.Empty;
-    public RuleSet Rules { get; }
-    public IList<Team> Teams { get; } = [];
+    public Guid Id { get; } = Guid.NewGuid();
+    public string Name { get; set; } = string.Empty;
+    public RuleSet Rules { get; set; }
+    public IList<Team> Teams { get; set; } = [];
     public IList<Game> Games { get; set; } = [];
 }

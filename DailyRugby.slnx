@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="DailyRugby.Application/DailyRugby.Application.csproj" />
   <Project Path="DailyRugby.Domain/DailyRugby.Domain.csproj" />
   <Project Path="DailyRugby.Shared/DailyRugby.Shared.csproj" />
   <Project Path="DailyRugby.Web/DailyRugby.Web.csproj" />

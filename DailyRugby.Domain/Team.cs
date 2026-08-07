@@ -8,7 +8,7 @@ public class Team
     public int Insight { get; set; }
     public int Physique { get; set; }
     public int Technique { get; set; }
-    public bool HasIngithCoach { get; set; }
+    public bool HasInsigthCoach { get; set; }
     public bool HasPhysiqueCoach { get; set; }
     public bool HasTechniqueCoach { get; set; }
     public bool HasGeneralCoach { get; set; }
