@@ -1,7 +1,6 @@
 ﻿using DailyRugby.Application.Interfaces;
 using Discord;
 using Discord.Interactions;
-using Microsoft.AspNetCore.Mvc;
 
 namespace DailyRugby.Web.AutoCompletes;
 

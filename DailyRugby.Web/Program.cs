@@ -33,6 +33,7 @@ class Program
 
         builder.Services.AddScoped<IChampionshipCrudService, ChampionshipCrudService>();
         builder.Services.AddTransient<ITeamValidatorFactory, TeamValidatorFactory>();
+        builder.Services.AddScoped<ITeamCrudService, TeamCrudService>();
 
         builder.Services.AddDbContext<AppDbContext>(options =>
         {
