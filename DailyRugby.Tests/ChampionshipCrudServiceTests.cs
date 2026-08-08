@@ -48,7 +48,7 @@ public class ChampionshipCrudServiceTests : IAsyncLifetime
     [Fact]
     public async Task Add_EmptyName_ReturnsInvalid()
     {
-        ChampionshipAddRequest request = new("   ");
+        ChampionshipAddRequest request = new("   ", Seasons.Season1);
         var result = await _champService.AddAsync(request);
         Assert.False(result.IsSuccessful);
         Assert.Equal(Errors.Invalid, result.Error);
@@ -57,7 +57,7 @@ public class ChampionshipCrudServiceTests : IAsyncLifetime
     [Fact]
     public async Task Add_Valid_AddsToDb()
     {
-        ChampionshipAddRequest request = new("DailyRugby");
+        ChampionshipAddRequest request = new("DailyRugby", Seasons.Season1);
         var result = await _champService.AddAsync(request);
         var all = await _champService.GetAllAsync();
 
@@ -81,9 +81,9 @@ public class ChampionshipCrudServiceTests : IAsyncLifetime
     {
         List<ChampionshipAddRequest> requests =
             [
-                new("champ1"),
-                new("champ2"),
-                new("champ3")
+                new("champ1", Seasons.Season1),
+                new("champ2", Seasons.Season1),
+                new("champ3", Seasons.Season1)
             ];
         foreach (var request in requests) await _champService.AddAsync(request);
 
@@ -112,9 +112,9 @@ public class ChampionshipCrudServiceTests : IAsyncLifetime
     {
         List<ChampionshipAddRequest> requests =
             [
-                new("champ1"),
-                new("champ2"),
-                new("champ3")
+                new("champ1", Seasons.Season1),
+                new("champ2", Seasons.Season1),
+                new("champ3", Seasons.Season1)
             ];
 
         List<Result<ChampionshipResponse>> addResponses = [];
@@ -150,9 +150,9 @@ public class ChampionshipCrudServiceTests : IAsyncLifetime
     {
         List<ChampionshipAddRequest> requests =
             [
-                new("champ1"),
-                new("champ2"),
-                new("champ3")
+                new("champ1", Seasons.Season1),
+                new("champ2", Seasons.Season1),
+                new("champ3", Seasons.Season1)
             ];
 
         List<Result<ChampionshipResponse>> addResponses = [];

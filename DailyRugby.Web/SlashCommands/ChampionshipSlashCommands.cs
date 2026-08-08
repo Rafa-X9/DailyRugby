@@ -1,5 +1,6 @@
 ﻿using DailyRugby.Application.DTOs;
 using DailyRugby.Application.Interfaces;
+using DailyRugby.Domain;
 using DailyRugby.Web.AutoCompletes;
 using Discord.Interactions;
 using System.Text;
@@ -11,11 +12,23 @@ public class ChampionshipSlashCommands(IChampionshipCrudService champService)
 {
     [SlashCommand("add-championship", "Creates a championship")]
     public async Task AddChampionship(
-        [Summary("name", "The name of the championship")] string name)
+        [Summary("name", "The name of the championship")]
+        string name,
+
+        [Summary("season", "The season whose rules the championship will abide by")]
+        [Autocomplete(typeof(SeasonAutoComplete))]
+        string season)
     {
         await DeferAsync();
 
-        ChampionshipAddRequest request = new(name);
+        bool parsed = Enum.TryParse(season, true, out Seasons enumSeason);
+        if (!parsed)
+        {
+            await FollowupAsync("Invalid season");
+            return;
+        }
+
+        ChampionshipAddRequest request = new(name, enumSeason);
 
         var result = await champService.AddAsync(request);
         if (!result.IsSuccessful)
@@ -36,7 +49,10 @@ public class ChampionshipSlashCommands(IChampionshipCrudService champService)
         sb.AppendLine("These are all championships registered:");
         foreach (var response in list)
         {
-            sb.AppendLine($"- {response.Name}, State = {response.State}, Id = {response.Id}");
+            sb.AppendLine($"- {response.Name}, " +
+                $"State = {response.State}, " +
+                $"Season = {response.Season}, " +
+                $"Id = {response.Id}");
         }
         await FollowupAsync(sb.ToString());
     }

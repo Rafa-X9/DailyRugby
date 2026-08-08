@@ -2,11 +2,12 @@
 
 namespace DailyRugby.Application.DTOs;
 
-public sealed record ChampionshipAddRequest(string Name);
+public sealed record ChampionshipAddRequest(string Name, Seasons Season);
 
 public sealed record ChampionshipResponse(Guid Id,
     string Name,
     ChampionshipState State,
+    Seasons Season,
     IReadOnlyList<TeamResponse> Teams,
     IReadOnlyList<GameResponse> Games);
 
@@ -15,13 +16,15 @@ public static class ChampionshipExtensions
     public static Championship ToChampionship(this ChampionshipAddRequest request)
         => new()
         {
-            Name = request.Name
+            Name = request.Name,
+            Season = request.Season
         };
 
     public static ChampionshipResponse ToChampionshipResponse(this Championship champ)
         => new(champ.Id,
             champ.Name,
             champ.State,
+            champ.Season,
             champ.Teams.Select(team => team.ToTeamResponse()).ToList().AsReadOnly(),
             champ.Games.Select(game => game.ToGameResponse()).ToList().AsReadOnly());
 }
