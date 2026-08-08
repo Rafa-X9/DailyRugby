@@ -36,7 +36,7 @@ public class ChampionshipSlashCommands(IChampionshipCrudService champService)
         sb.AppendLine("These are all championships registered:");
         foreach (var response in list)
         {
-            sb.AppendLine($"- {response.Name}, Id = {response.Id}");
+            sb.AppendLine($"- {response.Name}, State = {response.State}, Id = {response.Id}");
         }
         await FollowupAsync(sb.ToString());
     }
