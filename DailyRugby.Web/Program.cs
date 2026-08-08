@@ -21,8 +21,6 @@ class Program
             | GatewayIntents.MessageContent
     });
 
-    public const ulong ChannelId = 1535691855969132707;
-
     static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -58,6 +56,9 @@ class Program
         {
             throw new Exception("Unable to get discord token");
         }
+
+        ulong serverId = ulong.Parse(builder.Configuration["ServerId"] ?? "fail");
+        ulong channelId = ulong.Parse(builder.Configuration["ChannelId"] ?? "fail");
 
         DiscordClient.Log += message =>
         {
@@ -107,7 +108,7 @@ class Program
 
         DiscordClient.Ready += async () =>
         {
-            await interactions.RegisterCommandsToGuildAsync(1535691855302369370);
+            await interactions.RegisterCommandsToGuildAsync(serverId);
         };
 
         await DiscordClient.LoginAsync(TokenType.Bot, token);
