@@ -74,7 +74,7 @@ public class TeamSlashCommands(ITeamCrudService teamService)
             return;
         }
 
-        var allTeams = await teamService.GetAllAsync(id);
+        var allTeams = (await teamService.GetAllAsync(id)).OrderByDescending(team => team.Id);
         
         StringBuilder sb = new();
         sb.AppendLine("Teams in the championship:");

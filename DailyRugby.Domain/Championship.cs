@@ -2,7 +2,7 @@
 
 public sealed class Championship
 {
-    public Guid Id { get; } = Guid.NewGuid();
+    public Guid Id { get; } = Guid.CreateVersion7();
     public string Name { get; set; } = string.Empty;
     public ChampionshipState State = ChampionshipState.NotStarted;
     public Seasons Season = Seasons.Season1;

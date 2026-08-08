@@ -44,7 +44,7 @@ public class ChampionshipSlashCommands(IChampionshipCrudService champService)
     public async Task SeeChampionships()
     {
         await DeferAsync();
-        var list = await champService.GetAllAsync();
+        var list = (await champService.GetAllAsync()).OrderByDescending(temp => temp.Id);
         StringBuilder sb = new();
         sb.AppendLine("These are all championships registered:");
         foreach (var response in list)

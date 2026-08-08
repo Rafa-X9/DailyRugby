@@ -2,7 +2,7 @@
 
 public class TeamGame
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.CreateVersion7();
     public Guid TeamId { get; set; }
     public Guid GameId { get; set; }
     public required Team Team { get; set; }

@@ -20,12 +20,14 @@ public class ChampionshipAutoComplete : AutocompleteHandler
         if (string.IsNullOrWhiteSpace(input))
         {
             list = (await champService.GetAllAsync())
+                .OrderByDescending(temp => temp.Id)
                 .Select(temp => new AutocompleteResult(temp.Name, temp.Id.ToString()))
                 .Take(25);
             return AutocompletionResult.FromSuccess(list);
         }
 
         list = (await champService.GetAllAsync())
+            .OrderByDescending(temp => temp.Id)
             .Where(temp => temp.Name.Contains(input, StringComparison.OrdinalIgnoreCase))
             .Select(temp => new AutocompleteResult(temp.Name, temp.Id.ToString()))
             .Take(25);

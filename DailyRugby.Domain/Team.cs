@@ -2,7 +2,7 @@
 
 public class Team
 {
-    public Guid Id { get; } = Guid.NewGuid();
+    public Guid Id { get; } = Guid.CreateVersion7();
     public Guid ChampionshipId { get; set; }
     public string PlayerUsername { get; set; } = string.Empty;
     public string Country { get; set; } = string.Empty;
