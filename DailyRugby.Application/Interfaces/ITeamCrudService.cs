@@ -5,9 +5,9 @@ namespace DailyRugby.Application.Interfaces;
 
 public interface ITeamCrudService
 {
-    Task<Result<TeamResponse>> AddAsync(TeamAddRequest request);
+    Task<Result<TeamResponse>> AddAsync(TeamAddRequest? request);
 
-    Task<IList<TeamResponse>> GetAllAsync();
+    Task<IList<TeamResponse>> GetAllAsync(Guid champId);
 
     Task<Result<ChampionshipResponse>> GetByIdAsync(Guid id);
 

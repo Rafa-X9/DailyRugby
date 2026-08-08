@@ -1,5 +1,6 @@
 using DailyRugby.Application.CRUD;
 using DailyRugby.Application.Interfaces;
+using DailyRugby.Application.Validators;
 using DailyRugby.Domain;
 using DailyRugby.Web.SlashCommands;
 using Discord;
@@ -29,7 +30,9 @@ class Program
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
         builder.Services.AddSingleton(connection);
+
         builder.Services.AddScoped<IChampionshipCrudService, ChampionshipCrudService>();
+        builder.Services.AddTransient<ITeamValidatorFactory, TeamValidatorFactory>();
 
         builder.Services.AddDbContext<AppDbContext>(options =>
         {

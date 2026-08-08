@@ -1,5 +1,4 @@
 ﻿using DailyRugby.Domain;
-using Microsoft.EntityFrameworkCore;
 
 namespace DailyRugby.Application.DTOs;
 
