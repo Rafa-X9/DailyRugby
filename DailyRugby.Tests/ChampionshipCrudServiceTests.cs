@@ -1,17 +1,38 @@
 ﻿using DailyRugby.Application.CRUD;
 using DailyRugby.Application.DTOs;
 using DailyRugby.Application.Interfaces;
+using DailyRugby.Domain;
 using DailyRugby.Shared;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace DailyRugby.Tests;
 
-public class ChampionshipCrudServiceTests
+public class ChampionshipCrudServiceTests : IAsyncLifetime
 {
-    private readonly IChampionshipCrudService _champService;
+    private IChampionshipCrudService _champService = null!;
+    private AppDbContext _db = null!;
+    private SqliteConnection _connection = null!;
 
-    public ChampionshipCrudServiceTests()
+    public async Task InitializeAsync()
     {
-        _champService = new ChampionshipCrudService();
+        _connection = new SqliteConnection("Filename=:memory:");
+        await _connection.OpenAsync();
+
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseSqlite(_connection)
+            .Options;
+
+        _db = new AppDbContext(options);
+        _champService = new ChampionshipCrudService(_db);
+
+        await _db.Database.EnsureCreatedAsync();
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _db.DisposeAsync();
+        await _connection.CloseAsync();
     }
 
     #region Add
