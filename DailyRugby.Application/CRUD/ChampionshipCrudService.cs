@@ -2,6 +2,7 @@
 using DailyRugby.Application.Interfaces;
 using DailyRugby.Domain;
 using DailyRugby.Shared;
+using Microsoft.EntityFrameworkCore;
 
 namespace DailyRugby.Application.CRUD;
 
@@ -26,18 +27,37 @@ public class ChampionshipCrudService(AppDbContext db) : IChampionshipCrudService
         return Result<ChampionshipResponse>.Success(response);
     }
 
-    public Task<Result> DeleteAsync(Guid id)
+    public async Task<Result> DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        int linesAffected = await db.Championships
+            .Where(temp => temp.Id == id)
+            .ExecuteDeleteAsync();
+
+        if (linesAffected < 1)
+        {
+            return Result.Failure("Given id wasn't found", Errors.NotFound);
+        }
+
+        return Result.Success();
     }
 
-    public Task<IList<ChampionshipResponse>> GetAllAsync()
+    public async Task<IList<ChampionshipResponse>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return (await db.Championships
+            .ToListAsync())
+            .Select(temp => temp.ToChampionshipResponse())
+            .ToList();
     }
 
-    public Task<Result<ChampionshipResponse>> GetByIdAsync(Guid id)
+    public async Task<Result<ChampionshipResponse>> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var match = await db.Championships.FirstOrDefaultAsync(temp => temp.Id == id);
+
+        if (match is null)
+        {
+            return Result<ChampionshipResponse>.Failure("Given id wasn't found", Errors.NotFound);
+        }
+
+        return Result<ChampionshipResponse>.Success(match.ToChampionshipResponse());
     }
 }

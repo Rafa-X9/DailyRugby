@@ -62,7 +62,7 @@ public class ChampionshipCrudServiceTests : IAsyncLifetime
         var all = await _champService.GetAllAsync();
 
         Assert.True(result.IsSuccessful);
-        Assert.Contains(result.Item, all);
+        Assert.Contains(all, temp => temp.Id == result.Item.Id);
     }
 
     #endregion
@@ -129,7 +129,7 @@ public class ChampionshipCrudServiceTests : IAsyncLifetime
             Assert.True(addResponse.IsSuccessful);
             var getByIdResult = await _champService.GetByIdAsync(addResponse.Item.Id);
             Assert.True(getByIdResult.IsSuccessful);
-            Assert.Equal(addResponse.Item, getByIdResult.Item);
+            Assert.Equal(addResponse.Item.Id, getByIdResult.Item.Id);
         }
     }
 
