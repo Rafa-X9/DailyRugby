@@ -3,6 +3,7 @@ using DailyRugby.Application.Interfaces;
 using DailyRugby.Domain;
 using DailyRugby.Web.AutoCompletes;
 using Discord.Interactions;
+using System.Text;
 
 namespace DailyRugby.Web.SlashCommands;
 
@@ -15,7 +16,9 @@ public class TeamSlashCommands(ITeamCrudService teamService)
         [Autocomplete(typeof(ChampionshipAutoComplete))]
         string champId,
         [Summary("playerUsername", "The team's player")]
-        string playerUsername,        
+        string playerUsername,
+        [Summary("country", "The team's country")]
+        string country,
         int insight, int physique, int technique,
         [Summary("initialCoach", "The team's initial coach")]
         [Autocomplete(typeof(CoachAutoComplete))]
@@ -39,6 +42,7 @@ public class TeamSlashCommands(ITeamCrudService teamService)
 
         TeamAddRequest request = new(id,
             playerUsername,
+            country,
             insight,
             physique,
             technique,
@@ -53,5 +57,33 @@ public class TeamSlashCommands(ITeamCrudService teamService)
         }
 
         await FollowupAsync($"Created successfully with the id {addResult.Item.Id}");
+    }
+
+    [SlashCommand("see-teams", "Shows all teams in a championship")]
+    public async Task SeeTeams(
+        [Summary("championship", "The championship to see the teams from")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string champId)
+    {
+        await DeferAsync();
+
+        bool idParsed = Guid.TryParse(champId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid");
+            return;
+        }
+
+        var allTeams = await teamService.GetAllAsync(id);
+        
+        StringBuilder sb = new();
+        sb.AppendLine("Teams in the championship:");
+        foreach (var team in allTeams)
+        {
+            sb.AppendLine($"- {team.Country} by {team.PlayerUsername}; " +
+                $"I = {team.Insight}, T = {team.Technique}, P = {team.Physique}, " +
+                $"Coaches: {string.Join(", ", team.Coaches)}");
+        }
+        await FollowupAsync(sb.ToString());
     }
 }

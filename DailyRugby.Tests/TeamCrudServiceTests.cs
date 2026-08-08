@@ -54,6 +54,7 @@ public class TeamCrudServiceTests : IAsyncLifetime
         ChampionshipResponse champ = await SetUpChampionship();
         TeamAddRequest request = new(champ.Id,
             "   ",
+            "Brazil",
             95,
             0,
             0,
@@ -70,6 +71,7 @@ public class TeamCrudServiceTests : IAsyncLifetime
         await SetUpChampionship();
         TeamAddRequest request = new(Guid.NewGuid(),
             "RafaX9",
+            "Brazil",
             95, 0, 0,
             Coaches.Insight);
 
@@ -87,14 +89,17 @@ public class TeamCrudServiceTests : IAsyncLifetime
             [
             new(champ.Id,
                 "agweg",
+                "USA",
                 96, -1, 0,
                 Coaches.Insight),
             new(champ.Id,
                 "ugikn",
+                "Brazil",
                 0, 96, -1,
                 Coaches.Physique),
             new(champ.Id,
                 "iugiug",
+                "Soviet Union",
                 0, -1, 96,
                 Coaches.Technique)
             ];
@@ -115,10 +120,12 @@ public class TeamCrudServiceTests : IAsyncLifetime
             [
             new(champ.Id,
                 "RafaX9",
+                "Brazil",
                 92, 1, 1,
                 Coaches.Technique),
             new(champ.Id,
                 "eqgf",
+                "Australia",
                 1, 1, 94,
                 Coaches.Insight)
             ];
@@ -137,6 +144,7 @@ public class TeamCrudServiceTests : IAsyncLifetime
         var champ = await SetUpChampionship();
         TeamAddRequest request = new(champ.Id,
             "RafaX9",
+            "Brazil",
             93, 1, 1,
             Coaches.Technique);
 
@@ -257,6 +265,7 @@ public class TeamCrudServiceTests : IAsyncLifetime
     {
         TeamAddRequest request = new(champId,
             "AFafgwe",
+            "fasgf",
             statSum - 2, 1, 1,
             Coaches.Technique);
         var result = await _teamService.AddAsync(request);

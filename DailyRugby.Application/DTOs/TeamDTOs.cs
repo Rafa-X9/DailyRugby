@@ -4,6 +4,7 @@ namespace DailyRugby.Application.DTOs;
 
 public sealed record TeamAddRequest(Guid ChampionshipId,
     string PlayerUsername,
+    string Country,
     int Insight,
     int Physique,
     int Technique,
@@ -12,6 +13,7 @@ public sealed record TeamAddRequest(Guid ChampionshipId,
 public sealed record TeamResponse(Guid Id,
     Guid ChampionshipId,
     string PlayerUsername,
+    string Country,
     int Insight,
     int Physique,
     int Technique,
@@ -26,6 +28,7 @@ public static class TeamExtensions
         {
             ChampionshipId = request.ChampionshipId,
             PlayerUsername = request.PlayerUsername,
+            Country = request.Country,
             Insight = request.Insight,
             Physique = request.Physique,
             Technique = request.Technique
@@ -48,6 +51,7 @@ public static class TeamExtensions
         TeamResponse response = new(team.Id,
             team.ChampionshipId,
             team.PlayerUsername,
+            team.Country,
             team.Insight,
             team.Physique,
             team.Technique,
