@@ -60,6 +60,14 @@ public class TeamCrudService(AppDbContext db, ITeamValidatorFactory teamValidato
         return Result.Success();
     }
 
+    public async Task<IList<TeamResponse>> GetAllAsync()
+    {
+        return (await db.Teams
+            .ToListAsync())
+            .Select(temp => temp.ToTeamResponse())
+            .ToList();
+    }
+
     public async Task<IList<TeamResponse>> GetAllAsync(Guid champId)
     {
         return (await db.Teams

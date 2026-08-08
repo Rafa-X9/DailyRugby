@@ -86,4 +86,30 @@ public class TeamSlashCommands(ITeamCrudService teamService)
         }
         await FollowupAsync(sb.ToString());
     }
+
+    [SlashCommand("delete-team", "Deletes a team from a championship")]
+    public async Task DeleteTeam(
+        [Summary("team", "The team to delete")]
+        [Autocomplete(typeof(TeamAutoComplete))]
+        string teamId)
+    {
+        await DeferAsync();
+
+        bool idParsed = Guid.TryParse(teamId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid");
+            return;
+        }
+
+        var result = await teamService.DeleteAsync(id);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}");
+            return;
+        }
+
+        await FollowupAsync("Deleted successfully");
+    }
 }
