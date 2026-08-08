@@ -2,5 +2,6 @@
   <Project Path="DailyRugby.Application/DailyRugby.Application.csproj" />
   <Project Path="DailyRugby.Domain/DailyRugby.Domain.csproj" />
   <Project Path="DailyRugby.Shared/DailyRugby.Shared.csproj" />
+  <Project Path="DailyRugby.Tests/DailyRugby.Tests.csproj" Id="47df6e06-552e-4748-afbd-427bad43f27f" />
   <Project Path="DailyRugby.Web/DailyRugby.Web.csproj" />
 </Solution>

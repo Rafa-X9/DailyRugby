@@ -4,7 +4,6 @@ public sealed class Championship
 {
     public Guid Id { get; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;
-    public RuleSet Rules { get; set; }
     public IList<Team> Teams { get; set; } = [];
     public IList<Game> Games { get; set; } = [];
 }

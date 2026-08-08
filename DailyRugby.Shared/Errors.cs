@@ -4,5 +4,6 @@ public enum Errors
 {
     None,
     Invalid,
-    NotFound
+    NotFound,
+    NullArgument
 }
