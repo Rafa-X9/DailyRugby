@@ -1,5 +1,6 @@
 ﻿using DailyRugby.Application.DTOs;
 using DailyRugby.Application.Interfaces;
+using DailyRugby.Web.AutoCompletes;
 using Discord.Interactions;
 using System.Text;
 
@@ -38,5 +39,30 @@ public class ChampionshipSlashCommands(IChampionshipCrudService champService)
             sb.AppendLine($"- {response.Name}, Id = {response.Id}");
         }
         await FollowupAsync(sb.ToString());
+    }
+
+    [SlashCommand("delete-championship", "Deletes a championship")]
+    public async Task DeleteChampionship(
+        [Summary("id", "The Id of the championship you want to delete")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string id)
+    {
+        await DeferAsync();
+
+        bool parsed = Guid.TryParse(id, out Guid guid);
+        if (!parsed)
+        {
+            await FollowupAsync($"The id '{id}' isn't a valid Guid");
+            return;
+        }
+
+        var result = await champService.DeleteAsync(guid);
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}");
+            return;
+        }
+
+        await FollowupAsync("Deleted successfully");
     }
 }
