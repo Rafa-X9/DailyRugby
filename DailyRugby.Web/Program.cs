@@ -25,25 +25,24 @@ class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        var connection = new SqliteConnection("Filename=:memory:");
-        connection.Open();
-        builder.Services.AddSingleton(connection);
-
-        builder.Services.AddScoped<IChampionshipCrudService, ChampionshipCrudService>();
-        builder.Services.AddTransient<ITeamValidatorFactory, TeamValidatorFactory>();
-        builder.Services.AddScoped<ITeamCrudService, TeamCrudService>();
+        string? connection = builder.Configuration.GetConnectionString("Sqlite");
+        if (connection is null) throw new Exception();
 
         builder.Services.AddDbContext<AppDbContext>(options =>
         {
             options.UseSqlite(connection);
         });
 
+        builder.Services.AddScoped<IChampionshipCrudService, ChampionshipCrudService>();
+        builder.Services.AddTransient<ITeamValidatorFactory, TeamValidatorFactory>();
+        builder.Services.AddScoped<ITeamCrudService, TeamCrudService>();
+
         var app = builder.Build();
 
         using (var scope = app.Services.CreateScope())
         {
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            db.Database.EnsureCreated();
+            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            dbContext.Database.EnsureCreated(); 
         }
 
         app.MapGet("/", () =>
