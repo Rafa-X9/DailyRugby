@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DailyRugby.Domain\DailyRugby.Domain.csproj" />
+    <PackageReference Include="Discord.Net" Version="3.20.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DailyRugby.Application\DailyRugby.Application.csproj" />
+    <ProjectReference Include="..\DailyRugby.Shared\DailyRugby.Shared.csproj" />
   </ItemGroup>
 
 </Project>
