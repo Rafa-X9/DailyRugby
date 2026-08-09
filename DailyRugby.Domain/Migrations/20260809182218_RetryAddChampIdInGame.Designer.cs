@@ -3,6 +3,7 @@ using System;
 using DailyRugby.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DailyRugby.Domain.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260809182218_RetryAddChampIdInGame")]
+    partial class RetryAddChampIdInGame
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.10");
@@ -56,11 +59,21 @@ namespace DailyRugby.Domain.Migrations
                     b.Property<DateTime>("ScheduledTime")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("TeamAId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("TeamBId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ChampionshipId");
 
                     b.HasIndex("ChampionshipId1");
+
+                    b.HasIndex("TeamAId");
+
+                    b.HasIndex("TeamBId");
 
                     b.ToTable("Games", (string)null);
                 });
@@ -142,8 +155,6 @@ namespace DailyRugby.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GameId");
-
                     b.HasIndex("TeamId");
 
                     b.ToTable("TeamGames", (string)null);
@@ -151,19 +162,35 @@ namespace DailyRugby.Domain.Migrations
 
             modelBuilder.Entity("DailyRugby.Domain.Game", b =>
                 {
-                    b.HasOne("DailyRugby.Domain.Championship", null)
-                        .WithMany("Games")
+                    b.HasOne("DailyRugby.Domain.Championship", "Championship")
+                        .WithMany()
                         .HasForeignKey("ChampionshipId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DailyRugby.Domain.Championship", "Championship")
-                        .WithMany()
+                    b.HasOne("DailyRugby.Domain.Championship", null)
+                        .WithMany("Games")
                         .HasForeignKey("ChampionshipId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DailyRugby.Domain.TeamGame", "TeamA")
+                        .WithMany()
+                        .HasForeignKey("TeamAId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DailyRugby.Domain.TeamGame", "TeamB")
+                        .WithMany()
+                        .HasForeignKey("TeamBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Championship");
+
+                    b.Navigation("TeamA");
+
+                    b.Navigation("TeamB");
                 });
 
             modelBuilder.Entity("DailyRugby.Domain.Team", b =>
@@ -177,19 +204,11 @@ namespace DailyRugby.Domain.Migrations
 
             modelBuilder.Entity("DailyRugby.Domain.TeamGame", b =>
                 {
-                    b.HasOne("DailyRugby.Domain.Game", "Game")
-                        .WithMany("Teams")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("DailyRugby.Domain.Team", "Team")
                         .WithMany()
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Game");
 
                     b.Navigation("Team");
                 });
@@ -198,11 +217,6 @@ namespace DailyRugby.Domain.Migrations
                 {
                     b.Navigation("Games");
 
-                    b.Navigation("Teams");
-                });
-
-            modelBuilder.Entity("DailyRugby.Domain.Game", b =>
-                {
                     b.Navigation("Teams");
                 });
 #pragma warning restore 612, 618

@@ -2,11 +2,6 @@
 
 namespace DailyRugby.Application.DTOs;
 
-public sealed record GameAddRequest(Guid TeamAId,
-    Guid TeamBId,
-    DateTime ScheduledTime,
-    int Round);
-
 public sealed record GameResponse(Guid Id,
     TeamGameResponse TeamA,
     TeamGameResponse TeamB,
@@ -17,19 +12,10 @@ public sealed record GameResponse(Guid Id,
 
 public static class GameExtensions
 {
-    public static Game ToGame(this GameAddRequest request)
-        => new()
-        {
-            TeamAId = request.TeamAId,
-            TeamBId = request.TeamBId,
-            ScheduledTime = request.ScheduledTime,
-            Round = request.Round
-        };
-
     public static GameResponse ToGameResponse(this Game game)
         => new(game.Id,
-            game.TeamA.ToTeamGameResponse(),
-            game.TeamB.ToTeamGameResponse(),
+            game.Teams[0].ToTeamGameResponse(),
+            game.Teams[1].ToTeamGameResponse(),
             game.ScheduledTime,
             game.Round,
             game.CurrentMinute,

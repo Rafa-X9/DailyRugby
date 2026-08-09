@@ -5,11 +5,11 @@ namespace DailyRugby.Application.Interfaces;
 
 public interface IGameCrudService
 {
-    Task<Result<GameResponse>> AddGameAsync();
+    Task<Result<IList<GameResponse>>> GenerateRounds(Guid champId);
 
-    Task<IList<GameResponse>> GetAllAsync();
+    Task<IList<GameResponse>> GetAllAsync(Guid champId);
+
+    Task<IList<GameResponse>> GetByTeamIdAsync(Guid champId);
 
     Task<Result<GameResponse>> GetByIdAsync(Guid id);
-
-    Task<Result> DeleteAsync(Guid id);
 }

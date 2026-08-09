@@ -20,24 +20,27 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
         modelBuilder.Entity<Championship>()
             .Property(temp => temp.Id)
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedNever();
 
         modelBuilder.Entity<Team>()
             .Property(temp => temp.Id)
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedNever();
 
         modelBuilder.Entity<Game>()
             .Property(temp => temp.Id)
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedNever();
 
         modelBuilder.Entity<TeamGame>()
             .Property(temp => temp.Id)
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedNever();
 
         modelBuilder.Entity<Championship>(builder =>
         {
             builder.HasMany(champ => champ.Teams).WithOne();
-            builder.HasMany(champ => champ.Games).WithOne();
+
+            builder.HasMany(champ => champ.Games)
+                .WithOne()
+                .HasForeignKey(game => game.ChampionshipId);
         });
     }
 }
