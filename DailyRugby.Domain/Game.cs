@@ -10,7 +10,7 @@ public class Game
     public int Round { get; set; }
     public DateTime ScheduledTime { get; set; }
     public int CurrentMinute { get; set; }
-    public GameState CurrentState { get; set; } = GameState.Scheduled;
+    public GameState CurrentState { get; set; }
     
 
     [ForeignKey(nameof(Championship))]

@@ -2,6 +2,7 @@
 
 public enum GameState
 {
+    NotScheduled,
     Scheduled,
     Started,
     Finished
