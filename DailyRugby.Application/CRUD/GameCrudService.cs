@@ -8,7 +8,7 @@ namespace DailyRugby.Application.CRUD;
 
 public class GameCrudService(AppDbContext db) : IGameCrudService
 {
-    public async Task<Result<IList<GameResponse>>> GenerateRounds(Guid champId)
+    public async Task<Result<IList<GameResponse>>> GenerateRounds(Guid champId, bool overwriteIfExists = false)
     {
         var champ = await db.Championships
             .Include(temp => temp.Teams)
@@ -20,15 +20,37 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
                 .Failure("Championship Id not found", Errors.NotFound);
         }
 
+        if (champ.State != ChampionshipState.NotStarted)
+        {
+            if (overwriteIfExists)
+            {
+                await db.Games
+                    .Where(temp => temp.ChampionshipId == champId)
+                    .ExecuteDeleteAsync();
+                champ.State = ChampionshipState.NotStarted;
+                await db.SaveChangesAsync();
+                return await GenerateRounds(champId, false);
+            }
+            else
+            {
+                return Result<IList<GameResponse>>.Failure("Can't generate rounds of an " +
+                    "already started championship", Errors.Invalid);
+            }
+        }
+
         if (champ.Teams.Count < 2)
         {
             return Result<IList<GameResponse>>
                 .Failure("Championship must have at least 2 teams", Errors.Invalid);
         }
 
+        
+
         List<Game> games = [];
 
         var teamIds = champ.Teams.Select(temp => temp.Id).ToList();
+        Random random = new();
+        teamIds.Sort((id1, id2) => random.Next(-10, 10));
         if (teamIds.Count % 2 == 1)
         {
             teamIds.Add(Guid.Empty);
@@ -88,6 +110,8 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         }
 
         db.TeamGames.AddRange(teamGames);
+        champ.State = ChampionshipState.Started;
+        db.Championships.Update(champ);
         await db.SaveChangesAsync();
 
         var gamesWithTeams = (await db.Games

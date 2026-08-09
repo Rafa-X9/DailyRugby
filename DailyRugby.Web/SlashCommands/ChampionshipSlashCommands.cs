@@ -7,7 +7,8 @@ using System.Text;
 
 namespace DailyRugby.Web.SlashCommands;
 
-public class ChampionshipSlashCommands(IChampionshipCrudService champService)
+public class ChampionshipSlashCommands
+        (IChampionshipCrudService champService, IGameCrudService gameService)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("add-championship", "Creates a championship")]
@@ -80,5 +81,90 @@ public class ChampionshipSlashCommands(IChampionshipCrudService champService)
         }
 
         await FollowupAsync("Deleted successfully");
+    }
+
+    [SlashCommand("start-championship", "Sets a championship as started and generates its rounds")]
+    public async Task StartChampionship(
+        [Summary("Championship", "The championship you want to set as started")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string champId)
+    {
+        await DeferAsync();
+
+        bool idParsed = Guid.TryParse(champId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid");
+            return;
+        }
+
+        var pairingsResult = await gameService.GenerateRounds(id);
+        if (!pairingsResult.IsSuccessful)
+        {
+            await FollowupAsync($"{pairingsResult.Error}: {pairingsResult.Message}");
+            return;
+        }
+
+        var rounds = pairingsResult.Item
+            .GroupBy(temp => temp.Round)
+            .OrderBy(temp => temp.Key);
+        StringBuilder sb = new();
+        
+        sb.AppendLine("These are the rounds generated:");
+        sb.AppendLine();
+        foreach (var round in rounds)
+        {
+            sb.AppendLine($"**ROUND {round.Key}**");
+            foreach (var game in round)
+            {
+                sb.AppendLine($"- {game.TeamA.Team.Country} vs {game.TeamB.Team.Country}");
+            }
+            sb.AppendLine();
+        }
+
+        await FollowupAsync(sb.ToString());
+    }
+
+    [SlashCommand("restart-championship", "Deletes all games in a championship " +
+        "and regenerates its pairings")]
+    public async Task RestartChampionship(
+        [Summary("Championship", "The championship you want to set as started")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string champId)
+    {
+        await DeferAsync();
+
+        bool idParsed = Guid.TryParse(champId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid");
+            return;
+        }
+
+        var pairingsResult = await gameService.GenerateRounds(id, true);
+        if (!pairingsResult.IsSuccessful)
+        {
+            await FollowupAsync($"{pairingsResult.Error}: {pairingsResult.Message}");
+            return;
+        }
+
+        var rounds = pairingsResult.Item
+            .GroupBy(temp => temp.Round)
+            .OrderBy(temp => temp.Key);
+        StringBuilder sb = new();
+
+        sb.AppendLine("These are the rounds generated:");
+        sb.AppendLine();
+        foreach (var round in rounds)
+        {
+            sb.AppendLine($"**ROUND {round.Key}**");
+            foreach (var game in round)
+            {
+                sb.AppendLine($"- {game.TeamA.Team.Country} vs {game.TeamB.Team.Country}");
+            }
+            sb.AppendLine();
+        }
+
+        await FollowupAsync(sb.ToString());
     }
 }

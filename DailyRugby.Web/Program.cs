@@ -36,6 +36,7 @@ class Program
         builder.Services.AddScoped<IChampionshipCrudService, ChampionshipCrudService>();
         builder.Services.AddTransient<ITeamValidatorFactory, TeamValidatorFactory>();
         builder.Services.AddScoped<ITeamCrudService, TeamCrudService>();
+        builder.Services.AddScoped<IGameCrudService, GameCrudService>();
 
         var app = builder.Build();
 

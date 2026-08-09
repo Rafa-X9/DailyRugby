@@ -5,7 +5,7 @@ namespace DailyRugby.Application.Interfaces;
 
 public interface IGameCrudService
 {
-    Task<Result<IList<GameResponse>>> GenerateRounds(Guid champId);
+    Task<Result<IList<GameResponse>>> GenerateRounds(Guid champId, bool overwriteIfExists = false);
 
     Task<IList<GameResponse>> GetAllAsync(Guid champId);
 
