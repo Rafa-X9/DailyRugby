@@ -7,6 +7,7 @@ public class Game
     public Guid Id { get; set; } = Guid.CreateVersion7();
     public TeamGame TeamA { get; set; }
     public TeamGame TeamB { get; set; }
+    public int Round { get; set; }
     public DateTime ScheduledTime { get; set; }
     public int CurrentMinute { get; set; }
     public GameState CurrentState { get; set; } = GameState.Scheduled;
