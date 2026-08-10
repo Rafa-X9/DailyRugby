@@ -1,6 +1,7 @@
 ﻿using DailyRugby.Application.CRUD;
 using DailyRugby.Application.DTOs;
 using DailyRugby.Application.Interfaces;
+using DailyRugby.Application.Simulators;
 using DailyRugby.Application.Validators;
 using DailyRugby.Domain;
 using DailyRugby.Shared;
@@ -31,6 +32,7 @@ public class GameSimulatorManagerTests : IAsyncLifetime
         _champService = new ChampionshipCrudService(_db);
         _teamService = new TeamCrudService(_db, new TeamValidatorFactory());
         _gameService = new GameCrudService(_db);
+        _simulatorManager = new GameSimulatorManager(_db);
 
         await _db.Database.EnsureCreatedAsync();
     }
@@ -86,6 +88,7 @@ public class GameSimulatorManagerTests : IAsyncLifetime
             .ScheduleGameAsync(firstGameId, dateTime);
 
         Schedule? schedule = await _db.Schedules
+            .AsNoTracking()
             .FirstOrDefaultAsync(temp => temp.GameId == firstGameId);
 
         Assert.True(scheduleResult.IsSuccessful);
