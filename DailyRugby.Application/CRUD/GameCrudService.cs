@@ -141,11 +141,6 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
             .ToList();
     }
 
-    public Task<Result<GameResponse>> GetByIdAsync(Guid id)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<Result<IList<GameResponse>>> GetByTeamIdAsync(Guid teamId)
     {
         var team = await db.Teams.FirstOrDefaultAsync(temp => temp.Id == teamId);

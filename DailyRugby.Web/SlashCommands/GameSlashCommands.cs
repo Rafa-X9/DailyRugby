@@ -1,4 +1,5 @@
-﻿using DailyRugby.Application.Interfaces;
+﻿using DailyRugby.Application.DTOs;
+using DailyRugby.Application.Interfaces;
 using DailyRugby.Web.AutoCompletes;
 using Discord.Interactions;
 using System.Text;
@@ -39,6 +40,53 @@ public class GameSlashCommands(IGameCrudService gameService)
         {
             sb.AppendLine($"- {game.TeamA.Team.Country} vs {game.TeamB.Team.Country} " +
                 $"in Round {game.Round}");
+        }
+
+        await FollowupAsync(sb.ToString());
+    }
+
+    [SlashCommand("see-teams-games", "Sees all the games of a specific team")]
+    public async Task SeeTeamsGames(
+        [Summary("team", "The team to see the games")]
+        [Autocomplete(typeof(TeamAutoComplete))]
+        string teamId)
+    {
+        await DeferAsync();
+
+        bool idParsed = Guid.TryParse(teamId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid");
+            return;
+        }
+
+        var gamesResult = await gameService.GetByTeamIdAsync(id);
+
+        if (!gamesResult.IsSuccessful)
+        {
+            await FollowupAsync($"{gamesResult.Error}: {gamesResult.Message}");
+            return;
+        }
+
+        var sortedGames = gamesResult.Item.OrderBy(temp => temp.Round).ToList();
+
+        var requestedTeam = gamesResult.Item
+            .SelectMany(temp => new List<TeamResponse> { temp.TeamA.Team, temp.TeamB.Team })
+            .First(temp => temp.Id == id);
+
+        StringBuilder sb = new();
+        sb.AppendLine($"These are all {requestedTeam.Country}'s games:");
+
+        foreach (var game in sortedGames)
+        {
+            if (game.TeamA.Team.Id == id)
+            {
+                sb.AppendLine($"- vs {game.TeamB.Team.Country} on round {game.Round}");
+            }
+            else
+            {
+                sb.AppendLine($"- vs {game.TeamA.Team.Country} on round {game.Round}");
+            }
         }
 
         await FollowupAsync(sb.ToString());
