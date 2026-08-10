@@ -8,7 +8,6 @@ public class Game
     public IList<TeamGame> Teams { get; set; } = [];
     public Championship Championship { get; set; }
     public int Round { get; set; }
-    public DateTime ScheduledTime { get; set; }
     public int CurrentMinute { get; set; }
     public GameState CurrentState { get; set; }
     
