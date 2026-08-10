@@ -146,8 +146,24 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         throw new NotImplementedException();
     }
 
-    public Task<IList<GameResponse>> GetByTeamIdAsync(Guid champId)
+    public async Task<Result<IList<GameResponse>>> GetByTeamIdAsync(Guid teamId)
     {
-        throw new NotImplementedException();
+        var team = await db.Teams.FirstOrDefaultAsync(temp => temp.Id == teamId);
+
+        if (team is null)
+        {
+            return Result<IList<GameResponse>>.Failure("No such team Id", Errors.NotFound);
+        }
+
+        var games = (await db.Games
+            .AsNoTracking()
+            .Include(temp => temp.Teams)
+            .ThenInclude(temp => temp.Team)
+            .Where(temp => temp.Teams.Any(t => t.Team.Id == team.Id))
+            .ToListAsync())
+            .Select(temp => temp.ToGameResponse())
+            .ToList();
+
+        return Result<IList<GameResponse>>.Success(games);
     }
 }

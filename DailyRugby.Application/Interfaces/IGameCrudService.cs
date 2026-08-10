@@ -9,7 +9,7 @@ public interface IGameCrudService
 
     Task<IList<GameResponse>> GetAllAsync(Guid champId);
 
-    Task<IList<GameResponse>> GetByTeamIdAsync(Guid champId);
+    Task<Result<IList<GameResponse>>> GetByTeamIdAsync(Guid teamId);
 
     Task<Result<GameResponse>> GetByIdAsync(Guid id);
 }

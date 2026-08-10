@@ -177,6 +177,39 @@ public class GameCrudServiceTests : IAsyncLifetime
 
     #endregion
 
+    #region GetByTeamId
+
+    [Fact]
+    public async Task GetByTeamId_NoMatch_ReturnsNotFound()
+    {
+        var champ = await SetUpChampionship();
+        await SetUpTeamA(champ.Id, 95);
+        var result = await _gameService.GetByTeamIdAsync(Guid.NewGuid());
+        Assert.False(result.IsSuccessful);
+        Assert.Equal(Errors.NotFound, result.Error);
+    }
+
+    [Fact]
+    public async Task GetByTeamId_Match_ReturnsAllGames()
+    {
+        var champ = await SetUpChampionship();
+        var teams = await SetUpFourTeams(champ.Id, 95);
+        List<TeamResponse> teamsList = 
+            [teams.teamA, teams.teamB, teams.teamC, teams.teamD];
+        await _gameService.GenerateRounds(champ.Id);
+
+        foreach (var team in teamsList)
+        {
+            var gamesResult = await _gameService.GetByTeamIdAsync(team.Id);
+            Assert.True(gamesResult.IsSuccessful);
+            Assert.Equal(3, gamesResult.Item.Count);
+            Assert.DoesNotContain(gamesResult.Item, temp =>
+                temp.TeamA.Team.Id != team.Id && temp.TeamB.Team.Id != team.Id);
+        }
+    }
+
+    #endregion
+
     #region Helpers
 
     private async Task<ChampionshipResponse> SetUpChampionship(Seasons season = Seasons.Season1)
