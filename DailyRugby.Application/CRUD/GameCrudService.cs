@@ -130,9 +130,13 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         return Result<IList<GameResponse>>.Success(gamesWithTeams);
     }
 
-    public Task<IList<GameResponse>> GetAllAsync(Guid champId)
+    public async Task<IList<GameResponse>> GetAllAsync(Guid champId)
     {
-        throw new NotImplementedException();
+        return (await db.Games
+            .Where(temp => temp.ChampionshipId == champId)
+            .ToListAsync())
+            .Select(temp => temp.ToGameResponse())
+            .ToList();
     }
 
     public Task<Result<GameResponse>> GetByIdAsync(Guid id)
