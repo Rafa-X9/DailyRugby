@@ -5,6 +5,8 @@ namespace DailyRugby.Application.Interfaces;
 
 public interface IGameSimulatorManager
 {
+    public event EventHandler GameEventHappened;
+
     Task<Result> ScheduleGameAsync(Guid gameId, DateTime dateTimeUtc);
 
     Task<IList<Schedule>> SeeScheduledGamesAsync(Guid champId, bool futureOnly = true);

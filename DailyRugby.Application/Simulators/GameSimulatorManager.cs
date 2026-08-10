@@ -9,6 +9,7 @@ namespace DailyRugby.Application.Simulators;
 public class GameSimulatorManager(AppDbContext db) : BackgroundService, IGameSimulatorManager
 {
     private readonly PriorityQueue<Schedule, DateTime> _schedules = new();
+    public event EventHandler? GameEventHappened;
 
     public async Task<Result> ScheduleGameAsync(Guid gameId, DateTime dateTimeUtc)
     {
@@ -19,6 +20,8 @@ public class GameSimulatorManager(AppDbContext db) : BackgroundService, IGameSim
 
         var game = await db.Games
             .AsNoTracking()
+            .Include(temp => temp.Teams)
+            .ThenInclude(temp => temp.Team)
             .FirstOrDefaultAsync(temp => temp.Id == gameId);
 
         if (game is null)
@@ -49,8 +52,44 @@ public class GameSimulatorManager(AppDbContext db) : BackgroundService, IGameSim
                 && ((!futureOnly) || temp.DateTimeUtc > DateTime.UtcNow))
             .ToListAsync();
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        throw new NotImplementedException();
+        List<Schedule> schedules = await db.Schedules
+            .AsNoTracking()
+            .Include(temp => temp.Game)
+            .ThenInclude(temp => temp.Teams)
+            .ThenInclude(temp => temp.Team)
+            .AsSplitQuery()
+            .ToListAsync(stoppingToken);
+
+        foreach (var schedule in schedules)
+        {
+            _schedules.Enqueue(schedule, schedule.DateTimeUtc);
+        }
+
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            if (_schedules.Count == 0)
+            {
+                await WaitDelay();
+                continue;
+            }
+
+            var earliestGame = _schedules.Peek();
+            if (earliestGame.DateTimeUtc >= DateTime.UtcNow)
+            {
+                GameEvent gameEvent = new(0, GameEventType.GameStarted, 0, 0, earliestGame.Game);
+                GameEventHappened?.Invoke(this, gameEvent);
+                _schedules.Dequeue();
+                await db.Schedules
+                    .Where(temp => temp.Id == earliestGame.Id)
+                    .ExecuteDeleteAsync();
+            }
+        }
+    }
+
+    private async Task WaitDelay()
+    {
+        await Task.Delay(TimeSpan.FromSeconds(5));
     }
 }

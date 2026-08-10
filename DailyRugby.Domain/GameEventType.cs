@@ -3,6 +3,8 @@
 public enum GameEventType
 {
     Nothing,
+    
+    GameStarted,
 
     TeamAFailedTry,
     TeamAUnconvertedTry,
