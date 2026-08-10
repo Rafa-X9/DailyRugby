@@ -134,6 +134,8 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
     {
         return (await db.Games
             .Where(temp => temp.ChampionshipId == champId)
+            .Include(temp => temp.Teams)
+                .ThenInclude(temp => temp.Team)
             .ToListAsync())
             .Select(temp => temp.ToGameResponse())
             .ToList();
