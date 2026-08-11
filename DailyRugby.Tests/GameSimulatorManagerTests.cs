@@ -7,6 +7,8 @@ using DailyRugby.Domain;
 using DailyRugby.Shared;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace DailyRugby.Tests;
 
@@ -32,7 +34,21 @@ public class GameSimulatorManagerTests : IAsyncLifetime
         _champService = new ChampionshipCrudService(_db);
         _teamService = new TeamCrudService(_db, new TeamValidatorFactory());
         _gameService = new GameCrudService(_db);
-        _simulatorManager = new GameSimulatorManager(_db);
+
+        var serviceProviderMock = new Mock<IServiceProvider>();
+        var scopeFactoryMock = new Mock<IServiceScopeFactory>();
+        var serviceScopeMock = new Mock<IServiceScope>();
+
+        serviceProviderMock.Setup(temp => temp.GetService(typeof(AppDbContext)))
+            .Returns(_db);
+        serviceProviderMock.Setup(temp => temp.GetService(typeof(IServiceScopeFactory)))
+            .Returns(scopeFactoryMock.Object);
+        scopeFactoryMock.Setup(temp => temp.CreateScope())
+            .Returns(serviceScopeMock.Object);
+        serviceScopeMock.Setup(temp => temp.ServiceProvider.GetService(It.IsAny<Type>()))
+            .Returns(_db);
+        
+        _simulatorManager = new GameSimulatorManager(serviceProviderMock.Object);
 
         await _db.Database.EnsureCreatedAsync();
     }
@@ -182,5 +198,6 @@ public class GameSimulatorManagerTests : IAsyncLifetime
             (temp.TeamA.Team.Id == teamB &&
             temp.TeamB.Team.Id == teamA));
     }
+
     #endregion
 }

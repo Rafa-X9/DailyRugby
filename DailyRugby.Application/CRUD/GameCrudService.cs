@@ -141,6 +141,17 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
             .ToList();
     }
 
+    public async Task<IList<GameResponse>> GetAllAsync()
+    {
+        return (await db.Games
+            .AsNoTracking()
+            .Include(temp => temp.Teams)
+                .ThenInclude(temp => temp.Team)
+            .ToListAsync())
+            .Select(temp => temp.ToGameResponse())
+            .ToList();
+    }
+
     public async Task<Result<IList<GameResponse>>> GetByTeamIdAsync(Guid teamId)
     {
         var team = await db.Teams.FirstOrDefaultAsync(temp => temp.Id == teamId);

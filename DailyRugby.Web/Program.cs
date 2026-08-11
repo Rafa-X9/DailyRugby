@@ -1,5 +1,6 @@
 using DailyRugby.Application.CRUD;
 using DailyRugby.Application.Interfaces;
+using DailyRugby.Application.Simulators;
 using DailyRugby.Application.Validators;
 using DailyRugby.Domain;
 using DailyRugby.Web.SlashCommands;
@@ -37,6 +38,10 @@ class Program
         builder.Services.AddTransient<ITeamValidatorFactory, TeamValidatorFactory>();
         builder.Services.AddScoped<ITeamCrudService, TeamCrudService>();
         builder.Services.AddScoped<IGameCrudService, GameCrudService>();
+        builder.Services.AddSingleton<GameSimulatorManager>();
+        builder.Services.AddSingleton<IGameSimulatorManager>(
+            provider => provider.GetRequiredService<GameSimulatorManager>());
+        builder.Services.AddHostedService(provider => provider.GetRequiredService<GameSimulatorManager>());
 
         var app = builder.Build();
 

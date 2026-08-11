@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DailyRugby.Web.SlashCommands;
 
-public class GameSlashCommands(IGameCrudService gameService)
+public class GameSlashCommands(IGameCrudService gameService, IGameSimulatorManager simulator)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("see-games", "Shows all games from a championship")]
@@ -90,5 +90,38 @@ public class GameSlashCommands(IGameCrudService gameService)
         }
 
         await FollowupAsync(sb.ToString());
+    }
+
+    [SlashCommand("schedule-game", "Schedules a game")]
+    public async Task ScheduleGame(
+        [Summary("game", "The game to schedule")]
+        [Autocomplete(typeof(GameAutocomplete))]
+        string gameId,
+        int yearUtc,
+        int monthUtc,
+        int dayUtc,
+        int hourUtc,
+        int minuteUtc)
+    {
+        await DeferAsync();
+
+        bool idParsed = Guid.TryParse(gameId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid");
+            return;
+        }
+
+        DateTime dateTime = new(yearUtc, monthUtc, dayUtc, hourUtc, minuteUtc, 0);
+
+        var result = await simulator.ScheduleGameAsync(id, dateTime);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}");
+            return;
+        }
+
+        await FollowupAsync("Scheduled successfully");
     }
 }
