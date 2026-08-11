@@ -3,6 +3,7 @@ using DailyRugby.Application.Interfaces;
 using DailyRugby.Application.Simulators;
 using DailyRugby.Application.Validators;
 using DailyRugby.Domain;
+using DailyRugby.Web.BotServices;
 using DailyRugby.Web.SlashCommands;
 using Discord;
 using Discord.Interactions;
@@ -43,8 +44,11 @@ class Program
             provider => provider.GetRequiredService<GameSimulatorManager>());
         builder.Services.AddHostedService(provider => provider.GetRequiredService<GameSimulatorManager>());
 
+        builder.Services.AddSingleton<MessageSender>();
+
         var app = builder.Build();
 
+        _ = app.Services.GetRequiredService<MessageSender>();
         using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();

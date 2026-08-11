@@ -92,7 +92,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider) : Background
             }
 
             var earliestGame = _schedules.Peek();
-            if (earliestGame.DateTimeUtc >= DateTime.UtcNow)
+            if (earliestGame.DateTimeUtc <= DateTime.UtcNow)
             {
                 using var scope = serviceProvider.CreateScope();
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
