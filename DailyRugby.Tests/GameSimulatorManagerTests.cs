@@ -2,6 +2,7 @@
 using DailyRugby.Application.DTOs;
 using DailyRugby.Application.Interfaces;
 using DailyRugby.Application.Simulators;
+using DailyRugby.Application.Utilitaries;
 using DailyRugby.Application.Validators;
 using DailyRugby.Domain;
 using DailyRugby.Shared;
@@ -48,7 +49,9 @@ public class GameSimulatorManagerTests : IAsyncLifetime
         serviceScopeMock.Setup(temp => temp.ServiceProvider.GetService(It.IsAny<Type>()))
             .Returns(_db);
         
-        _simulatorManager = new GameSimulatorManager(serviceProviderMock.Object);
+        _simulatorManager = new GameSimulatorManager(serviceProviderMock.Object,
+            new GameSimulatorFactory(serviceProviderMock.Object),
+            new InstantTimer());
 
         await _db.Database.EnsureCreatedAsync();
     }

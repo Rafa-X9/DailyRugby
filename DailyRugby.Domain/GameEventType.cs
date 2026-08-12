@@ -5,6 +5,8 @@ public enum GameEventType
     Nothing,
     
     GameStarted,
+    HalfTime,
+    GameFinished,
 
     TeamAFailedTry,
     TeamAUnconvertedTry,

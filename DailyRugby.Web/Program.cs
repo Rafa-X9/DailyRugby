@@ -1,6 +1,7 @@
 using DailyRugby.Application.CRUD;
 using DailyRugby.Application.Interfaces;
 using DailyRugby.Application.Simulators;
+using DailyRugby.Application.Utilitaries;
 using DailyRugby.Application.Validators;
 using DailyRugby.Domain;
 using DailyRugby.Web.BotServices;
@@ -43,7 +44,7 @@ class Program
         builder.Services.AddSingleton<IGameSimulatorManager>(
             provider => provider.GetRequiredService<GameSimulatorManager>());
         builder.Services.AddHostedService(provider => provider.GetRequiredService<GameSimulatorManager>());
-
+        builder.Services.AddTransient<IGameTimer, SpedUpTimer>();
         builder.Services.AddSingleton<MessageSender>();
 
         var app = builder.Build();

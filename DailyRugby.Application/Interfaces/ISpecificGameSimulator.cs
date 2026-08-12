@@ -4,5 +4,5 @@ namespace DailyRugby.Application.Interfaces;
 
 public interface ISpecificGameSimulator
 {
-    GameEvent SimulateNextMinute(Game game);
+    Task<GameEvent> SimulateNextMinute(Game game);
 }

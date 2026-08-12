@@ -4,10 +4,14 @@ using DailyRugby.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.VisualBasic.FileIO;
 
 namespace DailyRugby.Application.Simulators;
 
-public class GameSimulatorManager(IServiceProvider serviceProvider) : BackgroundService, IGameSimulatorManager
+public class GameSimulatorManager(IServiceProvider serviceProvider,
+    IGameSimulatorFactory simulatorFactory,
+    IGameTimer timer)
+    : BackgroundService, IGameSimulatorManager
 {
     private readonly PriorityQueue<Schedule, DateTime> _schedules = new();
     public event EventHandler? GameEventHappened;
@@ -27,7 +31,8 @@ public class GameSimulatorManager(IServiceProvider serviceProvider) : Background
             game = await db.Games
                 .AsNoTracking()
                 .Include(temp => temp.Teams)
-                .ThenInclude(temp => temp.Team)
+                    .ThenInclude(temp => temp.Team)
+                .Include(temp => temp.Championship)
                 .FirstOrDefaultAsync(temp => temp.Id == gameId);
 
 
@@ -41,6 +46,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider) : Background
                 DateTimeUtc = dateTimeUtc,
                 GameId = game.Id
             };
+            game.CurrentState = GameState.Scheduled;
 
             db.Schedules.Add(schedule);
 
@@ -72,8 +78,10 @@ public class GameSimulatorManager(IServiceProvider serviceProvider) : Background
             List<Schedule> schedules = await db.Schedules
                 .AsNoTracking()
                 .Include(temp => temp.Game)
-                .ThenInclude(temp => temp.Teams)
-                .ThenInclude(temp => temp.Team)
+                    .ThenInclude(temp => temp.Teams)
+                        .ThenInclude(temp => temp.Team)
+                .Include(temp => temp.Game)
+                    .ThenInclude(temp => temp.Championship)
                 .AsSplitQuery()
                 .ToListAsync(stoppingToken);
 
@@ -94,16 +102,64 @@ public class GameSimulatorManager(IServiceProvider serviceProvider) : Background
             var earliestGame = _schedules.Peek();
             if (earliestGame.DateTimeUtc <= DateTime.UtcNow)
             {
-                using var scope = serviceProvider.CreateScope();
-                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                GameEvent gameEvent = new(0, GameEventType.GameStarted, 0, 0, earliestGame.Game);
-                GameEventHappened?.Invoke(this, gameEvent);
-                _schedules.Dequeue();
-                await db.Schedules
-                    .Where(temp => temp.Id == earliestGame.Id)
-                    .ExecuteDeleteAsync();
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                    _schedules.Dequeue();
+                    await db.Schedules
+                        .Where(temp => temp.Id == earliestGame.Id)
+                        .ExecuteDeleteAsync();
+                }
+                await SimulateGameAsync(earliestGame.Game);
             }
         }
+    }
+
+    private async Task SimulateGameAsync(Game game)
+    {
+        if (game.CurrentState == GameState.Scheduled)
+        {
+            using var startScope = serviceProvider.CreateScope();
+            var startDb = startScope.ServiceProvider.GetRequiredService<AppDbContext>();
+            await startDb.Games
+                .Where(temp => temp.Id == game.Id)
+                .ExecuteUpdateAsync(setter => setter
+                    .SetProperty(temp => temp.CurrentState, GameState.Started));
+        }
+
+        var simulator = simulatorFactory.GetGameSimulator(game.Championship.Season);
+        while (game.CurrentMinute <= 80)
+        {
+            GameEvent gameEvent = await simulator.SimulateNextMinute(game);
+            GameEventHappened?.Invoke(this, gameEvent);
+            if (game.CurrentMinute == 41)
+            {
+                GameEvent halfTime = new(40,
+                    GameEventType.HalfTime,
+                    -1 /*FIX*/,
+                    -1 /*FIX*/,
+                    game);
+                GameEventHappened?.Invoke(this, halfTime);
+                await timer.WaitFifteenMinutesAsync();
+            }
+            else
+            {
+                await timer.WaitOneMinuteAsync();
+            }
+        }
+
+        using var scope = serviceProvider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await db.Games
+            .Where(temp => temp.Id == game.Id)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(temp => temp.CurrentState, GameState.Finished));
+
+        GameEvent finished = new(game.CurrentMinute,
+            GameEventType.GameFinished,
+            -1,
+            -1,
+            game);
     }
 
     private async Task WaitDelay()
