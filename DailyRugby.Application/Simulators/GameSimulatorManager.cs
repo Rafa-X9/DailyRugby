@@ -4,12 +4,10 @@ using DailyRugby.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.VisualBasic.FileIO;
 
 namespace DailyRugby.Application.Simulators;
 
 public class GameSimulatorManager(IServiceProvider serviceProvider,
-    IGameSimulatorFactory simulatorFactory,
     IGameTimer timer)
     : BackgroundService, IGameSimulatorManager
 {
@@ -29,7 +27,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             game = await db.Games
-                .AsNoTracking()
+                //.AsNoTracking()
                 .Include(temp => temp.Teams)
                     .ThenInclude(temp => temp.Team)
                 .Include(temp => temp.Championship)
@@ -44,7 +42,8 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             Schedule schedule = new()
             {
                 DateTimeUtc = dateTimeUtc,
-                GameId = game.Id
+                GameId = game.Id,
+                Game = game
             };
             game.CurrentState = GameState.Scheduled;
 
@@ -125,14 +124,22 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
                 .Where(temp => temp.Id == game.Id)
                 .ExecuteUpdateAsync(setter => setter
                     .SetProperty(temp => temp.CurrentState, GameState.Started));
+
+
+            GameEvent started = new(0, GameEventType.GameStarted,
+                -1,
+                -1,
+                game);
+            GameEventHappened?.Invoke(this, started);
         }
 
-        var simulator = simulatorFactory.GetGameSimulator(game.Championship.Season);
+        var simulator = new GameSimulatorFactory(serviceProvider)
+            .GetGameSimulator(game.Championship.Season);
         while (game.CurrentMinute <= 80)
         {
             GameEvent gameEvent = await simulator.SimulateNextMinute(game);
             GameEventHappened?.Invoke(this, gameEvent);
-            if (game.CurrentMinute == 41)
+            if (game.CurrentMinute == 40)
             {
                 GameEvent halfTime = new(40,
                     GameEventType.HalfTime,
@@ -160,6 +167,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             -1,
             -1,
             game);
+        GameEventHappened?.Invoke(this, finished);
     }
 
     private async Task WaitDelay()
