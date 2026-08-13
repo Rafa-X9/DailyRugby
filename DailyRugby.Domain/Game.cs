@@ -10,7 +10,8 @@ public class Game
     public int Round { get; set; }
     public int CurrentMinute { get; set; }
     public GameState CurrentState { get; set; }
-    
+    public int TeamAScore { get; set; }
+    public int TeamBScore { get; set; }
 
     [ForeignKey(nameof(Championship))]
     public Guid ChampionshipId { get; set; }

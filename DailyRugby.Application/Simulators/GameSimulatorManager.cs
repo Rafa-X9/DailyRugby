@@ -127,15 +127,15 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
 
 
             GameEvent started = new(0, GameEventType.GameStarted,
-                -1,
-                -1,
+                0,
+                0,
                 game);
             GameEventHappened?.Invoke(this, started);
         }
 
         var simulator = new GameSimulatorFactory(serviceProvider)
             .GetGameSimulator(game.Championship.Season);
-        while (game.CurrentMinute <= 80)
+        while (game.CurrentMinute < 80)
         {
             GameEvent gameEvent = await simulator.SimulateNextMinute(game);
             GameEventHappened?.Invoke(this, gameEvent);
@@ -143,8 +143,8 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             {
                 GameEvent halfTime = new(40,
                     GameEventType.HalfTime,
-                    -1 /*FIX*/,
-                    -1 /*FIX*/,
+                    game.TeamAScore,
+                    game.TeamBScore,
                     game);
                 GameEventHappened?.Invoke(this, halfTime);
                 await timer.WaitFifteenMinutesAsync();
@@ -164,8 +164,8 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
 
         GameEvent finished = new(game.CurrentMinute,
             GameEventType.GameFinished,
-            -1,
-            -1,
+            game.TeamAScore,
+            game.TeamBScore,
             game);
         GameEventHappened?.Invoke(this, finished);
     }

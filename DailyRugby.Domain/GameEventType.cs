@@ -14,5 +14,17 @@ public enum GameEventType
     
     TeamBFailedTry,
     TeamBUnconvertedTry,
-    TeamBConvertedTry
+    TeamBConvertedTry,
+
+    TeamAFailedDropGoal,
+    TeamAScoredDropGoal,
+
+    TeamBFailedDropGoal,
+    TeamBScoredDropGoal,
+
+    TeamAScoredPenalty,
+    TeamAMissedPenalty,
+
+    TeamBScoredPenalty,
+    TeamBMissedPenalty
 }
