@@ -16,7 +16,19 @@ public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecifi
         game.CurrentMinute++;
         if (_stack is not null)
         {
-            if (_stack.Count == 0)
+            int count = _stack.Count;
+            if (count == 0)
+            {
+                return new(game.CurrentMinute,
+                    GameEventType.Nothing,
+                    game.TeamAScore,
+                    game.TeamBScore,
+                    game);
+            }
+
+            int minutesLeft = 79 - game.CurrentMinute;
+            int number = new Random().Next(1, minutesLeft + 1);
+            if (number > count)
             {
                 return new(game.CurrentMinute,
                     GameEventType.Nothing,

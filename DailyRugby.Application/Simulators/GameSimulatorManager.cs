@@ -126,7 +126,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
                     .SetProperty(temp => temp.CurrentState, GameState.Started));
 
 
-            GameEvent started = new(0, GameEventType.GameStarted,
+            GameEvent started = new(-1, GameEventType.GameStarted,
                 0,
                 0,
                 game);
@@ -141,6 +141,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             GameEventHappened?.Invoke(this, gameEvent);
             if (game.CurrentMinute == 40)
             {
+                await timer.WaitOneMinuteAsync();
                 GameEvent halfTime = new(40,
                     GameEventType.HalfTime,
                     game.TeamAScore,
