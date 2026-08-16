@@ -49,11 +49,11 @@ public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecifi
         {
             double successChance = _teamAStats.GetTrySuccessChance();
             double number = random.NextDouble();
-            if (successChance <= number)
+            if (number <= successChance)
             {
                 double conversionChance = _teamAStats.GetConversionSuccessChance();
                 number = random.NextDouble();
-                if (conversionChance <= number)
+                if (number <= conversionChance)
                 {
                     events.Add((GameEventType.TeamAConvertedTry, gameChange =>
                     {
@@ -80,11 +80,11 @@ public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecifi
         {
             double successChance = _teamBStats.GetTrySuccessChance();
             double number = random.NextDouble();
-            if (successChance <= number)
+            if (number <= successChance)
             {
                 double conversionChance = _teamBStats.GetConversionSuccessChance();
                 number = random.NextDouble();
-                if (conversionChance <= number)
+                if (number <= conversionChance)
                 {
                     events.Add((GameEventType.TeamBConvertedTry, gameChange =>
                     {
@@ -111,7 +111,7 @@ public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecifi
         {
             double successChance = _teamAStats.GetDropGoalSuccessChance();
             double number = random.NextDouble();
-            if (successChance <= number)
+            if (number <= successChance)
             {
                 events.Add((GameEventType.TeamAScoredDropGoal, gameChange =>
                 {
@@ -129,7 +129,7 @@ public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecifi
         {
             double successChance = _teamBStats.GetDropGoalSuccessChance();
             double number = random.NextDouble();
-            if (successChance <= number)
+            if (number <= successChance)
             {
                 events.Add((GameEventType.TeamBScoredDropGoal, gameChange =>
                 {
@@ -147,7 +147,7 @@ public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecifi
         {
             double successChance = _teamAStats.GetPenaltySuccessChance();
             double number = random.NextDouble();
-            if (successChance <= number)
+            if (number <= successChance)
             {
                 events.Add((GameEventType.TeamAScoredPenalty, gameChange =>
                 {
@@ -165,7 +165,7 @@ public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecifi
         {
             double successChance = _teamBStats.GetPenaltySuccessChance();
             double number = random.NextDouble();
-            if (successChance <= number)
+            if (number <= successChance)
             {
                 events.Add((GameEventType.TeamBScoredPenalty, gameChange =>
                 {

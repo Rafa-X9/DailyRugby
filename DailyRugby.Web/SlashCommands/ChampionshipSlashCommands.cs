@@ -109,7 +109,7 @@ public class ChampionshipSlashCommands
             .GroupBy(temp => temp.Round)
             .OrderBy(temp => temp.Key);
         StringBuilder sb = new();
-        
+
         sb.AppendLine("These are the rounds generated:");
         sb.AppendLine();
         foreach (var round in rounds)
