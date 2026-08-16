@@ -240,7 +240,7 @@ public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecifi
         //returns the percentage
         public double GetTrySuccessChance()
         {
-            double chance = (((Insight * 0.7) + (Technique * 0.7)) / 3.0) / 100.0;
+            double chance = ((Insight * 0.7) + (Technique * 0.3)) / 100.0;
             return chance < 1.0 ? chance : 1.0;
         }
 
