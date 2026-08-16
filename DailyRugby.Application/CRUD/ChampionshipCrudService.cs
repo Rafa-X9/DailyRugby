@@ -60,4 +60,9 @@ public class ChampionshipCrudService(AppDbContext db) : IChampionshipCrudService
 
         return Result<ChampionshipResponse>.Success(match.ToChampionshipResponse());
     }
+
+    public Task<Result<ChampionshipResponse>> SetAsMain(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 }
