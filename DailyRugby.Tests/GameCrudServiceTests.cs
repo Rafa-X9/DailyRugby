@@ -213,11 +213,24 @@ public class GameCrudServiceTests : IAsyncLifetime
     #region GetCurrentRound
 
     [Fact]
-    public async Task GetCurrentRound_NoRounds_ReturnsInvalid()
+    public async Task GetCurrentRound_NoMainChampionship_ReturnsInvalid()
     {
         var champ = await SetUpChampionship();
         await SetUpFourTeams(champ.Id, 95);
-        var result = await _gameService.GetCurrentRoundAsync(champ.Id);
+        await _gameService.GenerateRounds(champ.Id);
+
+        var result = await _gameService.GetCurrentRoundAsync();
+        Assert.False(result.IsSuccessful);
+        Assert.Equal(Errors.Invalid, result.Error);
+    }
+
+    [Fact]
+    public async Task GetCurrentRound_NoRounds_ReturnsInvalid()
+    {
+        var champ = await SetUpChampionship();
+        await _champService.SetAsMainAsync(champ.Id);
+        await SetUpFourTeams(champ.Id, 95);
+        var result = await _gameService.GetCurrentRoundAsync();
         Assert.False(result.IsSuccessful);
         Assert.Equal(Errors.Invalid, result.Error);
     }
@@ -226,10 +239,11 @@ public class GameCrudServiceTests : IAsyncLifetime
     public async Task GetCurrentRound_NoGamesFinished_ReturnsFirstRound()
     {
         var champ = await SetUpChampionship();
+        await _champService.SetAsMainAsync(champ.Id);
         await SetUpFourTeams(champ.Id, 95);
         var gamesResult = await _gameService.GenerateRounds(champ.Id);
         Assert.True(gamesResult.IsSuccessful);
-        var currentRoundResult = await _gameService.GetCurrentRoundAsync(champ.Id);
+        var currentRoundResult = await _gameService.GetCurrentRoundAsync();
 
         Assert.True(currentRoundResult.IsSuccessful);
         Assert.Equal(gamesResult.Item.Count(temp => temp.Round == 1), currentRoundResult.Item.Count);
@@ -245,6 +259,7 @@ public class GameCrudServiceTests : IAsyncLifetime
     public async Task GetCurrentRound_RoundOneFinished_ReturnsRoundTwo()
     {
         var champ = await SetUpChampionship();
+        await _champService.SetAsMainAsync(champ.Id);
         await SetUpFourTeams(champ.Id, 95);
         var gamesResult = await _gameService.GenerateRounds(champ.Id);
         Assert.True(gamesResult.IsSuccessful);
@@ -257,7 +272,7 @@ public class GameCrudServiceTests : IAsyncLifetime
                 .SetProperty(temp => temp.TeamAScore, 30)
                 .SetProperty(temp => temp.TeamBScore, 20));
 
-        var currentRoundResult = await _gameService.GetCurrentRoundAsync(champ.Id);
+        var currentRoundResult = await _gameService.GetCurrentRoundAsync();
         Assert.True(currentRoundResult.IsSuccessful);
         Assert.Equal(gamesResult.Item.Count(temp => temp.Round == 2), currentRoundResult.Item.Count);
 

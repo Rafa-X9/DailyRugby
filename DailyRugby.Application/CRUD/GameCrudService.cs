@@ -173,18 +173,20 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         return Result<IList<GameResponse>>.Success(games);
     }
 
-    public async Task<Result<IList<GameResponse>>> GetCurrentRoundAsync(Guid champId)
+    public async Task<Result<IList<GameResponse>>> GetCurrentRoundAsync()
     {
         var games = await db.Games
             .AsNoTracking()
+            .Include(temp => temp.Championship)
             .Include(temp => temp.Teams)
             .ThenInclude(temp => temp.Team)
-            .Where(temp => temp.ChampionshipId == champId)
+            .Where(temp => temp.Championship.IsMainChampionship)
             .ToListAsync();
         
         if (games.Count == 0)
         {
-            return Result<IList<GameResponse>>.Failure("The championship has no rounds",
+            return Result<IList<GameResponse>>.Failure("There isn't a main championship ongoing, " +
+                "or it has no rounds",
                 Errors.Invalid);
         }
 

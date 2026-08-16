@@ -11,7 +11,7 @@ public interface IGameCrudService
 
     Task<IList<GameResponse>> GetAllAsync(Guid champId);
 
-    Task<Result<IList<GameResponse>>> GetCurrentRoundAsync(Guid champId);
+    Task<Result<IList<GameResponse>>> GetCurrentRoundAsync();
 
     Task<Result<IList<GameResponse>>> GetRoundAsync(Guid champId, int round);
 
