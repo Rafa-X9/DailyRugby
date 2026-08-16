@@ -19,12 +19,12 @@ public class SpedUpTimer : IGameTimer
 {
     public async Task WaitOneMinuteAsync()
     {
-        await Task.Delay(TimeSpan.FromSeconds(15));
+        await Task.Delay(TimeSpan.FromSeconds(20));
     }
 
     public async Task WaitFifteenMinutesAsync()
     {
-        await Task.Delay(TimeSpan.FromSeconds(15 * 15));
+        await Task.Delay(TimeSpan.FromSeconds(20 * 15));
     }
 }
 
