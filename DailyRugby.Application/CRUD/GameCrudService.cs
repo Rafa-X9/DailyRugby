@@ -172,4 +172,14 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
 
         return Result<IList<GameResponse>>.Success(games);
     }
+
+    public Task<Result<IList<GameResponse>>> GetCurrentRoundAsync(Guid champId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Result<IList<GameResponse>>> GetRoundAsync(Guid champId, int round)
+    {
+        throw new NotImplementedException();
+    }
 }
