@@ -93,23 +93,26 @@ public class MessageSender
                 break;
 
             case GameEventType.TeamAScoredPenalty:
-                await channel.SendMessageAsync($"{gameEvent.Minute}' - " + AttempDropGoal(gameEvent.Game.Teams[0].Team.Country));
+                await channel.SendMessageAsync($"{gameEvent.Minute}' - "
+                    + AttemptedPenalty(gameEvent.Game.Teams[0].Team.Country));
                 await WaitDelay();
-                await channel.SendMessageAsync(ScoredDropGoal(gameEvent.Game.Teams[0].Team.Country)
+                await channel.SendMessageAsync(ScoredPenalty(gameEvent.Game.Teams[0].Team.Country)
                     + " " + CurrentScore(gameEvent));
                 break;
 
             //---------------------
 
             case GameEventType.TeamBFailedTry:
-                await channel.SendMessageAsync($"{gameEvent.Minute}' - " + TryAttempt(gameEvent.Game.Teams[1].Team.Country));
+                await channel.SendMessageAsync($"{gameEvent.Minute}' - "
+                    + TryAttempt(gameEvent.Game.Teams[1].Team.Country));
                 await WaitDelay();
                 await channel.SendMessageAsync($"{FailedTry(gameEvent.Game.Teams[1].Team.Country)} " +
                     $"{CurrentScore(gameEvent)}");
                 break;
 
             case GameEventType.TeamBUnconvertedTry:
-                await channel.SendMessageAsync($"{gameEvent.Minute}' - " + TryAttempt(gameEvent.Game.Teams[1].Team.Country));
+                await channel.SendMessageAsync($"{gameEvent.Minute}' - "
+                    + TryAttempt(gameEvent.Game.Teams[1].Team.Country));
                 await WaitDelay();
                 await channel.SendMessageAsync(ScoredTry(gameEvent.Game.Teams[1].Team.Country));
                 await WaitDelay();
@@ -118,7 +121,8 @@ public class MessageSender
                 break;
 
             case GameEventType.TeamBConvertedTry:
-                await channel.SendMessageAsync($"{gameEvent.Minute}' - " + TryAttempt(gameEvent.Game.Teams[1].Team.Country));
+                await channel.SendMessageAsync($"{gameEvent.Minute}' - "
+                    + TryAttempt(gameEvent.Game.Teams[1].Team.Country));
                 await WaitDelay();
                 await channel.SendMessageAsync(ScoredTry(gameEvent.Game.Teams[1].Team.Country));
                 await WaitDelay();
@@ -136,25 +140,25 @@ public class MessageSender
 
             case GameEventType.TeamBScoredDropGoal:
                 await channel.SendMessageAsync($"{gameEvent.Minute}' - "
+                    + AttempDropGoal(gameEvent.Game.Teams[1].Team.Country));
+                await WaitDelay();
+                await channel.SendMessageAsync(ScoredDropGoal(gameEvent.Game.Teams[1].Team.Country)
+                    + " " + CurrentScore(gameEvent));
+                break;
+
+            case GameEventType.TeamBMissedPenalty:
+                await channel.SendMessageAsync($"{gameEvent.Minute}' - "
                     + AttemptedPenalty(gameEvent.Game.Teams[1].Team.Country));
                 await WaitDelay();
                 await channel.SendMessageAsync(MissedPenalty(gameEvent.Game.Teams[1].Team.Country)
                     + " " + CurrentScore(gameEvent));
                 break;
 
-            case GameEventType.TeamBMissedPenalty:
-                await channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + AttempDropGoal(gameEvent.Game.Teams[1].Team.Country));
-                await WaitDelay();
-                await channel.SendMessageAsync(FailedDropGoal(gameEvent.Game.Teams[1].Team.Country)
-                    + " " + CurrentScore(gameEvent));
-                break;
-
             case GameEventType.TeamBScoredPenalty:
                 await channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + AttempDropGoal(gameEvent.Game.Teams[1].Team.Country));
+                    + AttemptedPenalty(gameEvent.Game.Teams[1].Team.Country));
                 await WaitDelay();
-                await channel.SendMessageAsync(ScoredDropGoal(gameEvent.Game.Teams[1].Team.Country)
+                await channel.SendMessageAsync(ScoredPenalty(gameEvent.Game.Teams[1].Team.Country)
                     + " " + CurrentScore(gameEvent));
                 break;
 
