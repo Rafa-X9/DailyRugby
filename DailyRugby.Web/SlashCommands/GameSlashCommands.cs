@@ -124,4 +124,27 @@ public class GameSlashCommands(IGameCrudService gameService, IGameSimulatorManag
 
         await FollowupAsync("Scheduled successfully");
     }
+
+    [SlashCommand("see-current-round", "Shows all games from the current round")]
+    public async Task SeeCurrentRound()
+    {
+        await DeferAsync();
+
+        var result = await gameService.GetCurrentRoundAsync();
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}");
+            return;
+        }
+
+        StringBuilder sb = new();
+        sb.AppendLine($"**ROUND {result.Item.First().Round}**");
+        foreach (var game in result.Item)
+        {
+            sb.AppendLine($"- {game.TeamA.Team.Country} vs {game.TeamB.Team.Country}");
+        }
+
+        await FollowupAsync(sb.ToString());
+    }
 }
