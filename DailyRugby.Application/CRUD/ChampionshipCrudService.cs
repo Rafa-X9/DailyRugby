@@ -82,8 +82,18 @@ public class ChampionshipCrudService(AppDbContext db) : IChampionshipCrudService
         return Result<ChampionshipResponse>.Success(champ.ToChampionshipResponse());
     }
 
-    public Task<Result<ChampionshipResponse>> UnsetAsMainAsync(Guid id)
+    public async Task<Result<ChampionshipResponse>> UnsetAsMainAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var champ = await db.Championships.FirstOrDefaultAsync(temp => temp.Id == id);
+        
+        if (champ is null)
+        {
+            return Result<ChampionshipResponse>.Failure("Given id wasn't found",
+                Errors.NotFound);
+        }
+
+        champ.IsMainChampionship = false;
+        await db.SaveChangesAsync();
+        return Result<ChampionshipResponse>.Success(champ.ToChampionshipResponse());
     }
 }
