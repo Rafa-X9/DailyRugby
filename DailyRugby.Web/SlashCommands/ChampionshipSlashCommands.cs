@@ -167,4 +167,56 @@ public class ChampionshipSlashCommands
 
         await FollowupAsync(sb.ToString());
     }
+
+    [SlashCommand("set-as-main", "Sets a championship as the main one")]
+    public async Task SetAsMainChampionship(
+        [Summary("Championship", "The championship to set as the main one")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string champId)
+    {
+        await DeferAsync();
+
+        bool idParsed = Guid.TryParse(champId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid");
+            return;
+        }
+
+        var result = await champService.SetAsMainAsync(id);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}");
+            return;
+        }
+
+        await FollowupAsync($"{result.Item.Name} successfully set as the main championship");
+    }
+
+    [SlashCommand("unset-as-main", "Removes the main championship from its spot")]
+    public async Task UnsetAsMainChampionship(
+        [Summary("Championship", "The championship to unset as the main one")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string champId)
+    {
+        await DeferAsync();
+
+        bool idParsed = Guid.TryParse(champId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid");
+            return;
+        }
+
+        var result = await champService.UnsetAsMainAsync(id);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}");
+            return;
+        }
+
+        await FollowupAsync($"{result.Item.Name} successfully unset as the main championship");
+    }
 }
