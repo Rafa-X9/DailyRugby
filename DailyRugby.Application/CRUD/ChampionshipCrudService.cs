@@ -81,4 +81,9 @@ public class ChampionshipCrudService(AppDbContext db) : IChampionshipCrudService
 
         return Result<ChampionshipResponse>.Success(champ.ToChampionshipResponse());
     }
+
+    public Task<Result<ChampionshipResponse>> UnsetAsMainAsync(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 }

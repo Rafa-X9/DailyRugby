@@ -180,6 +180,32 @@ public class ChampionshipCrudServiceTests : IAsyncLifetime
 
     #endregion
 
+    #region UnsetAsMain
+
+    [Fact]
+    public async Task UnsetAsMain_NotFoundId_ReturnsNotFound()
+    {
+        var result = await _champService.UnsetAsMainAsync(Guid.NewGuid());
+        Assert.False(result.IsSuccessful);
+        Assert.Equal(Errors.NotFound, result.Error);
+    }
+
+    [Fact]
+    public async Task UnsetAsMain_MakesIsMainFalse()
+    {
+        ChampionshipAddRequest request = new("champ", Seasons.Season1);
+        var addResult = await _champService.AddAsync(request);
+        Assert.True(addResult.IsSuccessful);
+        var setAsMainResult = await _champService.SetAsMainAsync(addResult.Item.Id);
+        Assert.True(setAsMainResult.IsSuccessful);
+
+        var unsetAsMainResult = await _champService.UnsetAsMainAsync(addResult.Item.Id);
+        Assert.True(unsetAsMainResult.IsSuccessful);
+        Assert.Empty(await _db.Championships.Where(temp => temp.IsMainChampionship).ToListAsync());
+    }
+
+    #endregion
+
     #region Delete
 
     [Fact]
