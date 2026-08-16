@@ -50,7 +50,6 @@ public class GameSimulatorManagerTests : IAsyncLifetime
             .Returns(_db);
         
         _simulatorManager = new GameSimulatorManager(serviceProviderMock.Object,
-            new GameSimulatorFactory(serviceProviderMock.Object),
             new InstantTimer());
 
         await _db.Database.EnsureCreatedAsync();

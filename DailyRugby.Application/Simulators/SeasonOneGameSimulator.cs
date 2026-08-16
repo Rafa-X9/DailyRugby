@@ -197,7 +197,7 @@ public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecifi
     }
 
 
-    private record Stats(int Insight, int Physique, int Technique)
+    public record Stats(int Insight, int Physique, int Technique)
     {
         public Stats(TeamGame team) : this(team.Team.Insight,
             team.Team.Physique,
@@ -255,7 +255,7 @@ public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecifi
 
         public double GetDropGoalSuccessChance() => GetConversionSuccessChance();
 
-        public double GetOpponentPenaltyCount()
+        public int GetOpponentPenaltyCount()
             => (int)Math.Floor((50 - ((Insight * 0.8) + (Technique * 0.2))) / 4.0);
 
         public double GetPenaltySuccessChance() => GetConversionSuccessChance();
