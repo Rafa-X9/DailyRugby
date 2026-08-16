@@ -194,7 +194,7 @@ public class GameCrudServiceTests : IAsyncLifetime
     {
         var champ = await SetUpChampionship();
         var teams = await SetUpFourTeams(champ.Id, 95);
-        List<TeamResponse> teamsList = 
+        List<TeamResponse> teamsList =
             [teams.teamA, teams.teamB, teams.teamC, teams.teamD];
         await _gameService.GenerateRounds(champ.Id);
 
@@ -205,6 +205,66 @@ public class GameCrudServiceTests : IAsyncLifetime
             Assert.Equal(3, gamesResult.Item.Count);
             Assert.DoesNotContain(gamesResult.Item, temp =>
                 temp.TeamA.Team.Id != team.Id && temp.TeamB.Team.Id != team.Id);
+        }
+    }
+
+    #endregion
+
+    #region GetCurrentRound
+
+    [Fact]
+    public async Task GetCurrentRound_NoRounds_ReturnsInvalid()
+    {
+        var champ = await SetUpChampionship();
+        await SetUpFourTeams(champ.Id, 95);
+        var result = await _gameService.GetCurrentRoundAsync(champ.Id);
+        Assert.False(result.IsSuccessful);
+        Assert.Equal(Errors.Invalid, result.Error);
+    }
+
+    [Fact]
+    public async Task GetCurrentRound_NoGamesFinished_ReturnsFirstRound()
+    {
+        var champ = await SetUpChampionship();
+        await SetUpFourTeams(champ.Id, 95);
+        var gamesResult = await _gameService.GenerateRounds(champ.Id);
+        Assert.True(gamesResult.IsSuccessful);
+        var currentRoundResult = await _gameService.GetCurrentRoundAsync(champ.Id);
+
+        Assert.True(currentRoundResult.IsSuccessful);
+        Assert.Equal(gamesResult.Item.Count(temp => temp.Round == 1), currentRoundResult.Item.Count);
+
+        foreach (var game in gamesResult.Item)
+        {
+            if (game.Round != 1) continue;
+            Assert.Contains(currentRoundResult.Item, temp => temp.Id == game.Id);
+        }
+    }
+
+    [Fact]
+    public async Task GetCurrentRound_RoundOneFinished_ReturnsRoundTwo()
+    {
+        var champ = await SetUpChampionship();
+        await SetUpFourTeams(champ.Id, 95);
+        var gamesResult = await _gameService.GenerateRounds(champ.Id);
+        Assert.True(gamesResult.IsSuccessful);
+
+        await _db.Games
+            .Where(temp => temp.ChampionshipId == champ.Id
+                && temp.Round == 1)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(temp => temp.CurrentState, GameState.Finished)
+                .SetProperty(temp => temp.TeamAScore, 30)
+                .SetProperty(temp => temp.TeamBScore, 20));
+
+        var currentRoundResult = await _gameService.GetCurrentRoundAsync(champ.Id);
+        Assert.True(currentRoundResult.IsSuccessful);
+        Assert.Equal(gamesResult.Item.Count(temp => temp.Round == 2), currentRoundResult.Item.Count);
+
+        foreach (var game in gamesResult.Item)
+        {
+            if (game.Round != 2) continue;
+            Assert.Contains(currentRoundResult.Item, temp => temp.Id == game.Id);
         }
     }
 
