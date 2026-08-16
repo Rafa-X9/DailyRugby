@@ -61,8 +61,24 @@ public class ChampionshipCrudService(AppDbContext db) : IChampionshipCrudService
         return Result<ChampionshipResponse>.Success(match.ToChampionshipResponse());
     }
 
-    public Task<Result<ChampionshipResponse>> SetAsMain(Guid id)
+    public async Task<Result<ChampionshipResponse>> SetAsMainAsync(Guid id)
     {
-        throw new NotImplementedException();
+        if (await db.Championships.AnyAsync(temp => temp.IsMainChampionship))
+        {
+            return Result<ChampionshipResponse>.Failure("There is already a main championship",
+                Errors.Invalid);
+        }
+
+        var champ = await db.Championships.FirstOrDefaultAsync(temp => temp.Id == id);
+        if (champ is null)
+        {
+            return Result<ChampionshipResponse>.Failure("No such championship Id",
+                Errors.NotFound);
+        }
+
+        champ.IsMainChampionship = true;
+        await db.SaveChangesAsync();
+
+        return Result<ChampionshipResponse>.Success(champ.ToChampionshipResponse());
     }
 }

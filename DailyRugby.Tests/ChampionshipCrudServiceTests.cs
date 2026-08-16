@@ -135,6 +135,51 @@ public class ChampionshipCrudServiceTests : IAsyncLifetime
 
     #endregion
 
+    #region SetAsMain
+
+    [Fact]
+    public async Task SetAsMain_NotFoundId_ReturnsNotFound()
+    {
+        var result = await _champService.SetAsMainAsync(Guid.NewGuid());
+        Assert.False(result.IsSuccessful);
+        Assert.Equal(Errors.NotFound, result.Error);
+    }
+
+    [Fact]
+    public async Task SetAsMain_SetsAsMainChampionship()
+    {
+        ChampionshipAddRequest request = new("champ", Seasons.Season1);
+        var addResult = await _champService.AddAsync(request);
+        Assert.True(addResult.IsSuccessful);
+
+        var setAsMainResult = await _champService.SetAsMainAsync(addResult.Item.Id);
+        var main = await _db.Championships.FirstOrDefaultAsync(temp => temp.IsMainChampionship);
+
+        Assert.True(setAsMainResult.IsSuccessful);
+        Assert.NotNull(main);
+        Assert.Equal(main.Id, setAsMainResult.Item.Id);
+    }
+
+    [Fact]
+    public async Task SetAsMain_ThereIsAlreadyMain_ReturnsInvalid()
+    {
+        ChampionshipAddRequest request1 = new("champ", Seasons.Season1);
+        var addResult1 = await _champService.AddAsync(request1);
+        Assert.True(addResult1.IsSuccessful);
+        var mainResult1 = await _champService.SetAsMainAsync(addResult1.Item.Id);
+        Assert.True(mainResult1.IsSuccessful);
+
+        ChampionshipAddRequest request2 = new("champ2", Seasons.Season1);
+        var addResult2 = await _champService.AddAsync(request2);
+        Assert.True(addResult2.IsSuccessful);
+
+        var mainResult2 = await _champService.SetAsMainAsync(addResult2.Item.Id);
+        Assert.False(mainResult2.IsSuccessful);
+        Assert.Equal(Errors.Invalid, mainResult2.Error);
+    }
+
+    #endregion
+
     #region Delete
 
     [Fact]
