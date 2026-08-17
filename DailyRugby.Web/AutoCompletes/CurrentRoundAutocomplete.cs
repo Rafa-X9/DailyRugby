@@ -23,6 +23,6 @@ public class CurrentRoundAutocomplete : AutocompleteHandler
             .OrderBy(temp => temp.Round)
             .Select(temp => new AutocompleteResult(
                 $"{temp.TeamA.Team.Country} vs {temp.TeamB.Team.Country}, round {temp.Round}",
-                temp.Id)));
+                temp.Id.ToString())));
     }
 }

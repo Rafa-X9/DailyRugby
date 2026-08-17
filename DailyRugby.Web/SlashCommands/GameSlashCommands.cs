@@ -95,7 +95,7 @@ public class GameSlashCommands(IGameCrudService gameService, IGameSimulatorManag
     [SlashCommand("schedule-game", "Schedules a game")]
     public async Task ScheduleGame(
         [Summary("game", "The game to schedule")]
-        [Autocomplete(typeof(GameAutocomplete))]
+        [Autocomplete(typeof(CurrentRoundAutocomplete))]
         string gameId,
         int yearUtc,
         int monthUtc,
