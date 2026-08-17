@@ -20,6 +20,8 @@ public sealed record TeamResponse(Guid Id,
     List<Coaches> Coaches,
     int CakesAmount);
 
+public enum Teams { TeamA, TeamB }
+
 public static class TeamExtensions
 {
     public static Team ToTeam(this TeamAddRequest request)

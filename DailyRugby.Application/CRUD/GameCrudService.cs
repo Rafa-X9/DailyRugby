@@ -209,4 +209,9 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
     {
         throw new NotImplementedException();
     }
+
+    public Task<Result<TeamGameResponse>> SetTacticAsync(Guid gameId, Teams team, Tactics tactic)
+    {
+        throw new NotImplementedException();
+    }
 }
