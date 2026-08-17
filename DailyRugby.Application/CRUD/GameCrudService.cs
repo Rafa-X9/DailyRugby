@@ -214,6 +214,7 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
     {
         var game = await db.Games
             .Include(temp => temp.Teams)
+                .ThenInclude(temp => temp.Team)
             .FirstOrDefaultAsync(temp => temp.Id == gameId);
 
         if (game is null)

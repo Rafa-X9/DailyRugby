@@ -174,6 +174,10 @@ public class MessageSender
     {
         await channel.SendMessageAsync($"The game between {gameEvent.Game.Teams[0].Team.Country} and " +
             $"{gameEvent.Game.Teams[1].Team.Country} begins!");
+
+        await channel.SendMessageAsync($"{gameEvent.Game.Teams[0].Team.Country} has chosen the " +
+            $"{gameEvent.Game.Teams[0].Tactic} tactic, while {gameEvent.Game.Teams[1].Team.Country} " +
+            $"has chosen the {gameEvent.Game.Teams[1].Tactic} tactic");
     }
 
     private async Task AnnounceGameEndAsync(IMessageChannel channel, GameEvent gameEvent)

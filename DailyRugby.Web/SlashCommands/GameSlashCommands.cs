@@ -1,5 +1,6 @@
 ﻿using DailyRugby.Application.DTOs;
 using DailyRugby.Application.Interfaces;
+using DailyRugby.Domain;
 using DailyRugby.Web.AutoCompletes;
 using Discord.Interactions;
 using System.Text;
@@ -146,5 +147,54 @@ public class GameSlashCommands(IGameCrudService gameService, IGameSimulatorManag
         }
 
         await FollowupAsync(sb.ToString());
+    }
+
+    [SlashCommand("set-tactic", "Sets a team's tactic")]
+    public async Task SetTactic(
+        [Summary("Game", "The game to set a tactic")]
+        [Autocomplete(typeof(CurrentRoundAutocomplete))]
+        string gameId,
+
+        [Summary("Tactic", "The tactic to set")]
+        [Autocomplete(typeof(TacticAutocomplete))]
+        string tactic,
+
+        [Summary("Team", "The team that should have the tactic applied to")]
+        [Autocomplete(typeof(TeamAorBAutocomplete))]
+        string teamAorB)
+    {
+        await DeferAsync();
+
+        bool idParsed = Guid.TryParse(gameId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid");
+            return;
+        }
+
+        bool tacticParsed = Enum.TryParse(tactic, true, out Tactics tacticEnum);
+        if (!tacticParsed)
+        {
+            await FollowupAsync("Invalid tactic");
+            return;
+        }
+
+        bool teamParsed = Enum.TryParse(teamAorB, true, out Teams team);
+        if (!teamParsed)
+        {
+            await FollowupAsync("Invalid team to set tactic to");
+            return;
+        }
+
+        var result = await gameService.SetTacticAsync(id, team, tacticEnum);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}");
+            return;
+        }
+
+        await FollowupAsync($"Successfully applied the tactic {result.Item.Tactic} " +
+            $"to {result.Item.Team.Country}");
     }
 }
