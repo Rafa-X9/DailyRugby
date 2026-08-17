@@ -285,6 +285,42 @@ public class GameCrudServiceTests : IAsyncLifetime
 
     #endregion
 
+    #region SetTactic
+
+    [Fact]
+    public async Task SetTactic_IdNotFound_ReturnsNotFound()
+    {
+        var champ = await SetUpChampionship();
+        await SetUpFourTeams(champ.Id, 95);
+        var gamesResult = await _gameService.GenerateRounds(champ.Id);
+        Assert.True(gamesResult.IsSuccessful);
+
+        var tacticResult = await _gameService
+            .SetTacticAsync(Guid.NewGuid(), Teams.TeamA, Tactics.General);
+        Assert.False(tacticResult.IsSuccessful);
+        Assert.Equal(Errors.NotFound, tacticResult.Error);
+    }
+
+    [Fact]
+    public async Task SetTactic_Valid_SetsTactic()
+    {
+        var champ = await SetUpChampionship();
+        await SetUpFourTeams(champ.Id, 95);
+        var gamesResult = await _gameService.GenerateRounds(champ.Id);
+        Assert.True(gamesResult.IsSuccessful);
+
+        var firstGame = gamesResult.Item.First();
+        var tacticResult = await _gameService
+            .SetTacticAsync(firstGame.Id, Teams.TeamA, Tactics.General);
+        var updatedGame = (await _gameService.GetAllAsync(champ.Id))
+            .First(temp => temp.Id == firstGame.Id);
+
+        Assert.True(tacticResult.IsSuccessful);
+        Assert.Equal(Tactics.General, updatedGame.TeamA.Tactic);
+    }
+
+    #endregion
+
     #region Helpers
 
     private async Task<ChampionshipResponse> SetUpChampionship(Seasons season = Seasons.Season1)
