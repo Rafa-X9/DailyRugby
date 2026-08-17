@@ -18,7 +18,11 @@ public sealed record TeamResponse(Guid Id,
     int Physique,
     int Technique,
     List<Coaches> Coaches,
-    int CakesAmount);
+    int CakesAmount,
+    int ScoredTriesCount,
+    int WinCount,
+    int TieCount,
+    int LossCount);
 
 public enum Teams { TeamA, TeamB }
 
@@ -58,7 +62,11 @@ public static class TeamExtensions
             team.Physique,
             team.Technique,
             [],
-            team.CakesAmount);
+            team.CakesAmount,
+            team.ScoredTriesCount,
+            team.WinCount,
+            team.TieCount,
+            team.LossCount);
 
         if (team.HasGeneralCoach) response.Coaches.Add(Coaches.General);
         if (team.HasInsigthCoach) response.Coaches.Add(Coaches.Insight);
