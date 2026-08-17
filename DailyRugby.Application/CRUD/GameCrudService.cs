@@ -210,8 +210,31 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         throw new NotImplementedException();
     }
 
-    public Task<Result<TeamGameResponse>> SetTacticAsync(Guid gameId, Teams team, Tactics tactic)
+    public async Task<Result<TeamGameResponse>> SetTacticAsync(Guid gameId, Teams team, Tactics tactic)
     {
-        throw new NotImplementedException();
+        var game = await db.Games
+            .Include(temp => temp.Teams)
+            .FirstOrDefaultAsync(temp => temp.Id == gameId);
+
+        if (game is null)
+        {
+            return Result<TeamGameResponse>.Failure("Given Id wasn't found", Errors.NotFound);
+        }
+
+        TeamGameResponse response;
+
+        if (team == Teams.TeamA)
+        {
+            game.Teams[0].Tactic = tactic;
+            response = game.Teams[0].ToTeamGameResponse();
+        }
+        else
+        {
+            game.Teams[1].Tactic = tactic;
+            response = game.Teams[1].ToTeamGameResponse();
+        }
+
+        await db.SaveChangesAsync();
+        return Result<TeamGameResponse>.Success(response);
     }
 }
