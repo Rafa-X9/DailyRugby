@@ -61,6 +61,11 @@ public class ChampionshipCrudService(AppDbContext db) : IChampionshipCrudService
         return Result<ChampionshipResponse>.Success(match.ToChampionshipResponse());
     }
 
+    public Task<SortedDictionary<int, TeamResponse>> GetStandingsAsync(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Result<ChampionshipResponse>> SetAsMainAsync(Guid id)
     {
         if (await db.Championships.AnyAsync(temp => temp.IsMainChampionship))

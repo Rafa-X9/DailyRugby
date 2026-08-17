@@ -11,6 +11,8 @@ public interface IChampionshipCrudService
 
     Task<Result<ChampionshipResponse>> GetByIdAsync(Guid id);
 
+    Task<SortedDictionary<int, TeamResponse>> GetStandingsAsync(Guid id);
+
     Task<Result<ChampionshipResponse>> SetAsMainAsync(Guid id);
 
     Task<Result<ChampionshipResponse>> UnsetAsMainAsync(Guid id);

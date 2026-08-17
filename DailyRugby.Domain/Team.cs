@@ -14,6 +14,8 @@ public class Team
     public bool HasTechniqueCoach { get; set; }
     public bool HasGeneralCoach { get; set; }
     public int CakesAmount { get; set; }
+    public int PointsScored { get; set; }
+    public int PointsTaken { get; set; }
     public int ScoredTriesCount { get; set; }
     public int WinCount { get; set; }
     public int TieCount { get; set; }
