@@ -1,17 +1,15 @@
 ﻿using DailyRugby.Application.Interfaces;
 using DailyRugby.Domain;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DailyRugby.Application.Simulators;
 
-public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecificGameSimulator
+public class SeasonOneGameSimulator : ISpecificGameSimulator
 {
     private Stats? _teamAStats;
     private Stats? _teamBStats;
     private Stack<(GameEventType EventType, Action<Game> GameAction)>? _stack;
 
-    public async Task<GameEvent> SimulateNextMinute(Game game)
+    public GameEvent SimulateNextMinute(Game game)
     {
         game.CurrentMinute++;
         if (_stack is not null)
@@ -39,7 +37,6 @@ public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecifi
 
             var top = _stack.Pop();
             top.GameAction.Invoke(game);
-            await SaveGame(game);
             return new(game.CurrentMinute,
                 top.EventType,
                 game.TeamAScore,
@@ -203,8 +200,6 @@ public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecifi
             game.TeamBScore,
             game);
 
-        await SaveGame(game);
-
         return gameEvent;
     }
 
@@ -272,17 +267,4 @@ public class SeasonOneGameSimulator(IServiceProvider serviceProvider) : ISpecifi
 
         public double GetPenaltySuccessChance() => GetConversionSuccessChance();
     };
-
-    private async Task SaveGame(Game game)
-    {
-        using var scope = serviceProvider.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        await db.Games
-            .Where(temp => temp.Id == game.Id)
-            .ExecuteUpdateAsync(setters => setters
-                .SetProperty(temp => temp.CurrentMinute, game.CurrentMinute)
-                .SetProperty(temp => temp.TeamAScore, game.TeamAScore)
-                .SetProperty(temp => temp.TeamBScore, game.TeamBScore)
-            );
-    }
 }

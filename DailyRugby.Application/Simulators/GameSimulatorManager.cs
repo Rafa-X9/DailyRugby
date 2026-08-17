@@ -133,11 +133,24 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             GameEventHappened?.Invoke(this, started);
         }
 
-        var simulator = new GameSimulatorFactory(serviceProvider)
+        var simulator = new GameSimulatorFactory()
             .GetGameSimulator(game.Championship.Season);
         while (game.CurrentMinute < 80)
         {
-            GameEvent gameEvent = await simulator.SimulateNextMinute(game);
+            GameEvent gameEvent = simulator.SimulateNextMinute(game);
+
+            using (var eventScope = serviceProvider.CreateScope())
+            {
+                var eventDb = eventScope.ServiceProvider.GetRequiredService<AppDbContext>();
+                await eventDb.Games
+                    .Where(temp => temp.Id == game.Id)
+                    .ExecuteUpdateAsync(setters => setters
+                        .SetProperty(temp => temp.CurrentMinute, game.CurrentMinute)
+                        .SetProperty(temp => temp.TeamAScore, game.TeamAScore)
+                        .SetProperty(temp => temp.TeamBScore, game.TeamBScore)
+                    );
+            }
+
             GameEventHappened?.Invoke(this, gameEvent);
             if (game.CurrentMinute == 40)
             {

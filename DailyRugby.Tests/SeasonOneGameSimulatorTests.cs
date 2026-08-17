@@ -8,49 +8,8 @@ using static DailyRugby.Application.Simulators.SeasonOneGameSimulator;
 
 namespace DailyRugby.Tests;
 
-public class SeasonOneGameSimulatorTests : IAsyncLifetime
+public class SeasonOneGameSimulatorTests
 {
-    private SeasonOneGameSimulator _simulator = null!;
-    private SqliteConnection _connection = null!;
-    private AppDbContext _db = null!;
-
-    public async Task InitializeAsync()
-    {
-        _connection = new SqliteConnection("Filename=:memory:");
-        await _connection.OpenAsync();
-
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseSqlite(_connection)
-            .Options;
-
-        _db = new AppDbContext(options);
-
-        var serviceProviderMock = new Mock<IServiceProvider>();
-        var scopeFactoryMock = new Mock<IServiceScopeFactory>();
-        var serviceScopeMock = new Mock<IServiceScope>();
-
-        serviceProviderMock.Setup(temp => temp.GetService(typeof(AppDbContext)))
-            .Returns(_db);
-        serviceProviderMock.Setup(temp => temp.GetService(typeof(IServiceScopeFactory)))
-            .Returns(scopeFactoryMock.Object);
-
-        scopeFactoryMock.Setup(temp => temp.CreateScope())
-            .Returns(serviceScopeMock.Object);
-
-        serviceScopeMock.Setup(temp => temp.ServiceProvider.GetService(It.IsAny<Type>()))
-            .Returns(_db);
-
-        _simulator = new(serviceProviderMock.Object);
-
-        await _db.Database.EnsureCreatedAsync();
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _db.DisposeAsync();
-        await _connection.CloseAsync();
-    }
-
     //Stats stats1 = new(30, 35, 30);
     //Stats stats2 = new(50, 20, 25);
 
