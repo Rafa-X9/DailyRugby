@@ -1,4 +1,5 @@
 ﻿using DailyRugby.Application.Interfaces;
+using DailyRugby.Application.Utilitaries;
 using DailyRugby.Domain;
 using DailyRugby.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -149,6 +150,25 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
                         .SetProperty(temp => temp.TeamAScore, game.TeamAScore)
                         .SetProperty(temp => temp.TeamBScore, game.TeamBScore)
                     );
+
+                if (gameEvent.EventType.IsTeamAScoredTry())
+                {
+                    gameEvent.Game.Teams[0].Team.ScoredTriesCount++;
+                    await eventDb.Teams
+                        .Where(temp => temp.Id == gameEvent.Game.Teams[0].Team.Id)
+                        .ExecuteUpdateAsync(setters => setters
+                            .SetProperty(temp => temp.ScoredTriesCount,
+                                gameEvent.Game.Teams[0].Team.ScoredTriesCount++));
+                }
+                else if (gameEvent.EventType.IsTeamBScoredTry())
+                {
+                    gameEvent.Game.Teams[1].Team.ScoredTriesCount++;
+                    await eventDb.Teams
+                        .Where(temp => temp.Id == gameEvent.Game.Teams[1].Team.Id)
+                        .ExecuteUpdateAsync(setters => setters
+                            .SetProperty(temp => temp.ScoredTriesCount,
+                                gameEvent.Game.Teams[1].Team.ScoredTriesCount++));
+                }
             }
 
             GameEventHappened?.Invoke(this, gameEvent);
