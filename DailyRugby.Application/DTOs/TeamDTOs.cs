@@ -22,6 +22,7 @@ public sealed record TeamResponse(Guid Id,
     int PointsScored,
     int PointsTaken,
     int ScoredTriesCount,
+    int SufferedTriesCount,
     int WinCount,
     int TieCount,
     int LossCount);
@@ -68,6 +69,7 @@ public static class TeamExtensions
             team.PointsScored,
             team.PointsTaken,
             team.ScoredTriesCount,
+            team.SufferedTriesCount,
             team.WinCount,
             team.TieCount,
             team.LossCount);

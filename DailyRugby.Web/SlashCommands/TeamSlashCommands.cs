@@ -141,9 +141,14 @@ public class TeamSlashCommands(ITeamCrudService teamService)
         sb.AppendLine($"- {result.Item.WinCount} wins");
         sb.AppendLine($"- {result.Item.TieCount} ties");
         sb.AppendLine($"- {result.Item.LossCount} losses");
+        sb.AppendLine();
+        sb.AppendLine($"- {result.Item.PointsScored - result.Item.PointsTaken} point balance");
         sb.AppendLine($"- {result.Item.PointsScored} points scored");
         sb.AppendLine($"- {result.Item.PointsTaken} points suffered");
+        sb.AppendLine();
+        sb.AppendLine($"- {result.Item.ScoredTriesCount - result.Item.SufferedTriesCount} try balance");
         sb.AppendLine($"- {result.Item.ScoredTriesCount} tries scored");
+        sb.AppendLine($"- {result.Item.SufferedTriesCount} tries suffered");
 
         await FollowupAsync(sb.ToString());
     }
