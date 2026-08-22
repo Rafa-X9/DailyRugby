@@ -61,9 +61,31 @@ public class ChampionshipCrudService(AppDbContext db) : IChampionshipCrudService
         return Result<ChampionshipResponse>.Success(match.ToChampionshipResponse());
     }
 
-    public Task<SortedDictionary<int, TeamResponse>> GetStandingsAsync(Guid id)
+    public async Task<SortedDictionary<int, TeamResponse>> GetStandingsAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var champ = await db.Championships
+            .AsNoTracking()
+            .Include(temp => temp.Teams)
+            .FirstOrDefaultAsync(temp => temp.Id == id);
+
+        if (champ is null) return [];
+
+        List<Team> ordered = champ.Teams
+            .OrderByDescending(temp => temp.PointsScored - temp.PointsTaken)
+            .ThenByDescending(temp => temp.ScoredTriesCount - temp.SufferedTriesCount)
+            .ThenByDescending(temp => temp.ScoredTriesCount)
+            .ThenByDescending(temp => temp.PointsScored)
+            .ThenBy(temp => new Random().Next())
+            .ToList();
+
+        SortedDictionary<int, TeamResponse> response = [];
+
+        for (int i = 0; i < ordered.Count; i++)
+        {
+            response[i + 1] = ordered[i].ToTeamResponse();
+        }
+
+        return response;
     }
 
     public async Task<Result<ChampionshipResponse>> SetAsMainAsync(Guid id)
