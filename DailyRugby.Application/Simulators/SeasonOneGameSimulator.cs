@@ -1,5 +1,8 @@
 ﻿using DailyRugby.Application.Interfaces;
+using DailyRugby.Application.Utilitaries;
 using DailyRugby.Domain;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace DailyRugby.Application.Simulators;
 
@@ -8,6 +11,36 @@ public class SeasonOneGameSimulator : ISpecificGameSimulator
     private Stats? _teamAStats;
     private Stats? _teamBStats;
     private Stack<(GameEventType EventType, Action<Game> GameAction)>? _stack;
+
+    public async Task SaveGameAsync(GameEvent gameEvent, AppDbContext db)
+    {
+        await db.Games
+            .Where(temp => temp.Id == gameEvent.Game.Id)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(temp => temp.CurrentMinute, gameEvent.Game.CurrentMinute)
+                .SetProperty(temp => temp.TeamAScore, gameEvent.Game.TeamAScore)
+                .SetProperty(temp => temp.TeamBScore, gameEvent.Game.TeamBScore)
+            );
+
+        if (gameEvent.EventType.IsTeamAScoredTry())
+        {
+            gameEvent.Game.Teams[0].Team.ScoredTriesCount++;
+            await db.Teams
+                .Where(temp => temp.Id == gameEvent.Game.Teams[0].Team.Id)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(temp => temp.ScoredTriesCount,
+                        gameEvent.Game.Teams[0].Team.ScoredTriesCount++));
+        }
+        else if (gameEvent.EventType.IsTeamBScoredTry())
+        {
+            gameEvent.Game.Teams[1].Team.ScoredTriesCount++;
+            await db.Teams
+                .Where(temp => temp.Id == gameEvent.Game.Teams[1].Team.Id)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(temp => temp.ScoredTriesCount,
+                        gameEvent.Game.Teams[1].Team.ScoredTriesCount++));
+        }
+    }
 
     public GameEvent SimulateNextMinute(Game game)
     {

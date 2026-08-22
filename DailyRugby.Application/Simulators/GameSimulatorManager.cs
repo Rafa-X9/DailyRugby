@@ -143,32 +143,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             using (var eventScope = serviceProvider.CreateScope())
             {
                 var eventDb = eventScope.ServiceProvider.GetRequiredService<AppDbContext>();
-                await eventDb.Games
-                    .Where(temp => temp.Id == game.Id)
-                    .ExecuteUpdateAsync(setters => setters
-                        .SetProperty(temp => temp.CurrentMinute, game.CurrentMinute)
-                        .SetProperty(temp => temp.TeamAScore, game.TeamAScore)
-                        .SetProperty(temp => temp.TeamBScore, game.TeamBScore)
-                    );
-
-                if (gameEvent.EventType.IsTeamAScoredTry())
-                {
-                    gameEvent.Game.Teams[0].Team.ScoredTriesCount++;
-                    await eventDb.Teams
-                        .Where(temp => temp.Id == gameEvent.Game.Teams[0].Team.Id)
-                        .ExecuteUpdateAsync(setters => setters
-                            .SetProperty(temp => temp.ScoredTriesCount,
-                                gameEvent.Game.Teams[0].Team.ScoredTriesCount++));
-                }
-                else if (gameEvent.EventType.IsTeamBScoredTry())
-                {
-                    gameEvent.Game.Teams[1].Team.ScoredTriesCount++;
-                    await eventDb.Teams
-                        .Where(temp => temp.Id == gameEvent.Game.Teams[1].Team.Id)
-                        .ExecuteUpdateAsync(setters => setters
-                            .SetProperty(temp => temp.ScoredTriesCount,
-                                gameEvent.Game.Teams[1].Team.ScoredTriesCount++));
-                }
+                await simulator.SaveGameAsync(gameEvent, eventDb);
             }
 
             GameEventHappened?.Invoke(this, gameEvent);
