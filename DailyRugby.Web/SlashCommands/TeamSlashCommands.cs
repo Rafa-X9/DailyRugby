@@ -112,4 +112,39 @@ public class TeamSlashCommands(ITeamCrudService teamService)
 
         await FollowupAsync("Deleted successfully");
     }
+
+    [SlashCommand("see-team-stats", "Shows the stats of a team")]
+    public async Task SeeTeamStats(
+        [Summary("team", "The team to see the stats from")]
+        [Autocomplete(typeof(TeamAutoComplete))]
+        string teamId)
+    {
+        await DeferAsync();
+
+        bool idParsed = Guid.TryParse(teamId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid");
+            return;
+        }
+
+        var result = await teamService.GetByIdAsync(id);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}");
+            return;
+        }
+
+        StringBuilder sb = new();
+        sb.AppendLine($"{result.Item.Country} stats:");
+        sb.AppendLine($"- {result.Item.WinCount} wins");
+        sb.AppendLine($"- {result.Item.TieCount} ties");
+        sb.AppendLine($"- {result.Item.LossCount} losses");
+        sb.AppendLine($"- {result.Item.PointsScored} points scored");
+        sb.AppendLine($"- {result.Item.PointsTaken} points suffered");
+        sb.AppendLine($"- {result.Item.ScoredTriesCount} tries scored");
+
+        await FollowupAsync(sb.ToString());
+    }
 }
