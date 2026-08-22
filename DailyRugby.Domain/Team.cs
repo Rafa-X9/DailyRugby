@@ -17,6 +17,7 @@ public class Team
     public int PointsScored { get; set; }
     public int PointsTaken { get; set; }
     public int ScoredTriesCount { get; set; }
+    public int SufferedTriesCount { get; set; }
     public int WinCount { get; set; }
     public int TieCount { get; set; }
     public int LossCount { get; set; }
