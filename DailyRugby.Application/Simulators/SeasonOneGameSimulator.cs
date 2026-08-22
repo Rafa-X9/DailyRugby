@@ -22,23 +22,33 @@ public class SeasonOneGameSimulator : ISpecificGameSimulator
                 .SetProperty(temp => temp.TeamBScore, gameEvent.Game.TeamBScore)
             );
 
-        if (gameEvent.EventType.IsTeamAScoredTry())
-        {
+        if (gameEvent.EventType.IsTeamAScoredTry)
             gameEvent.Game.Teams[0].Team.ScoredTriesCount++;
+
+        if (gameEvent.EventType.IsTeamBScoredTry)
+            gameEvent.Game.Teams[1].Team.ScoredTriesCount++;
+
+        if (gameEvent.EventType.IsTeamAScoring)
+        {
             await db.Teams
                 .Where(temp => temp.Id == gameEvent.Game.Teams[0].Team.Id)
                 .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(temp => temp.ScoredTriesCount,
-                        gameEvent.Game.Teams[0].Team.ScoredTriesCount++));
+                    .SetProperty(temp => temp.PointsScored, 
+                        temp => temp.PointsScored + gameEvent.EventType.GetTeamAScoreChange())
+                    .SetPropertyIf(gameEvent.EventType.IsTeamAScoredTry,
+                        temp => temp.ScoredTriesCount,
+                        temp => temp.ScoredTriesCount + 1));
         }
-        else if (gameEvent.EventType.IsTeamBScoredTry())
+        else if (gameEvent.EventType.IsTeamBScoring)
         {
-            gameEvent.Game.Teams[1].Team.ScoredTriesCount++;
             await db.Teams
                 .Where(temp => temp.Id == gameEvent.Game.Teams[1].Team.Id)
                 .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(temp => temp.ScoredTriesCount,
-                        gameEvent.Game.Teams[1].Team.ScoredTriesCount++));
+                    .SetProperty(temp => temp.PointsScored,
+                        temp => temp.PointsScored + gameEvent.EventType.GetTeamBScoreChange())
+                    .SetPropertyIf(gameEvent.EventType.IsTeamBScoredTry,
+                        temp => temp.ScoredTriesCount,
+                        temp => temp.ScoredTriesCount + 1));
         }
     }
 

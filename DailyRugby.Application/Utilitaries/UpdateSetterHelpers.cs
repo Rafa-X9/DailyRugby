@@ -14,4 +14,14 @@ public static class UpdateSetterHelpers
         if (!condition) return updater;
         return updater.SetProperty(property, value);
     }
+
+    public static UpdateSettersBuilder<TModel> SetPropertyIf<TModel, TProperty>
+        (this UpdateSettersBuilder<TModel> updater,
+        bool condition,
+        Expression<Func<TModel, TProperty>> property,
+        Expression<Func<TModel, TProperty>> value)
+    {
+        if (!condition) return updater;
+        return updater.SetProperty(property, value);
+    }
 }
