@@ -71,7 +71,9 @@ public class ChampionshipCrudService(AppDbContext db) : IChampionshipCrudService
         if (champ is null) return [];
 
         List<Team> ordered = champ.Teams
-            .OrderByDescending(temp => temp.PointsScored - temp.PointsTaken)
+            .OrderByDescending(temp => temp.WinCount)
+            .ThenByDescending(temp => temp.GetPointsAgainstTiedTeams(champ.Teams, champ.Games))
+            .ThenByDescending(temp => temp.PointsScored - temp.PointsTaken)
             .ThenByDescending(temp => temp.ScoredTriesCount - temp.SufferedTriesCount)
             .ThenByDescending(temp => temp.ScoredTriesCount)
             .ThenByDescending(temp => temp.PointsScored)
@@ -122,5 +124,41 @@ public class ChampionshipCrudService(AppDbContext db) : IChampionshipCrudService
         champ.IsMainChampionship = false;
         await db.SaveChangesAsync();
         return Result<ChampionshipResponse>.Success(champ.ToChampionshipResponse());
+    }
+}
+
+public static partial class TeamExtensions
+{
+    public static int GetPointsAgainstTiedTeams(this Team team,
+        IList<Team> others,
+        IList<Game> games)
+    {
+        var tiedTeams = others
+            .Where(temp => temp.WinCount == team.WinCount)
+            .ToList();
+
+        if (tiedTeams.Count == 0) return 0;
+
+        int wins = 0;
+
+        var gamesWithTiedTeams = games
+            .Where(temp => temp.Teams.Any(t => t.Team.Id == team.Id))
+            .Where(temp => temp.Teams.Any(t1 => tiedTeams.Any(t2 => t1.Team.Id == t2.Id)));
+
+        foreach (var game in gamesWithTiedTeams)
+        {
+            if (game.Teams[0].Team.Id == team.Id
+                && game.TeamAScore > game.TeamBScore)
+            {
+                wins++;
+            }
+            else if (game.Teams[1].Team.Id == team.Id
+                && game.TeamBScore > game.TeamAScore)
+            {
+                wins++;
+            }
+        }
+
+        return wins;
     }
 }

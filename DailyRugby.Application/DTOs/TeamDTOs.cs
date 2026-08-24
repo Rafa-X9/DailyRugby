@@ -29,7 +29,7 @@ public sealed record TeamResponse(Guid Id,
 
 public enum Teams { TeamA, TeamB }
 
-public static class TeamExtensions
+public static partial class TeamExtensions
 {
     public static Team ToTeam(this TeamAddRequest request)
     {
