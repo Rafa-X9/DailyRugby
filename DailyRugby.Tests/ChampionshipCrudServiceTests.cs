@@ -1,6 +1,7 @@
 ﻿using DailyRugby.Application.CRUD;
 using DailyRugby.Application.DTOs;
 using DailyRugby.Application.Interfaces;
+using DailyRugby.Application.Simulators;
 using DailyRugby.Application.Validators;
 using DailyRugby.Domain;
 using DailyRugby.Shared;
@@ -177,51 +178,41 @@ public class ChampionshipCrudServiceTests : IAsyncLifetime
         var champ = await SetUpChampionship();
         await SetUpFourTeams(champ.Id);
         await _gameService.GenerateRounds(champ.Id);
-
+        await _champService.SetAsMainAsync(champ.Id);
         var firstRoundResult = await _gameService.GetCurrentRoundAsync();
         Assert.True(firstRoundResult.IsSuccessful);
 
-        int difference = 5;
-        foreach (var game in firstRoundResult.Item)
+        var simulator = new SeasonOneGameSimulator();
+        foreach (var gameResponse in firstRoundResult.Item)
         {
-            await _db.Games
-                .Where(temp => temp.Id == game.Id)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(temp => temp.TeamAScore, 30)
-                    .SetProperty(temp => temp.TeamBScore, 30 - difference)
-                    .SetProperty(temp => temp.CurrentState, GameState.Finished));
-            
-            await _db.Teams
-                .Where(temp => temp.Id == game.TeamA.Id)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(temp => temp.PointsScored, 30)
-                    .SetProperty(temp => temp.PointsTaken, 30 - difference)
-                    .SetProperty(temp => temp.WinCount, 1));
+            var game = await _db.Games
+                .Include(temp => temp.Teams)
+                .ThenInclude(temp => temp.Team)
+                .FirstAsync(temp => temp.Id == gameResponse.Id);
 
-            await _db.Teams
-                .Where(temp => temp.Id == game.TeamB.Id)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(temp => temp.PointsScored, 30 - difference)
-                    .SetProperty(temp => temp.PointsTaken, 30)
-                    .SetProperty(temp => temp.LossCount, 1));
-
-            difference += 3;
+            while (game.CurrentMinute <= 80)
+            {
+                var gameEvent = simulator.SimulateNextMinute(game);
+                await simulator.SaveGameAsync(gameEvent, _db);
+            }
         }
 
         var standings = await _champService.GetStandingsAsync(champ.Id);
-        Assert.NotEmpty(standings);
-
-        for (int i = 1; i < standings.Count; i++)
+        for (int i = 2; i <= standings.Count; i++)
         {
-            var ahead = standings[i];
-            var behind = standings[i + 1];
+            var ahead = standings[i - 1];
+            var behind = standings[i];
 
             Assert.True(ahead.WinCount >= behind.WinCount);
-            if (ahead.WinCount == behind.WinCount)
-            {
-                Assert.True(ahead.PointsScored - ahead.PointsTaken
-                    > behind.PointsScored - behind.PointsTaken);
-            }
+            if (ahead.WinCount != behind.WinCount) continue;
+
+            Assert.True(ahead.PointsScored - ahead.PointsTaken
+                >= behind.PointsScored - behind.PointsTaken);
+            if (ahead.PointsScored - ahead.PointsTaken
+                != behind.PointsScored - behind.PointsTaken) continue;
+
+            Assert.True(ahead.ScoredTriesCount - ahead.SufferedTriesCount
+                >= behind.ScoredTriesCount - behind.SufferedTriesCount);
         }
     }
 
