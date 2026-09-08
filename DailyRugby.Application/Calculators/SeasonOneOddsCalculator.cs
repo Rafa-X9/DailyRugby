@@ -22,7 +22,7 @@ public class SeasonOneOddsCalculator(IServiceProvider serviceProvider)
             game = await db.Games
                 .AsNoTracking()
                 .Include(temp => temp.Championship)
-                .Include(temp => temp.Teams)
+                .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
                     .ThenInclude(temp => temp.Team)
                 .FirstOrDefaultAsync(temp => temp.Id == gameId);
         }

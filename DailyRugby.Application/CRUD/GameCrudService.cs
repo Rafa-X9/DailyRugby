@@ -117,7 +117,7 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         var gamesWithTeams = (await db.Games
             .AsNoTracking()
             .Where(temp => temp.ChampionshipId == champId)
-            .Include(temp => temp.Teams)
+            .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
                 .ThenInclude(temp => temp.Team)
             .ToListAsync())
             .Select(temp =>
@@ -134,7 +134,7 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
     {
         return (await db.Games
             .Where(temp => temp.ChampionshipId == champId)
-            .Include(temp => temp.Teams)
+            .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
                 .ThenInclude(temp => temp.Team)
             .ToListAsync())
             .Select(temp => temp.ToGameResponse())
@@ -145,7 +145,7 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
     {
         return (await db.Games
             .AsNoTracking()
-            .Include(temp => temp.Teams)
+            .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
                 .ThenInclude(temp => temp.Team)
             .ToListAsync())
             .Select(temp => temp.ToGameResponse())
@@ -163,7 +163,7 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
 
         var games = (await db.Games
             .AsNoTracking()
-            .Include(temp => temp.Teams)
+            .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
             .ThenInclude(temp => temp.Team)
             .Where(temp => temp.Teams.Any(t => t.Team.Id == team.Id))
             .ToListAsync())
@@ -178,7 +178,7 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         var games = await db.Games
             .AsNoTracking()
             .Include(temp => temp.Championship)
-            .Include(temp => temp.Teams)
+            .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
             .ThenInclude(temp => temp.Team)
             .Where(temp => temp.Championship.IsMainChampionship)
             .ToListAsync();
@@ -213,7 +213,7 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
     public async Task<Result<TeamGameResponse>> SetTacticAsync(Guid gameId, Teams team, Tactics tactic)
     {
         var game = await db.Games
-            .Include(temp => temp.Teams)
+            .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
                 .ThenInclude(temp => temp.Team)
             .FirstOrDefaultAsync(temp => temp.Id == gameId);
 

@@ -29,7 +29,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             game = await db.Games
                 //.AsNoTracking()
-                .Include(temp => temp.Teams)
+                .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
                     .ThenInclude(temp => temp.Team)
                 .Include(temp => temp.Championship)
                 .FirstOrDefaultAsync(temp => temp.Id == gameId);
@@ -78,7 +78,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             List<Schedule> schedules = await db.Schedules
                 .AsNoTracking()
                 .Include(temp => temp.Game)
-                    .ThenInclude(temp => temp.Teams)
+                    .ThenInclude(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
                         .ThenInclude(temp => temp.Team)
                 .Include(temp => temp.Game)
                     .ThenInclude(temp => temp.Championship)

@@ -186,7 +186,7 @@ public class ChampionshipCrudServiceTests : IAsyncLifetime
         foreach (var gameResponse in firstRoundResult.Item)
         {
             var game = await _db.Games
-                .Include(temp => temp.Teams)
+                .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
                 .ThenInclude(temp => temp.Team)
                 .FirstAsync(temp => temp.Id == gameResponse.Id);
 
