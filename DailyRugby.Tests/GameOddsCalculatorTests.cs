@@ -75,7 +75,14 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
         await SetUpThreeTeams(champ.Id, 95);
         await _gameService.GenerateRounds(champ.Id);
 
-        var game = await _db.Games.FirstAsync();
+        var game = await _db.Games
+            .Include(temp => temp.Teams.OrderBy(team => team.Team.Country))
+                .ThenInclude(temp => temp.Team)
+            .FirstAsync();
+
+        game.Teams = game.Teams
+            .OrderBy(temp => temp.Team.Country)
+            .ToList();
 
         _output.WriteLine($"The drawn game was:\n" +
             $"Team A: {game.Teams[0].Team.Country}\n" +
@@ -131,7 +138,8 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
         TeamAddRequest request = new(champId,
             "RafaX9",
             "Brazil",
-            statBudget - 2, 1, 1,
+            //statBudget - 2, 1, 1,
+            Insight: 68, Physique: 27, Technique: 0,
             Coaches.General);
         var result = await _teamService.AddAsync(request);
         if (!result.IsSuccessful) throw new Exception();
@@ -141,9 +149,10 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
     private async Task<TeamResponse> SetUpTeamB(Guid champId, int statBudget)
     {
         TeamAddRequest request = new(champId,
-            "Onko342",
-            "Taiwan",
-            10, statBudget - 20, 10,
+            "Terrs34",
+            "Ireland",
+            //10, statBudget - 20, 10,
+            Insight: 45, Physique: 25, Technique: 25,
             Coaches.General);
         var result = await _teamService.AddAsync(request);
         if (!result.IsSuccessful) throw new Exception();
@@ -153,9 +162,10 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
     private async Task<TeamResponse> SetUpTeamC(Guid champId, int statBudget)
     {
         TeamAddRequest request = new(champId,
-            "DonutDaniel5",
-            "SovietUnion",
-            10, 10, statBudget - 20,
+            "ChelseaFan",
+            "Singapore",
+            //10, 10, statBudget - 20,
+            Insight: 30, Physique: 30, Technique: 35,
             Coaches.General);
         var result = await _teamService.AddAsync(request);
         if (!result.IsSuccessful) throw new Exception();
@@ -165,9 +175,9 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
     private async Task<TeamResponse> SetUpTeamD(Guid champId, int statBudget)
     {
         TeamAddRequest request = new(champId,
-            "ChelseaFanForever",
-            "Singapore",
-            5, statBudget - 10, 5,
+            "Emerald_Remotist",
+            "Turkey",
+            Insight: 20, Physique: 31, Technique: 44,
             Coaches.General);
         var result = await _teamService.AddAsync(request);
         if (!result.IsSuccessful) throw new Exception();
