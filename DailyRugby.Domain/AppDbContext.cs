@@ -9,6 +9,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Game> Games { get; set; }
     public DbSet<TeamGame> TeamGames { get; set; }
     public DbSet<Schedule> Schedules { get; set; }
+    public DbSet<GameOdds> GameOdds { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,6 +20,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<Game>().ToTable(nameof(Games));
         modelBuilder.Entity<TeamGame>().ToTable(nameof(TeamGames));
         modelBuilder.Entity<Schedule>().ToTable(nameof(Schedules));
+        modelBuilder.Entity<GameOdds>().ToTable(nameof(GameOdds));
 
         modelBuilder.Entity<Championship>()
             .Property(temp => temp.Id)
@@ -33,6 +35,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .ValueGeneratedNever();
 
         modelBuilder.Entity<TeamGame>()
+            .Property(temp => temp.Id)
+            .ValueGeneratedNever();
+
+        modelBuilder.Entity<GameOdds>()
             .Property(temp => temp.Id)
             .ValueGeneratedNever();
 
