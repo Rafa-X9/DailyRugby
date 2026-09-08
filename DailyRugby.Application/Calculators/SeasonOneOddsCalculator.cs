@@ -10,13 +10,13 @@ public class SeasonOneOddsCalculator(IServiceProvider serviceProvider)
 {
     private const int _repetitions = 5_000;
     private Game _game = null!;
-    private ISpecificGameSimulator _simulator = null!;
+    private IGameSimulatorFactory _factory = null!;
     private GameOdds _result = new() { Id = Guid.CreateVersion7() };
 
     public async Task CalculateAsync(Guid gameId)
     {
         Game? game;
-        using (var scope = serviceProvider.CreateAsyncScope())
+        using (var scope = serviceProvider.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             game = await db.Games
@@ -32,12 +32,11 @@ public class SeasonOneOddsCalculator(IServiceProvider serviceProvider)
         _game = game;
         _result.GameId = gameId;
 
-        var simulatorFactory = serviceProvider.GetRequiredService<IGameSimulatorFactory>();
-        _simulator = simulatorFactory.GetGameSimulator(game.Championship.Season);
+        _factory = serviceProvider.GetRequiredService<IGameSimulatorFactory>();
 
         await Task.Run(Simulate);
 
-        using (var scope = serviceProvider.CreateAsyncScope())
+        using (var scope = serviceProvider.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             db.GameOdds.Add(_result);
@@ -58,9 +57,11 @@ public class SeasonOneOddsCalculator(IServiceProvider serviceProvider)
                 Teams = _game.Teams
             };
 
+            var simulator = _factory.GetGameSimulator(_game.Championship.Season);
+
             for (int minute = 0; minute < 80; minute++)
             {
-                _simulator.SimulateNextMinute(copy);
+                simulator.SimulateNextMinute(copy);
             }
 
             _result.TotalSimulations++;

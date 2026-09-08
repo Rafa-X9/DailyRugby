@@ -3,6 +3,7 @@ using DailyRugby.Application.Utilitaries;
 using DailyRugby.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Runtime.InteropServices;
 
 namespace DailyRugby.Application.Simulators;
 
@@ -242,7 +243,10 @@ public class SeasonOneGameSimulator : ISpecificGameSimulator
             }
         }
 
-        events.Sort((t1, t2) => random.Next(-100, 100));
+        //events.Sort((t1, t2) => random.Next(-100, 100));
+        //doing this throws an exception for "inconsistent results", grrrrrr
+
+        Random.Shared.Shuffle(CollectionsMarshal.AsSpan(events));
         _stack = new(events);
 
         var stackTop = _stack.Pop();
