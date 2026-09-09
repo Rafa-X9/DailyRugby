@@ -1,3 +1,4 @@
+using DailyRugby.Application.Calculators;
 using DailyRugby.Application.CRUD;
 using DailyRugby.Application.Interfaces;
 using DailyRugby.Application.Simulators;
@@ -46,6 +47,8 @@ class Program
         builder.Services.AddHostedService(provider => provider.GetRequiredService<GameSimulatorManager>());
         builder.Services.AddTransient<IGameTimer, SpedUpTimer>();
         builder.Services.AddSingleton<MessageSender>();
+        builder.Services.AddSingleton<IGameSimulatorFactory, GameSimulatorFactory>();
+        builder.Services.AddSingleton<IGameOddsCalculator, SeasonOneOddsCalculator>();
 
         var app = builder.Build();
 

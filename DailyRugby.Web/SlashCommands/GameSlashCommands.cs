@@ -7,7 +7,9 @@ using System.Text;
 
 namespace DailyRugby.Web.SlashCommands;
 
-public class GameSlashCommands(IGameCrudService gameService, IGameSimulatorManager simulator)
+public class GameSlashCommands(IGameCrudService gameService,
+    IGameSimulatorManager simulator,
+    IGameOddsCalculator oddsCalculator)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("see-games", "Shows all games from a championship")]
@@ -196,5 +198,38 @@ public class GameSlashCommands(IGameCrudService gameService, IGameSimulatorManag
 
         await FollowupAsync($"Successfully applied the tactic {result.Item.Tactic} " +
             $"to {result.Item.Team.Country}");
+    }
+
+    [SlashCommand("see-odds", "Shows the odds of a game")]
+    public async Task SeeOdds(
+        [Summary("Game", "The game to get odds from")]
+        [Autocomplete(typeof(CurrentRoundAutocomplete))]
+        string gameId)
+    {
+        await DeferAsync();
+
+        bool idParsed = Guid.TryParse(gameId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid");
+            return;
+        }
+
+        var oddsResult = await oddsCalculator.GetOddsAsync(id);
+
+        if (!oddsResult.IsSuccessful)
+        {
+            await FollowupAsync($"{oddsResult.Error}: {oddsResult.Message}");
+            return;
+        }
+
+        StringBuilder sb = new();
+        sb.AppendLine("These were the simulations:");
+        sb.AppendLine($"Total: {oddsResult.Item.TotalSimulations}");
+        sb.AppendLine($"Team A wins: {oddsResult.Item.TeamAWins}");
+        sb.AppendLine($":necktie:: {oddsResult.Item.Tie}");
+        sb.AppendLine($"Team B wins: {oddsResult.Item.TeamBWins}");
+
+        await FollowupAsync(sb.ToString());
     }
 }
