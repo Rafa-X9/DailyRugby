@@ -48,29 +48,25 @@ public class SeasonOneOddsCalculator(IServiceProvider serviceProvider)
     {
         for (int repetition = 0; repetition < _repetitions; repetition++)
         {
-            Game copy = new()
-            {
-                CurrentMinute = _game.CurrentMinute,
-                CurrentState = _game.CurrentState,
-                TeamAScore = 0,
-                TeamBScore = 0,
-                Teams = _game.Teams
-            };
+            _game.CurrentMinute = -1;
+            _game.CurrentState = GameState.Started;
+            _game.TeamAScore = 0;
+            _game.TeamBScore = 0;
 
             var simulator = _factory.GetGameSimulator(_game.Championship.Season);
 
             for (int minute = 0; minute < 80; minute++)
             {
-                simulator.SimulateNextMinute(copy);
+                simulator.SimulateNextMinute(_game);
             }
 
             _result.TotalSimulations++;
 
-            if (copy.TeamAScore > copy.TeamBScore)
+            if (_game.TeamAScore > _game.TeamBScore)
             {
                 _result.TeamAWins++;
             }
-            else if (copy.TeamAScore < copy.TeamBScore)
+            else if (_game.TeamAScore < _game.TeamBScore)
             {
                 _result.TeamBWins++;
             }
