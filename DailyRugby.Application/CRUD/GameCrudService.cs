@@ -152,6 +152,22 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
             .ToList();
     }
 
+    public async Task<Result<GameResponse>> GetByIdAsync(Guid id)
+    {
+        var game = await db.Games
+            .AsNoTracking()
+            .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
+                .ThenInclude(temp => temp.Team)
+            .FirstOrDefaultAsync(temp => temp.Id == id);
+
+        if (game is null)
+        {
+            return Result<GameResponse>.Failure("Id not found", Errors.NotFound);
+        }
+
+        return Result<GameResponse>.Success(game.ToGameResponse());
+    }
+
     public async Task<Result<IList<GameResponse>>> GetByTeamIdAsync(Guid teamId)
     {
         var team = await db.Teams.FirstOrDefaultAsync(temp => temp.Id == teamId);
