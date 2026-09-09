@@ -14,7 +14,7 @@ public class SeasonOneOddsCalculator(IServiceProvider serviceProvider)
     private IGameSimulatorFactory _factory = null!;
     private GameOdds _result = new();
 
-    public async Task<Result<GameOdds>> GetOddsAsync(Guid gameId)
+    public async Task<Result<GameOdds>> GetOddsAsync(Guid gameId, bool passIfNotExists = false)
     {
         Game? game;
         using (var scope = serviceProvider.CreateScope())
@@ -31,6 +31,12 @@ public class SeasonOneOddsCalculator(IServiceProvider serviceProvider)
                 .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
                     .ThenInclude(temp => temp.Team)
                 .FirstOrDefaultAsync(temp => temp.Id == gameId);
+        }
+
+        if (passIfNotExists)
+        {
+            return Result<GameOdds>.Failure("Calculation is not yet finished, please wait",
+                Errors.Invalid);
         }
 
         _result = new() { Id = Guid.NewGuid() };

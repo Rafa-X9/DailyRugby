@@ -215,11 +215,12 @@ public class GameSlashCommands(IGameCrudService gameService,
             return;
         }
 
-        var oddsResult = await oddsCalculator.GetOddsAsync(id);
+        var oddsResult = await oddsCalculator.GetOddsAsync(id, passIfNotExists: true);
 
         if (!oddsResult.IsSuccessful)
         {
-            await FollowupAsync($"{oddsResult.Error}: {oddsResult.Message}");
+            await FollowupAsync(oddsResult.Message);
+            await oddsCalculator.GetOddsAsync(id, passIfNotExists: false);
             return;
         }
 

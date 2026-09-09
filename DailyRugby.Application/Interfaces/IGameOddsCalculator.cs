@@ -5,5 +5,5 @@ namespace DailyRugby.Application.Interfaces;
 
 public interface IGameOddsCalculator
 {
-    Task<Result<GameOdds>> GetOddsAsync(Guid gameId);
+    Task<Result<GameOdds>> GetOddsAsync(Guid gameId, bool passIfNotExists = false);
 }
