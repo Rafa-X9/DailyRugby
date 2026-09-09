@@ -3,6 +3,7 @@ using DailyRugby.Application.Interfaces;
 using DailyRugby.Domain;
 using DailyRugby.Web.AutoCompletes;
 using Discord.Interactions;
+using System.Globalization;
 using System.Text;
 
 namespace DailyRugby.Web.SlashCommands;
@@ -232,12 +233,15 @@ public class GameSlashCommands(IGameCrudService gameService,
             return;
         }
 
+        decimal teamAWins = ((decimal)oddsResult.Item.TeamAWins / oddsResult.Item.TotalSimulations) * 100;
+        decimal teamBWins = ((decimal)oddsResult.Item.TeamBWins / oddsResult.Item.TotalSimulations) * 100;
+
+        CultureInfo c = CultureInfo.InvariantCulture;
+
         StringBuilder sb = new();
         sb.AppendLine("These were the simulations:");
-        sb.AppendLine($"Total: {oddsResult.Item.TotalSimulations}");
-        sb.AppendLine($"{gameResult.Item.TeamA.Team.Country} wins: {oddsResult.Item.TeamAWins}");
-        sb.AppendLine($":necktie:: {oddsResult.Item.Tie}");
-        sb.AppendLine($"{gameResult.Item.TeamB.Team.Country} wins: {oddsResult.Item.TeamBWins}");
+        sb.AppendLine($"{gameResult.Item.TeamA.Team.Country} wins: {teamAWins.ToString("F0", c)}%");
+        sb.AppendLine($"{gameResult.Item.TeamB.Team.Country} wins: {teamBWins.ToString("F0", c)}%");
 
         await FollowupAsync(sb.ToString());
     }
