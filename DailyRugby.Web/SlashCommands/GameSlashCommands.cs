@@ -224,12 +224,20 @@ public class GameSlashCommands(IGameCrudService gameService,
             return;
         }
 
+        var gameResult = await gameService.GetByIdAsync(oddsResult.Item.GameId);
+
+        if (!gameResult.IsSuccessful)
+        {
+            await FollowupAsync("Somehow, getting the odds suceeded but getting the game failed");
+            return;
+        }
+
         StringBuilder sb = new();
         sb.AppendLine("These were the simulations:");
         sb.AppendLine($"Total: {oddsResult.Item.TotalSimulations}");
-        sb.AppendLine($"Team A wins: {oddsResult.Item.TeamAWins}");
+        sb.AppendLine($"{gameResult.Item.TeamA.Team.Country} wins: {oddsResult.Item.TeamAWins}");
         sb.AppendLine($":necktie:: {oddsResult.Item.Tie}");
-        sb.AppendLine($"Team B wins: {oddsResult.Item.TeamBWins}");
+        sb.AppendLine($"{gameResult.Item.TeamB.Team.Country} wins: {oddsResult.Item.TeamBWins}");
 
         await FollowupAsync(sb.ToString());
     }
