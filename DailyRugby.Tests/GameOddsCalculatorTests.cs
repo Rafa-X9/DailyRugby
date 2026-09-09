@@ -94,7 +94,7 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
             $"- Physique: {game.Teams[1].Team.Physique}\n" +
             $"- Technique: {game.Teams[1].Team.Technique}\n");
 
-        await _oddsCalculator.CalculateAsync(game.Id);
+        await _oddsCalculator.GetOddsAsync(game.Id);
 
         var result = await _db
             .GameOdds

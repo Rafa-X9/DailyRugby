@@ -1,6 +1,9 @@
-﻿namespace DailyRugby.Application.Interfaces;
+﻿using DailyRugby.Domain;
+using DailyRugby.Shared;
+
+namespace DailyRugby.Application.Interfaces;
 
 public interface IGameOddsCalculator
 {
-    Task CalculateAsync(Guid gameId);
+    Task<Result<GameOdds>> GetOddsAsync(Guid gameId);
 }

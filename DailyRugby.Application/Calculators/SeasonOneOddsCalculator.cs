@@ -1,5 +1,6 @@
 ﻿using DailyRugby.Application.Interfaces;
 using DailyRugby.Domain;
+using DailyRugby.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,12 +14,17 @@ public class SeasonOneOddsCalculator(IServiceProvider serviceProvider)
     private IGameSimulatorFactory _factory = null!;
     private GameOdds _result = new() { Id = Guid.CreateVersion7() };
 
-    public async Task CalculateAsync(Guid gameId)
+    public async Task<Result<GameOdds>> GetOddsAsync(Guid gameId)
     {
         Game? game;
         using (var scope = serviceProvider.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            var odds = await db.GameOdds.FirstOrDefaultAsync(temp => temp.GameId == gameId);
+
+            if (odds is not null) return Result<GameOdds>.Success(odds);
+
             game = await db.Games
                 .AsNoTracking()
                 .Include(temp => temp.Championship)
@@ -27,7 +33,7 @@ public class SeasonOneOddsCalculator(IServiceProvider serviceProvider)
                 .FirstOrDefaultAsync(temp => temp.Id == gameId);
         }
 
-        if (game is null) return;
+        if (game is null) return Result<GameOdds>.Failure("Id not found", Errors.NotFound);
 
         _game = game;
         _result.GameId = gameId;
@@ -42,6 +48,8 @@ public class SeasonOneOddsCalculator(IServiceProvider serviceProvider)
             db.GameOdds.Add(_result);
             await db.SaveChangesAsync();
         }
+
+        return Result<GameOdds>.Success(_result);
     }
 
     private void Simulate()
