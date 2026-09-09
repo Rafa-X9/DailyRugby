@@ -12,7 +12,7 @@ public class SeasonOneOddsCalculator(IServiceProvider serviceProvider)
     private const int _repetitions = 5_000;
     private Game _game = null!;
     private IGameSimulatorFactory _factory = null!;
-    private GameOdds _result = new() { Id = Guid.CreateVersion7() };
+    private GameOdds _result = new();
 
     public async Task<Result<GameOdds>> GetOddsAsync(Guid gameId)
     {
@@ -32,6 +32,8 @@ public class SeasonOneOddsCalculator(IServiceProvider serviceProvider)
                     .ThenInclude(temp => temp.Team)
                 .FirstOrDefaultAsync(temp => temp.Id == gameId);
         }
+
+        _result = new() { Id = Guid.NewGuid() };
 
         if (game is null) return Result<GameOdds>.Failure("Id not found", Errors.NotFound);
 
