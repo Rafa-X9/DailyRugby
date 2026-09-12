@@ -23,8 +23,4 @@ public interface IGameCrudService
     Task<Result<TeamGameResponse>> SetTacticAsync(Guid gameId, Teams team, Tactics tactic);
 
     Task<Result<TeamGameResponse>> SetCoachAsync(Guid gameId, Teams team, Coaches coach);
-
-    Task<Result<TeamResponse>> AddToStatAsync(int amount, TeamStats stat, Guid teamId);
-
-    Task<Result<TeamResponse>> AddCoachAsync(Coaches coach, Guid teamId);
 }

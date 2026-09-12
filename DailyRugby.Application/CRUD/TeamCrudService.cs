@@ -46,6 +46,16 @@ public class TeamCrudService(AppDbContext db, ITeamValidatorFactory teamValidato
         return Result<TeamResponse>.Success(team.ToTeamResponse());
     }
 
+    public Task<Result<TeamResponse>> AddCoachAsync(Coaches coach, Guid teamId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Result<TeamResponse>> AddToStatAsync(int amount, TeamStats stat, Guid teamId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Result> DeleteAsync(Guid id)
     {
         int affectedLines = await db.Teams
