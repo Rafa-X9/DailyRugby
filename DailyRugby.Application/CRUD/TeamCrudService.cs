@@ -46,9 +46,34 @@ public class TeamCrudService(AppDbContext db, ITeamValidatorFactory teamValidato
         return Result<TeamResponse>.Success(team.ToTeamResponse());
     }
 
-    public Task<Result<TeamResponse>> AddCoachAsync(Coaches coach, Guid teamId)
+    public async Task<Result<TeamResponse>> AddCoachAsync(Coaches coach, Guid teamId)
     {
-        throw new NotImplementedException();
+        var team = await db.Teams.FirstOrDefaultAsync(temp => temp.Id == teamId);
+
+        if (team is null)
+        {
+            return Result<TeamResponse>.Failure("Team id not found", Errors.NotFound);
+        }
+
+        switch (coach)
+        {
+            case Coaches.General:
+                team.HasGeneralCoach = true;
+                break;
+            case Coaches.Insight:
+                team.HasInsigthCoach = true;
+                break;
+            case Coaches.Physique:
+                team.HasPhysiqueCoach = true;
+                break;
+            case Coaches.Technique:
+                team.HasTechniqueCoach = true;
+                break;
+        }
+
+        await db.SaveChangesAsync();
+
+        return Result<TeamResponse>.Success(team.ToTeamResponse());
     }
 
     public async Task<Result<TeamResponse>> AddToStatAsync(int amount, TeamStats stat, Guid teamId)
