@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DailyRugby.Application.Calculators;
 
-public class SeasonOneOddsCalculator(IServiceProvider serviceProvider)
+public class GameOddsCalculator(IServiceProvider serviceProvider)
     : IGameOddsCalculator
 {
     private const int _repetitions = 5_000;

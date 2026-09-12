@@ -57,7 +57,7 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
         serviceProviderMock.Setup(temp => temp.GetService(typeof(IGameSimulatorFactory)))
             .Returns(new GameSimulatorFactory());
 
-        _oddsCalculator = new SeasonOneOddsCalculator(serviceProviderMock.Object);
+        _oddsCalculator = new GameOddsCalculator(serviceProviderMock.Object);
 
         await _db.Database.EnsureCreatedAsync();
     }

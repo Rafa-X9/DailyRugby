@@ -48,7 +48,7 @@ class Program
         builder.Services.AddTransient<IGameTimer, SpedUpTimer>();
         builder.Services.AddSingleton<MessageSender>();
         builder.Services.AddSingleton<IGameSimulatorFactory, GameSimulatorFactory>();
-        builder.Services.AddSingleton<IGameOddsCalculator, SeasonOneOddsCalculator>();
+        builder.Services.AddSingleton<IGameOddsCalculator, GameOddsCalculator>();
 
         var app = builder.Build();
 
