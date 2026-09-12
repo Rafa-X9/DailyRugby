@@ -46,6 +46,9 @@ public class GameOddsCalculator(IServiceProvider serviceProvider)
         _game = game;
         _result.GameId = gameId;
 
+        _game.Teams[0].Tactic = Tactics.None;
+        _game.Teams[1].Tactic = Tactics.None;
+
         _factory = serviceProvider.GetRequiredService<IGameSimulatorFactory>();
 
         await Task.Run(Simulate);
