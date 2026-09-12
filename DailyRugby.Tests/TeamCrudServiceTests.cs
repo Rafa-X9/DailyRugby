@@ -276,6 +276,27 @@ public class TeamCrudServiceTests : IAsyncLifetime
 
     #endregion
 
+    #region Add coach
+
+    [Fact]
+    public async Task AddCoach_ValidIds_AddsCoach()
+    {
+        var champ = await SetUpChampionship();
+        var team = await SetUpTeam(champ.Id);
+
+        //initial coach = Coaches.Technique
+
+        Assert.DoesNotContain(Coaches.General, team.Coaches);
+        var result = await _teamService.AddCoachAsync(Coaches.General, team.Id);
+
+        var updatedResult = await _teamService.GetByIdAsync(team.Id);
+        Assert.True(updatedResult.IsSuccessful);
+
+        Assert.Contains(Coaches.General, updatedResult.Item.Coaches);
+    }
+
+    #endregion
+
     #region Helpers
 
     private async Task<ChampionshipResponse> SetUpChampionship(Seasons season = Seasons.Season1)
