@@ -219,4 +219,36 @@ public class ChampionshipSlashCommands
 
         await FollowupAsync($"{result.Item.Name} successfully unset as the main championship");
     }
+
+    [SlashCommand("see-standings", "Shows the standings of a championship")]
+    public async Task SeeStandings(
+        [Summary("Championship", "The championship to get the standings from")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string champId)
+    {
+        await DeferAsync();
+
+        bool idParsed = Guid.TryParse(champId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid");
+            return;
+        }
+
+        var standings = await champService.GetStandingsAsync(id);
+
+        StringBuilder sb = new();
+
+        sb.AppendLine("Here are the standings:");
+        foreach (var pair in standings)
+        {
+            int wins = pair.Value.WinCount,
+                ties = pair.Value.TieCount,
+                loss = pair.Value.LossCount;
+
+            sb.AppendLine($"{pair.Key}: {pair.Value.Country} ({wins}-{ties}-{loss})");
+        }
+
+        await FollowupAsync(sb.ToString());
+    }
 }
