@@ -27,6 +27,11 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
         using (var scope = serviceProvider.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            await db.Schedules
+                .Where(temp => temp.GameId == gameId)
+                .ExecuteDeleteAsync();
+
             game = await db.Games
                 //.AsNoTracking()
                 .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
