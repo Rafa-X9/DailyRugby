@@ -8,6 +8,16 @@ namespace DailyRugby.Application.CRUD;
 
 public class GameCrudService(AppDbContext db) : IGameCrudService
 {
+    public Task<Result<TeamResponse>> AddCoachAsync(Coaches coach, Guid teamId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Result<TeamResponse>> AddToStatAsync(int amount, TeamStats stat, Guid teamId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Result<IList<GameResponse>>> GenerateRounds(Guid champId, bool overwriteIfExists = false)
     {
         var champ = await db.Championships
@@ -222,6 +232,11 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
     }
 
     public Task<Result<IList<GameResponse>>> GetRoundAsync(Guid champId, int round)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Result<TeamGameResponse>> SetCoachAsync(Guid gameId, Teams team, Coaches coach)
     {
         throw new NotImplementedException();
     }
