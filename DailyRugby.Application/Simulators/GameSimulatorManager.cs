@@ -169,12 +169,45 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             }
         }
 
+        Team winner, loser;
+
+        if (game.TeamAScore >= game.TeamBScore)
+        {
+            winner = game.Teams[0].Team;
+            loser = game.Teams[1].Team;
+        }
+        else
+        {
+            winner = game.Teams[1].Team;
+            loser = game.Teams[0].Team;
+        }
+
         using var scope = serviceProvider.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Games
             .Where(temp => temp.Id == game.Id)
             .ExecuteUpdateAsync(setters => setters
                 .SetProperty(temp => temp.CurrentState, GameState.Finished));
+
+        if (game.TeamAScore != game.TeamBScore)
+        {
+            await db.Teams
+                .Where(temp => temp.Id == winner.Id)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(temp => temp.WinCount, temp => temp.WinCount + 1));
+
+            await db.Teams
+                .Where(temp => temp.Id == loser.Id)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(temp => temp.WinCount, temp => temp.LossCount + 1));
+        }
+        else
+        {
+            await db.Teams
+                .Where(temp => temp.Id == winner.Id || temp.Id == loser.Id)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(temp => temp.TieCount, temp => temp.TieCount + 1));
+        }
 
         GameEvent finished = new(game.CurrentMinute,
             GameEventType.GameFinished,
