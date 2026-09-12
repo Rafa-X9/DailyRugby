@@ -3,6 +3,7 @@ using DailyRugby.Application.Interfaces;
 using DailyRugby.Domain;
 using DailyRugby.Web.AutoCompletes;
 using Discord.Interactions;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Text;
 
 namespace DailyRugby.Web.SlashCommands;
@@ -151,5 +152,47 @@ public class TeamSlashCommands(ITeamCrudService teamService)
         sb.AppendLine($"- {result.Item.SufferedTriesCount} tries suffered");
 
         await FollowupAsync(sb.ToString());
+    }
+
+    [SlashCommand("add-to-stat", "Add to a team's stat")]
+    public async Task AddToStat(
+        [Summary("team", "The team to add a stat to")]
+        [Autocomplete(typeof(TeamAutoComplete))]
+        string teamId,
+
+        [Summary("stat", "The stat to add to")]
+        [Autocomplete(typeof(TeamStatAutocomplete))]
+        string teamStat,
+
+        [Summary("amount", "The amount to add, can be positive or negative")]
+        int amount)
+    {
+        await DeferAsync();
+
+        bool idParsed = Guid.TryParse(teamId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid");
+            return;
+        }
+
+        bool enumParsed = Enum.TryParse(teamStat, true, out TeamStats stat);
+        if (!enumParsed)
+        {
+            await FollowupAsync("Invalid stat");
+            return;
+        }
+
+        var result = await teamService.AddToStatAsync(amount, stat, id);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}");
+            return;
+        }
+
+        await FollowupAsync($"Added {amount} points to {result.Item.Country}'s {teamStat}. " +
+            $"Its stats are now: I = {result.Item.Insight}, P = {result.Item.Physique}, " +
+            $"T = {result.Item.Technique}");
     }
 }
