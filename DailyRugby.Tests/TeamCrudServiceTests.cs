@@ -251,6 +251,31 @@ public class TeamCrudServiceTests : IAsyncLifetime
 
     #endregion
 
+    #region Add to stat
+
+    [Fact]
+    public async Task AddToStat_CorrectIds_Adds()
+    {
+        var champ = await SetUpChampionship();
+        var team = await SetUpTeam(champ.Id);
+
+        int insightBefore = team.Insight, physiqueBefore = team.Physique;
+
+        var insightResult = await _teamService.AddToStatAsync(5, TeamStats.Insight, team.Id);
+        var physiqueResult = await _teamService.AddToStatAsync(-3, TeamStats.Physique, team.Id);
+
+        Assert.True(insightResult.IsSuccessful);
+        Assert.True(physiqueResult.IsSuccessful);
+
+        int insightAfter = insightResult.Item.Insight,
+            physiqueAfter = physiqueResult.Item.Physique;
+
+        Assert.True(insightAfter == (insightBefore + 5));
+        Assert.True(physiqueAfter == (physiqueBefore - 3));
+    }
+
+    #endregion
+
     #region Helpers
 
     private async Task<ChampionshipResponse> SetUpChampionship(Seasons season = Seasons.Season1)
