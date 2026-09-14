@@ -10,6 +10,7 @@ public class TeamValidatorFactory : ITeamValidatorFactory
         return season switch
         {
             Seasons.Season1 => new SeasonOneTeamValidator(),
+            Seasons.Season3 => new SeasonThreeTeamValidator(),
             _ => throw new NotImplementedException($"There are no validators for " +
                 $"{season}'s teams yet")
         };

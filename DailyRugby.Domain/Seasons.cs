@@ -2,5 +2,6 @@
 
 public enum Seasons
 {
-    Season1
+    Season1,
+    Season3
 }
