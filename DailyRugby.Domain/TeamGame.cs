@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.CompilerServices;
 
 namespace DailyRugby.Domain;
 
@@ -16,4 +15,7 @@ public class TeamGame
     public bool IsUsingCake { get; set; }
     public bool HasMoraleBoost { get; set; }
     public bool GetsMoraleBoostIfWins { get; set; }
+
+    [NotMapped]
+    public List<Player> Players { get; set; } = [];
 }
