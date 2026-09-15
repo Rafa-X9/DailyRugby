@@ -78,6 +78,12 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
                 () => HandleTryAttempt(_teamAStats, game, true))
             .Add(_teamBStats.GetTryAttemptChance(_teamAStats),
                 () => HandleTryAttempt(_teamBStats, game, false))
+
+            .Add(_teamAStats.GetDropGoalAttemptChance(_teamBStats),
+                () => HandleDropGoalAttempt(_teamAStats, game, true))
+            .Add(_teamBStats.GetDropGoalAttemptChance(_teamAStats),
+                () => HandleDropGoalAttempt(_teamBStats, game, false))
+
             .AddFallback(() => new GameEvent(game.CurrentMinute,
                 GameEventType.Nothing,
                 game.TeamAScore,
@@ -279,6 +285,32 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 
         return new GameEvent(game.CurrentMinute,
             isTeamA ? GameEventType.TeamAConvertedTry : GameEventType.TeamBConvertedTry,
+            game.TeamAScore,
+            game.TeamBScore,
+            game);
+    }
+
+    private GameEvent HandleDropGoalAttempt(SeasonThreeStats attempter,
+        Game game,
+        bool isTeamA)
+    {
+        double successChance = attempter.GetDropGoalSuccessChance();
+        double roll = _random.NextDouble();
+        
+        if (roll > successChance)
+        {
+            return new(game.CurrentMinute,
+                isTeamA ? GameEventType.TeamAFailedDropGoal : GameEventType.TeamBFailedDropGoal,
+                game.TeamAScore,
+                game.TeamBScore,
+                game);
+        }
+
+        if (isTeamA) game.TeamAScore += 3;
+        else game.TeamBScore += 3;
+
+        return new(game.CurrentMinute,
+            isTeamA ? GameEventType.TeamAScoredDropGoal : GameEventType.TeamBScoredDropGoal,
             game.TeamAScore,
             game.TeamBScore,
             game);
