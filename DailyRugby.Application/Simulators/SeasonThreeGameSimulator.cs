@@ -1,6 +1,7 @@
 ﻿using DailyRugby.Application.Interfaces;
 using DailyRugby.Application.Utilitaries;
 using DailyRugby.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace DailyRugby.Application.Simulators;
 
@@ -10,9 +11,54 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
     private SeasonThreeStats? _teamAStats;
     private SeasonThreeStats? _teamBStats;
 
-    public Task SaveGameAsync(GameEvent gameEvent, AppDbContext db)
+    public async Task SaveGameAsync(GameEvent gameEvent, AppDbContext db)
     {
-        throw new NotImplementedException();
+        await db.Games
+            .Where(temp => temp.Id == gameEvent.Game.Id)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(temp => temp.CurrentMinute, gameEvent.Game.CurrentMinute)
+                .SetProperty(temp => temp.TeamAScore, gameEvent.Game.TeamAScore)
+                .SetProperty(temp => temp.TeamBScore, gameEvent.Game.TeamBScore)
+            );
+
+        if (gameEvent.EventType == GameEventType.Nothing) return;
+
+        if (gameEvent.EventType.IsTeamAScoredTry)
+            gameEvent.Game.Teams[0].Team.ScoredTriesCount++;
+
+        if (gameEvent.EventType.IsTeamBScoredTry)
+            gameEvent.Game.Teams[1].Team.ScoredTriesCount++;
+
+        await db.Teams
+            .Where(temp => temp.Id == gameEvent.Game.Teams[0].Team.Id)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(temp => temp.PointsScored,
+                    temp => temp.PointsScored + gameEvent.EventType.GetTeamAScoreChange())
+                .SetPropertyIf(gameEvent.EventType.IsTeamBScoring,
+                    temp => temp.PointsTaken,
+                    temp => temp.PointsTaken + gameEvent.EventType.GetTeamBScoreChange())
+                .SetPropertyIf(gameEvent.EventType.IsTeamAScoredTry,
+                    temp => temp.ScoredTriesCount,
+                    temp => temp.ScoredTriesCount + 1)
+                .SetPropertyIf(gameEvent.EventType.IsTeamBScoredTry,
+                    temp => temp.SufferedTriesCount,
+                    temp => temp.SufferedTriesCount + 1));
+
+
+        await db.Teams
+            .Where(temp => temp.Id == gameEvent.Game.Teams[1].Team.Id)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(temp => temp.PointsScored,
+                    temp => temp.PointsScored + gameEvent.EventType.GetTeamBScoreChange())
+                .SetPropertyIf(gameEvent.EventType.IsTeamAScoring,
+                    temp => temp.PointsTaken,
+                    temp => temp.PointsTaken + gameEvent.EventType.GetTeamAScoreChange())
+                .SetPropertyIf(gameEvent.EventType.IsTeamBScoredTry,
+                    temp => temp.ScoredTriesCount,
+                    temp => temp.ScoredTriesCount + 1)
+                .SetPropertyIf(gameEvent.EventType.IsTeamAScoredTry,
+                    temp => temp.SufferedTriesCount,
+                    temp => temp.SufferedTriesCount + 1));
     }
 
     public GameEvent SimulateNextMinute(Game game)
@@ -31,7 +77,7 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             .Add(_teamAStats.GetTryAttemptChance(_teamBStats),
                 () => HandleTryAttempt(_teamAStats, game, true))
             .Add(_teamBStats.GetTryAttemptChance(_teamAStats),
-                () => HandleTryAttempt(_teamBStats, game, false))            
+                () => HandleTryAttempt(_teamBStats, game, false))
             .AddFallback(() => new GameEvent(game.CurrentMinute,
                 GameEventType.Nothing,
                 game.TeamAScore,
