@@ -2,12 +2,14 @@
 using DailyRugby.Application.Utilitaries;
 using DailyRugby.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DailyRugby.Application.Simulators;
 
 public class SeasonThreeGameSimulator : ISpecificGameSimulator
 {
     private readonly Random _random = new();
+    private readonly List<PendingInjury> _pendingInjuries = [];
     private SeasonThreeStats? _teamAStats;
     private SeasonThreeStats? _teamBStats;
 
@@ -357,47 +359,8 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 
     private GameEvent HandlePlayerAbduction(TeamGame victimTeam, Game game, bool isTeamA)
     {
-        var playersOnField = victimTeam
-            .Players
-            .Where(player => player.IsOnField)
-            .ToList();
-
-        int index = _random.Next(0, playersOnField.Count);
-        var abductedPlayer = playersOnField[index];
-
-        var playerToRemove = victimTeam
-            .Players
-            .First(player => player.Id == abductedPlayer.Id);
-        victimTeam.Players.RemoveAll(player => player.Id == abductedPlayer.Id);
-        victimTeam.Players.Add(playerToRemove with { IsOnField = false, CanJoinField = false });
-
-        var replacementPlayers = victimTeam
-            .Players
-            .Where(player => !player.IsOnField && player.CanJoinField)
-            .ToList();
-
-        if (replacementPlayers.Count == 0)
-        {
-            return new(game.CurrentMinute,
-                isTeamA ? GameEventType.TeamAPlayerAbducted : GameEventType.TeamBPlayerAbducted,
-                game.TeamAScore,
-                game.TeamBScore,
-                game)
-            {
-                PlayerInvolved = abductedPlayer,
-                ReplacementPlayer = null
-            };
-        }
-
-        index = _random.Next(0, replacementPlayers.Count);
-
-        var replacement = victimTeam
-            .Players
-            .First(player => player.Id == replacementPlayers[index].Id);
-
-        victimTeam.Players.RemoveAll(player => player.Id == replacement.Id);
-
-        victimTeam.Players.Add(replacement with { IsOnField = true });
+        Player playerToAbduct = ChooseRandomPlayerOnField(victimTeam);
+        Player? replacementPlayer = ReplacePlayer(victimTeam, playerToAbduct.Id);
 
         return new(game.CurrentMinute,
             isTeamA ? GameEventType.TeamAPlayerAbducted : GameEventType.TeamBPlayerAbducted,
@@ -405,9 +368,50 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             game.TeamBScore,
             game)
         {
-            PlayerInvolved = abductedPlayer,
-            ReplacementPlayer = replacement
+            PlayerInvolved = playerToAbduct,
+            ReplacementPlayer = replacementPlayer
         };
+    }
+
+    private Player ChooseRandomPlayerOnField(TeamGame team)
+    {
+        var playersOnField = team
+            .Players
+            .Where(player => player.IsOnField)
+            .ToList();
+
+        return playersOnField[_random.Next(0, playersOnField.Count)];
+    }
+
+    private Player? ReplacePlayer(TeamGame team, Guid playerId)
+    {
+        var playerToRemove = team
+            .Players
+            .First(player => player.Id == playerId);
+        team.Players.RemoveAll(player => player.Id == playerToRemove.Id);
+        team.Players.Add(playerToRemove with { IsOnField = false, CanJoinField = false });
+
+        var replacementPlayers = team
+            .Players
+            .Where(player => !player.IsOnField && player.CanJoinField)
+            .ToList();
+
+        if (replacementPlayers.Count == 0)
+        {
+            return null;
+        }
+
+        int index = _random.Next(0, replacementPlayers.Count);
+
+        var replacement = team
+            .Players
+            .First(player => player.Id == replacementPlayers[index].Id);
+
+        team.Players.RemoveAll(player => player.Id == replacement.Id);
+
+        team.Players.Add(replacement with { IsOnField = true });
+
+        return replacement;
     }
 
     public sealed record SeasonThreeStats
@@ -549,4 +553,9 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             return number;
         }
     }
+
+    private sealed record PendingInjury(Guid PlayerId,
+        bool IsTeamA,
+        bool IsSerious,
+        int ReplaceOrReturnMinute);
 }
