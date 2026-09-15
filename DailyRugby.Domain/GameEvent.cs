@@ -13,4 +13,5 @@ public class GameEvent(int minute,
     public Game Game { get; set; } = game;
     public Player? PlayerInvolved { get; set; } = null;
     public Player? ReplacementPlayer { get; set; } = null;
+    public int? InjuryAnnouncementMinute { get; set; } = null;
 };

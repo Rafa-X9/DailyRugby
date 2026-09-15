@@ -30,5 +30,11 @@ public enum GameEventType
 
     TeamAPlayerAbducted,
 
-    TeamBPlayerAbducted
+    TeamBPlayerAbducted,
+
+    TeamAPlayerNonSeriousInjury,
+    TeamAPlayerSeriousInjury,
+
+    TeamBPlayerNonSeriousInjury,
+    TeamBPlayerSeriousInjury
 }
