@@ -13,7 +13,8 @@ public class SeasonAutoComplete : AutocompleteHandler
         IServiceProvider services)
     {
         List<AutocompleteResult> seasons =
-            [new(Seasons.Season1.ToString(), Seasons.Season1.ToString())];
+            [new(Seasons.Season1.ToString(), Seasons.Season1.ToString()),
+            new(Seasons.Season3.ToString(), Seasons.Season3.ToString())];
         return AutocompletionResult.FromSuccess(seasons);
     }
 }
