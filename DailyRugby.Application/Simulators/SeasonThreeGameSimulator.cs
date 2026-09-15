@@ -1,10 +1,13 @@
 ﻿using DailyRugby.Application.Interfaces;
+using DailyRugby.Application.Utilitaries;
 using DailyRugby.Domain;
 
 namespace DailyRugby.Application.Simulators;
 
 public class SeasonThreeGameSimulator : ISpecificGameSimulator
 {
+
+
     public Task SaveGameAsync(GameEvent gameEvent, AppDbContext db)
     {
         throw new NotImplementedException();
@@ -168,6 +171,52 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
                 playerPhysique,
                 playerTechnique,
                 IsOnField: false));
+        }
+    }
+
+    public sealed record SeasonThreeStats
+    {
+        public int Insight { get; init; }
+        public int Physique { get; init; }
+        public int Technique { get; init; }
+
+        public SeasonThreeStats(TeamGame team, TeamGame opponent)
+        {
+            Insight = team.Team.Insight;
+            Physique = team.Team.Physique;
+            Technique = team.Team.Technique;
+
+            if (team.Tactic == Tactics.None) return;
+
+            if (team.Tactic == Tactics.General)
+            {
+                Insight++;
+                Physique++;
+                Technique++;
+                return;
+            }
+
+            if (team.Tactic == opponent.Tactic) return;
+
+            if (opponent.Tactic is Tactics.General or Tactics.None
+                || team.Tactic.IsStrongerThan(opponent.Tactic))
+            {
+                if (team.Tactic == Tactics.Physique)
+                {
+                    Physique += 6;
+                    if (team.Coach == Coaches.Physique) Physique += 4;
+                }
+                else if (team.Tactic == Tactics.Insight)
+                {
+                    Insight += 6;
+                    if (team.Coach == Coaches.Insight) Insight += 4;
+                }
+                else if (team.Tactic == Tactics.Technique)
+                {
+                    Technique += 6;
+                    if (team.Coach == Coaches.Technique) Technique += 4;
+                }
+            }
         }
     }
 }
