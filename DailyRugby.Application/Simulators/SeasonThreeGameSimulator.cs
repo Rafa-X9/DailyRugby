@@ -218,5 +218,99 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
                 }
             }
         }
+
+        //the Get...Chance methods return the percentages in the range 0.0-1.0
+        
+        public double GetTryAttemptChance(SeasonThreeStats opponent)
+        {
+            double chance = (((20.0 * Physique) - (11.0 * opponent.Physique)
+                + (6.0 * Technique) - (3.0 * opponent.Technique)) / 40.0) / 100.0;
+
+            return NumberOrBoundary(chance, 0.0, 1.0);
+        }
+
+        public double GetTryScoreChance()
+        {
+            double chance = (((7.0 * Insight)
+                + (2.0 * Physique)
+                + (3.0 * Technique)
+                - 4.0)
+                / 12.0) / 100.0;
+
+            return NumberOrBoundary(chance, 0.0, 1.0);
+        }
+
+        public double GetConversionSuccessChance()
+        {
+            double chance = ((Insight + (11.0 * Technique) - 4) / 12.0) / 100.0;
+            return NumberOrBoundary(chance, 0.0, 1.0);
+        }
+
+        public double GetDropGoalAttemptChance(SeasonThreeStats opponent)
+        {
+            double chance = ((121.0
+                + (5.0 * Insight)
+                + (4.0 * Technique)
+                - (6.0 * opponent.Technique))
+                / 34.0) / 100.0;
+
+            return NumberOrBoundary(chance, 0.0, 1.0);
+        }
+
+        public double GetDropGoalSuccessChance() => GetConversionSuccessChance();
+
+        public double GetPenaltyKickAttemptChance(SeasonThreeStats opponent)
+        {
+            double chance = ((643.0
+                + (5.0 * Insight)
+                - (12.0 * opponent.Insight)
+                + (3.0 * Physique)
+                - (8.0 * opponent.Technique)) / 20.0) / 100.0;
+
+            return NumberOrBoundary(chance, 0.0, 1.0);
+        }
+
+        public double GetPenaltyKickSuccessChance() => GetConversionSuccessChance();
+
+        public double GetInjurySufferChance(SeasonThreeStats opponent)
+        {
+            double chance = ((1000.0
+                 - (2.0 * Technique)
+                 - (10.0 * Physique)
+                 + (4.0 * opponent.Physique)
+                 - (4.0 * Insight)) / 160.0) / 100.0;
+
+            return NumberOrBoundary(chance, 0.0, 1.0);
+        }
+
+        public double GetInjuryBeingSeriousChance()
+        {
+            double chance = ((29800.0 - (300.0 * Insight)) / 396.0) / 100.0;
+
+            return NumberOrBoundary(chance, 0.0, 1.0);
+        }
+
+        public double GetOffenceCommitChance(SeasonThreeStats opponent)
+        {
+            double chance = ((800.0
+                - (7.0 * Insight)
+                - (3.0 * Physique)
+                + opponent.Insight) / 500.0) / 100.0;
+
+            return NumberOrBoundary(chance, 0.0, 1.0);
+        }
+
+        public static double GetCardBeingRedChance() => 0.2;
+
+        public static double GetAlienAbductionChance() => 0.05 / 100.0;
+
+        private static double NumberOrBoundary(double number,
+            double min,
+            double max)
+        {
+            if (number < min) return min;
+            if (number > max) return max;
+            return number;
+        }
     }
 }
