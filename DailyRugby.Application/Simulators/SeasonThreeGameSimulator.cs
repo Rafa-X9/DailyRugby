@@ -6,7 +6,9 @@ namespace DailyRugby.Application.Simulators;
 
 public class SeasonThreeGameSimulator : ISpecificGameSimulator
 {
-
+    private readonly Random _random = new();
+    private SeasonThreeStats? _teamAStats;
+    private SeasonThreeStats? _teamBStats;
 
     public Task SaveGameAsync(GameEvent gameEvent, AppDbContext db)
     {
@@ -15,7 +17,28 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 
     public GameEvent SimulateNextMinute(Game game)
     {
-        throw new NotImplementedException();
+        game.CurrentMinute++;
+
+        if (_teamAStats is null || _teamBStats is null)
+        {
+            _teamAStats = new(game.Teams[0], game.Teams[1]);
+            _teamBStats = new(game.Teams[1], game.Teams[0]);
+        }
+
+        RandomEventList<GameEvent> eventList = new(new Random());
+
+        eventList
+            .Add(_teamAStats.GetTryAttemptChance(_teamBStats),
+                () => HandleTryAttempt(_teamAStats, game, true))
+            .Add(_teamBStats.GetTryAttemptChance(_teamAStats),
+                () => HandleTryAttempt(_teamBStats, game, false))            
+            .AddFallback(() => new GameEvent(game.CurrentMinute,
+                GameEventType.Nothing,
+                game.TeamAScore,
+                game.TeamBScore,
+                game));
+
+        return eventList.Draw();
     }
 
     public static void CreatePlayers(TeamGame team)
@@ -174,6 +197,47 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         }
     }
 
+    private GameEvent HandleTryAttempt(SeasonThreeStats attempter,
+        Game game,
+        bool isTeamA)
+    {
+        double trySuccessChance = attempter.GetTryScoreChance();
+        double roll = _random.NextDouble();
+
+        if (roll > trySuccessChance)
+        {
+            return new GameEvent(game.CurrentMinute,
+                isTeamA ? GameEventType.TeamAFailedTry : GameEventType.TeamBFailedTry,
+                game.TeamAScore,
+                game.TeamBScore,
+                game);
+        }
+
+        double conversionChance = attempter.GetConversionSuccessChance();
+        roll = _random.NextDouble();
+
+        if (roll > conversionChance)
+        {
+            if (isTeamA) game.TeamAScore += 5;
+            else game.TeamBScore += 5;
+
+            return new GameEvent(game.CurrentMinute,
+                isTeamA ? GameEventType.TeamAUnconvertedTry : GameEventType.TeamBUnconvertedTry,
+                game.TeamAScore,
+                game.TeamBScore,
+                game);
+        }
+
+        if (isTeamA) game.TeamAScore += 7;
+        else game.TeamBScore += 7;
+
+        return new GameEvent(game.CurrentMinute,
+            isTeamA ? GameEventType.TeamAConvertedTry : GameEventType.TeamBConvertedTry,
+            game.TeamAScore,
+            game.TeamBScore,
+            game);
+    }
+
     public sealed record SeasonThreeStats
     {
         public int Insight { get; init; }
@@ -220,7 +284,7 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         }
 
         //the Get...Chance methods return the percentages in the range 0.0-1.0
-        
+
         public double GetTryAttemptChance(SeasonThreeStats opponent)
         {
             double chance = (((20.0 * Physique) - (11.0 * opponent.Physique)
