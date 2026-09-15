@@ -69,6 +69,9 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         {
             _teamAStats = new(game.Teams[0], game.Teams[1]);
             _teamBStats = new(game.Teams[1], game.Teams[0]);
+
+            CreatePlayers(game.Teams[0]);
+            CreatePlayers(game.Teams[1]);
         }
 
         RandomEventList<GameEvent> eventList = new(new Random());
@@ -88,6 +91,11 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
                 () => HandlePenaltyKickAttempt(_teamAStats, game, true))
             .Add(_teamBStats.GetPenaltyKickAttemptChance(_teamAStats),
                 () => HandlePenaltyKickAttempt(_teamBStats, game, false))
+
+            .Add(SeasonThreeStats.GetAlienAbductionChance(),
+                () => HandlePlayerAbduction(game.Teams[0], game, true))
+            .Add(SeasonThreeStats.GetAlienAbductionChance(),
+                () => HandlePlayerAbduction(game.Teams[1], game, false))
 
             .AddFallback(() => new GameEvent(game.CurrentMinute,
                 GameEventType.Nothing,
@@ -301,7 +309,7 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
     {
         double successChance = attempter.GetDropGoalSuccessChance();
         double roll = _random.NextDouble();
-        
+
         if (roll > successChance)
         {
             return new(game.CurrentMinute,
@@ -345,6 +353,61 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             game.TeamAScore,
             game.TeamBScore,
             game);
+    }
+
+    private GameEvent HandlePlayerAbduction(TeamGame victimTeam, Game game, bool isTeamA)
+    {
+        var playersOnField = victimTeam
+            .Players
+            .Where(player => player.IsOnField)
+            .ToList();
+
+        int index = _random.Next(0, playersOnField.Count);
+        var abductedPlayer = playersOnField[index];
+
+        var playerToRemove = victimTeam
+            .Players
+            .First(player => player.Id == abductedPlayer.Id);
+        victimTeam.Players.RemoveAll(player => player.Id == abductedPlayer.Id);
+        victimTeam.Players.Add(playerToRemove with { IsOnField = false, CanJoinField = false });
+
+        var replacementPlayers = victimTeam
+            .Players
+            .Where(player => !player.IsOnField && player.CanJoinField)
+            .ToList();
+
+        if (replacementPlayers.Count == 0)
+        {
+            return new(game.CurrentMinute,
+                isTeamA ? GameEventType.TeamAPlayerAbducted : GameEventType.TeamBPlayerAbducted,
+                game.TeamAScore,
+                game.TeamBScore,
+                game)
+            {
+                PlayerInvolved = abductedPlayer,
+                ReplacementPlayer = null
+            };
+        }
+
+        index = _random.Next(0, replacementPlayers.Count);
+
+        var replacement = victimTeam
+            .Players
+            .First(player => player.Id == replacementPlayers[index].Id);
+
+        victimTeam.Players.RemoveAll(player => player.Id == replacement.Id);
+
+        victimTeam.Players.Add(replacement with { IsOnField = true });
+
+        return new(game.CurrentMinute,
+            isTeamA ? GameEventType.TeamAPlayerAbducted : GameEventType.TeamBPlayerAbducted,
+            game.TeamAScore,
+            game.TeamBScore,
+            game)
+        {
+            PlayerInvolved = abductedPlayer,
+            ReplacementPlayer = replacement
+        };
     }
 
     public sealed record SeasonThreeStats

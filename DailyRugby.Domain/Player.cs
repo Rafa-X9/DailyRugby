@@ -6,4 +6,5 @@ public record Player(Guid Id,
     int Physique,
     int Technique,
     bool IsOnField,
-    bool HasYellowCard = false);
+    bool HasYellowCard = false,
+    bool CanJoinField = true);

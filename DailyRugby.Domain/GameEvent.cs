@@ -11,4 +11,6 @@ public class GameEvent(int minute,
     public int TeamAScore { get; set; } = teamAScore;
     public int TeamBScore { get; set; } = teamBScore;
     public Game Game { get; set; } = game;
+    public Player? PlayerInvolved { get; set; } = null;
+    public Player? ReplacementPlayer { get; set; } = null;
 };

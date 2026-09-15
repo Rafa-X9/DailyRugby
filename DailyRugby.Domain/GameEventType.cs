@@ -26,5 +26,9 @@ public enum GameEventType
     TeamAMissedPenalty,
 
     TeamBScoredPenalty,
-    TeamBMissedPenalty
+    TeamBMissedPenalty,
+
+    TeamAPlayerAbducted,
+
+    TeamBPlayerAbducted
 }
