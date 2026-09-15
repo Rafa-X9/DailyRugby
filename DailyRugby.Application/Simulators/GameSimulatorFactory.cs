@@ -10,6 +10,7 @@ public class GameSimulatorFactory : IGameSimulatorFactory
         return season switch
         {
             Seasons.Season1 => new SeasonOneGameSimulator(),
+            Seasons.Season3 => new SeasonThreeGameSimulator(),
             _ => throw new NotImplementedException($"{season}'s game simulator not yet implemented")
         };
     }
