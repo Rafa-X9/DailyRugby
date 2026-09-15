@@ -71,6 +71,18 @@ public class ChampionshipCrudServiceTests : IAsyncLifetime
         Assert.Contains(all, temp => temp.Id == result.Item.Id);
     }
 
+    [Fact]
+    public async Task Add_SeasonThree_CreatesChampionship()
+    {
+        var request = new ChampionshipAddRequest("DailyRugby", Seasons.Season3);
+        var result = await _champService.AddAsync(request);
+        var all = await _champService.GetAllAsync();
+
+        Assert.True(result.IsSuccessful);
+        Assert.Contains(all, temp =>
+            temp.Id == result.Item.Id && temp.Season == Seasons.Season3);
+    }
+
     #endregion
 
     #region GetAll

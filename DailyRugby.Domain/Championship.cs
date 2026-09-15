@@ -6,7 +6,7 @@ public sealed class Championship
     public string Name { get; set; } = string.Empty;
     public bool IsMainChampionship { get; set; }
     public ChampionshipState State { get; set; }
-    public Seasons Season = Seasons.Season1;
+    public Seasons Season { get; set; }
     public IList<Team> Teams { get; set; } = [];
     public IList<Game> Games { get; set; } = [];
 }
