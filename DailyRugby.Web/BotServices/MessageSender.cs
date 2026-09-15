@@ -162,6 +162,21 @@ public class MessageSender
                     + " " + CurrentScore(gameEvent));
                 break;
 
+            case GameEventType.TeamAPlayerAbducted:
+                await channel.SendMessageAsync($"{gameEvent.Minute}' - " +
+                    $"A player from {gameEvent.Game.Teams[0].Team.Country} " +
+                    $"is abducted by aliens! This is player " +
+                    $"#{gameEvent.PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. " +
+                    $"He is replaced by #{gameEvent.ReplacementPlayer?.Number.ToString() ?? "UNKOWN"}");
+                break;
+
+            case GameEventType.TeamBPlayerAbducted:
+                await channel.SendMessageAsync($"{gameEvent.Minute}' - " +
+                    $"A player from {gameEvent.Game.Teams[1].Team.Country} " +
+                    $"is abducted by aliens! This is player " +
+                    $"#{gameEvent.PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. " +
+                    $"He is replaced by #{gameEvent.ReplacementPlayer?.Number.ToString() ?? "UNKOWN"}");
+                break;
 
             default:
                 await channel.SendMessageAsync($"{gameEvent.Minute}' - Something happened: " +
