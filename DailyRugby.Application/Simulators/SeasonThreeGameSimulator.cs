@@ -84,6 +84,11 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             .Add(_teamBStats.GetDropGoalAttemptChance(_teamAStats),
                 () => HandleDropGoalAttempt(_teamBStats, game, false))
 
+            .Add(_teamAStats.GetPenaltyKickAttemptChance(_teamBStats),
+                () => HandlePenaltyKickAttempt(_teamAStats, game, true))
+            .Add(_teamBStats.GetPenaltyKickAttemptChance(_teamAStats),
+                () => HandlePenaltyKickAttempt(_teamBStats, game, false))
+
             .AddFallback(() => new GameEvent(game.CurrentMinute,
                 GameEventType.Nothing,
                 game.TeamAScore,
@@ -311,6 +316,32 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 
         return new(game.CurrentMinute,
             isTeamA ? GameEventType.TeamAScoredDropGoal : GameEventType.TeamBScoredDropGoal,
+            game.TeamAScore,
+            game.TeamBScore,
+            game);
+    }
+
+    private GameEvent HandlePenaltyKickAttempt(SeasonThreeStats attempter,
+        Game game,
+        bool isTeamA)
+    {
+        double successChance = attempter.GetPenaltyKickSuccessChance();
+        double roll = _random.NextDouble();
+
+        if (roll > successChance)
+        {
+            return new(game.CurrentMinute,
+                isTeamA ? GameEventType.TeamAMissedPenalty : GameEventType.TeamBMissedPenalty,
+                game.TeamAScore,
+                game.TeamBScore,
+                game);
+        }
+
+        if (isTeamA) game.TeamAScore += 3;
+        else game.TeamBScore += 3;
+
+        return new(game.CurrentMinute,
+            isTeamA ? GameEventType.TeamAScoredPenalty : GameEventType.TeamBScoredPenalty,
             game.TeamAScore,
             game.TeamBScore,
             game);
