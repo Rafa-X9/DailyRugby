@@ -409,7 +409,10 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             isTeamA ? GameEventType.TeamAPlayerRisksInjury : GameEventType.TeamBPlayerRisksInjury,
             game.TeamAScore,
             game.TeamBScore,
-            game);
+            game)
+        {
+            PlayerInvolved = injuredPlayer
+        };
     }
 
     private Player ChooseRandomPlayerOnField(TeamGame team)

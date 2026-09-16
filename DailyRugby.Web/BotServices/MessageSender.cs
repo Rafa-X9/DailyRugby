@@ -178,6 +178,22 @@ public class MessageSender
                     $"He is replaced by #{gameEvent.ReplacementPlayer?.Number.ToString() ?? "UNKOWN"}");
                 break;
 
+            case GameEventType.TeamAPlayerRisksInjury:
+                await channel.SendMessageAsync($"{gameEvent.Minute}' - A player from " +
+                    $"{gameEvent.Game.Teams[0].Team.Country} was slapped on the face by " +
+                    $"Will Smith and needed to leave the game while the doctors assess if " +
+                    $"he can continue. This is #{gameEvent.PlayerInvolved?.Number.ToString()
+                    ?? "UNKOWN"}.");
+                break;
+
+            case GameEventType.TeamBPlayerRisksInjury:
+                await channel.SendMessageAsync($"{gameEvent.Minute}' - A player from " +
+                    $"{gameEvent.Game.Teams[1].Team.Country} was slapped on the face by " +
+                    $"Will Smith and needed to leave the game while the doctors assess if " +
+                    $"he can continue. This is #{gameEvent.PlayerInvolved?.Number.ToString()
+                    ?? "UNKOWN"}.");
+                break;
+
             default:
                 await channel.SendMessageAsync($"{gameEvent.Minute}' - Something happened: " +
                     $"{gameEvent.EventType}");
