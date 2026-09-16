@@ -178,6 +178,8 @@ public class MessageSender
                     $"He is replaced by #{gameEvent.ReplacementPlayer?.Number.ToString() ?? "UNKOWN"}");
                 break;
 
+            //-------
+
             case GameEventType.TeamAPlayerRisksInjury:
                 await channel.SendMessageAsync($"{gameEvent.Minute}' - A player from " +
                     $"{gameEvent.Game.Teams[0].Team.Country} was slapped on the face by " +
@@ -192,6 +194,35 @@ public class MessageSender
                     $"Will Smith and needed to leave the game while the doctors assess if " +
                     $"he can continue. This is #{gameEvent.PlayerInvolved?.Number.ToString()
                     ?? "UNKOWN"}.");
+                break;
+
+            case GameEventType.TeamAPlayerNonSeriousInjury:
+                await channel.SendMessageAsync($"{gameEvent.Minute}' - The injured player " +
+                    $"from {gameEvent.Game.Teams[0].Team.Country} was deemed to have deserved " +
+                    $"the slap, so he was sent back to the field. This is #{gameEvent
+                    .PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. He is back on the game.");
+                break;
+
+
+            case GameEventType.TeamBPlayerNonSeriousInjury:
+                await channel.SendMessageAsync($"{gameEvent.Minute}' - The injured player " +
+                    $"from {gameEvent.Game.Teams[1].Team.Country} was deemed to have deserved " +
+                    $"the slap, so he was sent back to the field. This is #{gameEvent
+                    .PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. He is back on the game.");
+                break;
+
+            case GameEventType.TeamAPlayerSeriousInjury:
+                await channel.SendMessageAsync($"{gameEvent.Minute}' - The injured player " +
+                    $"from {gameEvent.Game.Teams[0].Team.Country} was slapped so hard he died. " +
+                    $"This is #{gameEvent.PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. He is " +
+                    $"replaced by #{gameEvent.ReplacementPlayer?.Number.ToString() ?? "UNKNOWN"}.");
+                break;
+
+            case GameEventType.TeamBPlayerSeriousInjury:
+                await channel.SendMessageAsync($"{gameEvent.Minute}' - The injured player " +
+                    $"from {gameEvent.Game.Teams[1].Team.Country} was slapped so hard he died. " +
+                    $"This is #{gameEvent.PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. He is " +
+                    $"replaced by #{gameEvent.ReplacementPlayer?.Number.ToString() ?? "UNKNOWN"}.");
                 break;
 
             default:

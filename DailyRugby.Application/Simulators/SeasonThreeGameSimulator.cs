@@ -73,6 +73,9 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             CreatePlayers(game.Teams[1]);
         }
 
+        var injuryCheck = CheckPendingInjuries(game);
+        if (injuryCheck is not null) return injuryCheck;
+
         RandomEventList<GameEvent> eventList = new(new Random());
 
         eventList
@@ -412,6 +415,52 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             game)
         {
             PlayerInvolved = injuredPlayer
+        };
+    }
+
+    private GameEvent? CheckPendingInjuries(Game game)
+    {
+        var injury = _pendingInjuries
+            .FirstOrDefault(injury => injury.DecisionMinute == game.CurrentMinute);
+
+        if (injury is null) return null;
+
+        var team = injury.IsTeamA ? game.Teams[0] : game.Teams[1];
+        var teamStats = injury.IsTeamA ? _teamAStats! : _teamBStats!;
+
+        double isSeriousChance = teamStats.GetInjuryBeingSeriousChance();
+        double roll = _random.NextDouble();
+        var injuriedPlayer = team.Players.First(player => player.Id == injury.PlayerId);
+
+        if (roll > isSeriousChance)
+        {
+            teamStats.AddPlayerStats(injuriedPlayer);
+
+            return new(game.CurrentMinute,
+                injury.IsTeamA ?
+                    GameEventType.TeamAPlayerNonSeriousInjury :
+                    GameEventType.TeamBPlayerNonSeriousInjury,
+                game.TeamAScore,
+                game.TeamBScore,
+                game)
+            {
+                PlayerInvolved = injuriedPlayer
+            };
+        }
+
+        var replacement = ReplacePlayer(team, injury.PlayerId);
+        if (replacement is not null) teamStats.AddPlayerStats(replacement);
+
+        return new(game.CurrentMinute,
+            injury.IsTeamA ?
+                GameEventType.TeamAPlayerSeriousInjury :
+                GameEventType.TeamBPlayerSeriousInjury,
+            game.TeamAScore,
+            game.TeamBScore,
+            game)
+        {
+            PlayerInvolved = injuriedPlayer,
+            ReplacementPlayer = replacement
         };
     }
 
