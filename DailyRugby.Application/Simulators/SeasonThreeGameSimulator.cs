@@ -9,6 +9,7 @@ namespace DailyRugby.Application.Simulators;
 public class SeasonThreeGameSimulator : ISpecificGameSimulator
 {
     private readonly Random _random = new();
+    private readonly List<PendingInjury> _pendingInjuries = [];
     private SeasonThreeStats? _teamAStats;
     private SeasonThreeStats? _teamBStats;
 
@@ -95,6 +96,12 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
                 () => HandlePlayerAbduction(game.Teams[0], game, true))
             .Add(SeasonThreeStats.GetAlienAbductionChance(),
                 () => HandlePlayerAbduction(game.Teams[1], game, false))
+
+            .Add(_teamAStats.GetInjurySufferChance(_teamBStats),
+                () => HandlePlayerInjuryRisk(game.Teams[0], game, true))
+
+            .Add(_teamBStats.GetInjurySufferChance(_teamAStats),
+                () => HandlePlayerInjuryRisk(game.Teams[1], game, false))
 
             .AddFallback(() => new GameEvent(game.CurrentMinute,
                 GameEventType.Nothing,
@@ -370,6 +377,22 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         };
     }
     
+    private GameEvent HandlePlayerInjuryRisk(TeamGame team, Game game, bool isTeamA)
+    {
+        var injuredPlayer = ChooseRandomPlayerOnField(team);
+        team.Players.RemoveAll(player => player.Id == injuredPlayer.Id);
+        team.Players.Add(injuredPlayer with { IsOnField = false, CanJoinField = false });
+
+        int decisionMinute = _random.Next(0, 5);
+        _pendingInjuries.Add(new(injuredPlayer.Id, isTeamA, decisionMinute));
+
+        return new(game.CurrentMinute,
+            isTeamA ? GameEventType.TeamAPlayerRisksInjury : GameEventType.TeamBPlayerRisksInjury,
+            game.TeamAScore,
+            game.TeamBScore,
+            game);
+    }
+
     private Player ChooseRandomPlayerOnField(TeamGame team)
     {
         var playersOnField = team
@@ -550,4 +573,8 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             return number;
         }
     }
+
+    private sealed record PendingInjury(Guid PlayerId,
+        bool IsTeamA,
+        int DecisionMinute);
 }

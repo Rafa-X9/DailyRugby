@@ -146,11 +146,6 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
         {
             GameEvent gameEvent = simulator.SimulateNextMinute(game);
 
-            if (gameEvent.EventType.RequiresOwnMinute)
-            {
-                game.CurrentMinute++;
-            }
-
             using (var eventScope = serviceProvider.CreateScope())
             {
                 var eventDb = eventScope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -174,6 +169,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             if (gameEvent.EventType.RequiresOwnMinute)
             {
                 await timer.WaitOneMinuteAsync();
+                game.CurrentMinute++;
             }
         }
 
