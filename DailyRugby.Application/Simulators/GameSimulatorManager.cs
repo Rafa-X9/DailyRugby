@@ -141,9 +141,15 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
 
         var simulator = new GameSimulatorFactory()
             .GetGameSimulator(game.Championship.Season);
+
         while (game.CurrentMinute < 80)
         {
             GameEvent gameEvent = simulator.SimulateNextMinute(game);
+
+            if (gameEvent.EventType.RequiresOwnMinute)
+            {
+                game.CurrentMinute++;
+            }
 
             using (var eventScope = serviceProvider.CreateScope())
             {
@@ -162,8 +168,10 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
                     game);
                 GameEventHappened?.Invoke(this, halfTime);
                 await timer.WaitFifteenMinutesAsync();
+                continue;
             }
-            else
+
+            if (gameEvent.EventType.RequiresOwnMinute)
             {
                 await timer.WaitOneMinuteAsync();
             }

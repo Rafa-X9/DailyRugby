@@ -9,7 +9,6 @@ namespace DailyRugby.Application.Simulators;
 public class SeasonThreeGameSimulator : ISpecificGameSimulator
 {
     private readonly Random _random = new();
-    private readonly List<PendingInjury> _pendingInjuries = [];
     private SeasonThreeStats? _teamAStats;
     private SeasonThreeStats? _teamBStats;
 
@@ -65,8 +64,6 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 
     public GameEvent SimulateNextMinute(Game game)
     {
-        game.CurrentMinute++;
-
         if (_teamAStats is null || _teamBStats is null)
         {
             _teamAStats = new(game.Teams[0], game.Teams[1]);
@@ -98,11 +95,6 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
                 () => HandlePlayerAbduction(game.Teams[0], game, true))
             .Add(SeasonThreeStats.GetAlienAbductionChance(),
                 () => HandlePlayerAbduction(game.Teams[1], game, false))
-
-            .Add(_teamAStats.GetInjurySufferChance(_teamBStats),
-                () => HandlePlayerInjury(_teamAStats, game.Teams[0], game, true))
-            .Add(_teamBStats.GetInjurySufferChance(_teamAStats),
-                () => HandlePlayerInjury(_teamBStats, game.Teams[1], game, false))
 
             .AddFallback(() => new GameEvent(game.CurrentMinute,
                 GameEventType.Nothing,
@@ -377,64 +369,7 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             ReplacementPlayer = replacementPlayer
         };
     }
-
-    private GameEvent HandlePlayerInjury(SeasonThreeStats stats, TeamGame team, Game game, bool isTeamA)
-    {
-        var injuredPlayer = ChooseRandomPlayerOnField(team);
-
-        int minutesDelay = _random.Next(1, 5);
-
-        double isSeriousChance = stats.GetInjuryBeingSeriousChance();
-        double roll = _random.NextDouble();
-
-        bool isSerious = roll <= isSeriousChance;
-
-        if (!isSerious)
-        {
-            _pendingInjuries.Add(new(injuredPlayer.Id,
-                isTeamA,
-                isSerious,
-                minutesDelay,
-                Guid.Empty));
-         
-            return new(game.CurrentMinute,
-                isTeamA ? GameEventType.TeamAPlayerNonSeriousInjury : GameEventType.TeamBPlayerNonSeriousInjury,
-                game.TeamAScore,
-                game.TeamBScore,
-                game)
-            {
-                PlayerInvolved = injuredPlayer,
-                ReplacementPlayer = null,
-                InjuryAnnouncementMinute = minutesDelay
-            };
-        }
-
-        var replacement = team.Players
-            .FirstOrDefault(player => !player.IsOnField && player.CanJoinField);
-        if (replacement is not null)
-        {
-            team.Players.RemoveAll(player => !player.IsOnField && player.CanJoinField);
-            team.Players.Add(replacement with { CanJoinField = false });
-        }
-
-        _pendingInjuries.Add(new(injuredPlayer.Id,
-            isTeamA,
-            isSerious,
-            minutesDelay,
-            replacement?.Id ?? Guid.Empty));
-
-        return new(game.CurrentMinute,
-            isTeamA ? GameEventType.TeamAPlayerSeriousInjury : GameEventType.TeamBPlayerSeriousInjury,
-            game.TeamAScore,
-            game.TeamBScore,
-            game)
-        {
-            PlayerInvolved = injuredPlayer,
-            ReplacementPlayer = replacement,
-            InjuryAnnouncementMinute = minutesDelay
-        };
-    }
-
+    
     private Player ChooseRandomPlayerOnField(TeamGame team)
     {
         var playersOnField = team
@@ -615,10 +550,4 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             return number;
         }
     }
-
-    private sealed record PendingInjury(Guid PlayerId,
-        bool IsTeamA,
-        bool IsSerious,
-        int ReplaceOrReturnMinute,
-        Guid ReplacementPlayer);
 }

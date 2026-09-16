@@ -66,7 +66,6 @@ public class SeasonOneGameSimulator : ISpecificGameSimulator
 
     public GameEvent SimulateNextMinute(Game game)
     {
-        game.CurrentMinute++;
         if (_stack is not null)
         {
             int count = _stack.Count;

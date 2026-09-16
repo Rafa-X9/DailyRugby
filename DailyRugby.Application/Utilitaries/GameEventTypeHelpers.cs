@@ -41,5 +41,11 @@ public static class GameEventTypeHelpers
             }
             return type.IsTeamBScoring ? 3 : 0;
         }
+
+        public bool RequiresOwnMinute =>
+            !type.IsIn(GameEventType.TeamAPlayerNonSeriousInjury,
+                GameEventType.TeamAPlayerSeriousInjury,
+                GameEventType.TeamBPlayerNonSeriousInjury,
+                GameEventType.TeamBPlayerSeriousInjury);
     }
 }
