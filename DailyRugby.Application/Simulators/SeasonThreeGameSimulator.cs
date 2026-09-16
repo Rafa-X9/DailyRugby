@@ -2,7 +2,6 @@
 using DailyRugby.Application.Utilitaries;
 using DailyRugby.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DailyRugby.Application.Simulators;
 
@@ -366,6 +365,23 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         Player playerToAbduct = ChooseRandomPlayerOnField(victimTeam);
         Player? replacementPlayer = ReplacePlayer(victimTeam, playerToAbduct.Id);
 
+        if (isTeamA)
+        {
+            _teamAStats!.RemovePlayerStats(playerToAbduct);
+            if (replacementPlayer is not null)
+            {
+                _teamAStats.AddPlayerStats(replacementPlayer);
+            }
+        }
+        else
+        {
+            _teamBStats!.RemovePlayerStats(playerToAbduct);
+            if (replacementPlayer is not null)
+            {
+                _teamBStats.AddPlayerStats(replacementPlayer);
+            }
+        }
+
         return new(game.CurrentMinute,
             isTeamA ? GameEventType.TeamAPlayerAbducted : GameEventType.TeamBPlayerAbducted,
             game.TeamAScore,
@@ -376,12 +392,15 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             ReplacementPlayer = replacementPlayer
         };
     }
-    
+
     private GameEvent HandlePlayerInjuryRisk(TeamGame team, Game game, bool isTeamA)
     {
         var injuredPlayer = ChooseRandomPlayerOnField(team);
         team.Players.RemoveAll(player => player.Id == injuredPlayer.Id);
         team.Players.Add(injuredPlayer with { IsOnField = false, CanJoinField = false });
+
+        if (isTeamA) _teamAStats!.RemovePlayerStats(injuredPlayer);
+        else _teamBStats!.RemovePlayerStats(injuredPlayer);
 
         int decisionMinute = _random.Next(0, 5);
         _pendingInjuries.Add(new(injuredPlayer.Id, isTeamA, decisionMinute));
@@ -436,9 +455,9 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 
     public sealed record SeasonThreeStats
     {
-        public int Insight { get; init; }
-        public int Physique { get; init; }
-        public int Technique { get; init; }
+        public int Insight { get; private set; }
+        public int Physique { get; private set; }
+        public int Technique { get; private set; }
 
         public SeasonThreeStats(TeamGame team, TeamGame opponent)
         {
@@ -477,6 +496,20 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
                     if (team.Coach == Coaches.Technique) Technique += 4;
                 }
             }
+        }
+
+        public void AddPlayerStats(Player player)
+        {
+            Insight += player.Insight;
+            Physique += player.Physique;
+            Technique += player.Technique;
+        }
+
+        public void RemovePlayerStats(Player player)
+        {
+            Insight -= player.Insight;
+            Physique -= player.Physique;
+            Technique -= player.Technique;
         }
 
         //the Get...Chance methods return the percentages in the range 0.0-1.0
