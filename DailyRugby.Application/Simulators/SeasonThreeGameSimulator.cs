@@ -402,11 +402,19 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         team.Players.RemoveAll(player => player.Id == injuredPlayer.Id);
         team.Players.Add(injuredPlayer with { IsOnField = false, CanJoinField = false });
 
+        int decisionMinute = _random.Next(0, 5);
+
+        double isSeriousChance;
+        if (isTeamA) isSeriousChance = _teamAStats!.GetInjuryBeingSeriousChance();
+        else isSeriousChance = _teamBStats!.GetInjuryBeingSeriousChance();
+
+        double roll = _random.NextDouble();
+        bool isSerious = roll <= isSeriousChance;
+
+        _pendingInjuries.Add(new(injuredPlayer.Id, isTeamA, decisionMinute, isSerious));
+
         if (isTeamA) _teamAStats!.RemovePlayerStats(injuredPlayer);
         else _teamBStats!.RemovePlayerStats(injuredPlayer);
-
-        int decisionMinute = _random.Next(0, 5);
-        _pendingInjuries.Add(new(injuredPlayer.Id, isTeamA, decisionMinute));
 
         return new(game.CurrentMinute,
             isTeamA ? GameEventType.TeamAPlayerRisksInjury : GameEventType.TeamBPlayerRisksInjury,
@@ -430,11 +438,9 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         var team = injury.IsTeamA ? game.Teams[0] : game.Teams[1];
         var teamStats = injury.IsTeamA ? _teamAStats! : _teamBStats!;
 
-        double isSeriousChance = teamStats.GetInjuryBeingSeriousChance();
-        double roll = _random.NextDouble();
         var injuriedPlayer = team.Players.First(player => player.Id == injury.PlayerId);
 
-        if (roll > isSeriousChance)
+        if (!injury.IsSerious)
         {
             teamStats.AddPlayerStats(injuriedPlayer);
 
@@ -663,5 +669,6 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 
     private sealed record PendingInjury(Guid PlayerId,
         bool IsTeamA,
-        int DecisionMinute);
+        int DecisionMinute,
+        bool IsSerious);
 }
