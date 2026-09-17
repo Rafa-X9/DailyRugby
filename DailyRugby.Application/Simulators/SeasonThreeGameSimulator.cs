@@ -425,6 +425,8 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 
         if (injury is null) return null;
 
+        _pendingInjuries.Remove(injury);
+
         var team = injury.IsTeamA ? game.Teams[0] : game.Teams[1];
         var teamStats = injury.IsTeamA ? _teamAStats! : _teamBStats!;
 
