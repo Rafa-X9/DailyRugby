@@ -444,6 +444,9 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         {
             teamStats.AddPlayerStats(injuriedPlayer);
 
+            team.Players.RemoveAll(player => player.Id == injuriedPlayer.Id);
+            team.Players.Add(injuriedPlayer with { IsOnField = true });
+
             return new(game.CurrentMinute,
                 injury.IsTeamA ?
                     GameEventType.TeamAPlayerNonSeriousInjury :
