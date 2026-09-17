@@ -197,7 +197,7 @@ public class MessageSender
                 break;
 
             case GameEventType.TeamAPlayerNonSeriousInjury:
-                await channel.SendMessageAsync($"{gameEvent.Minute}' - The injured player " +
+                await channel.SendMessageAsync($"The injured player " +
                     $"from {gameEvent.Game.Teams[0].Team.Country} was deemed to have deserved " +
                     $"the slap, so he was sent back to the field. This is #{gameEvent
                     .PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. He is back on the game.");
@@ -205,21 +205,21 @@ public class MessageSender
 
 
             case GameEventType.TeamBPlayerNonSeriousInjury:
-                await channel.SendMessageAsync($"{gameEvent.Minute}' - The injured player " +
+                await channel.SendMessageAsync($"The injured player " +
                     $"from {gameEvent.Game.Teams[1].Team.Country} was deemed to have deserved " +
                     $"the slap, so he was sent back to the field. This is #{gameEvent
                     .PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. He is back on the game.");
                 break;
 
             case GameEventType.TeamAPlayerSeriousInjury:
-                await channel.SendMessageAsync($"{gameEvent.Minute}' - The injured player " +
+                await channel.SendMessageAsync($"The injured player " +
                     $"from {gameEvent.Game.Teams[0].Team.Country} was slapped so hard he died. " +
                     $"This is #{gameEvent.PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. He is " +
                     $"replaced by #{gameEvent.ReplacementPlayer?.Number.ToString() ?? "UNKNOWN"}.");
                 break;
 
             case GameEventType.TeamBPlayerSeriousInjury:
-                await channel.SendMessageAsync($"{gameEvent.Minute}' - The injured player " +
+                await channel.SendMessageAsync($"The injured player " +
                     $"from {gameEvent.Game.Teams[1].Team.Country} was slapped so hard he died. " +
                     $"This is #{gameEvent.PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. He is " +
                     $"replaced by #{gameEvent.ReplacementPlayer?.Number.ToString() ?? "UNKNOWN"}.");
