@@ -1,4 +1,5 @@
-﻿using DailyRugby.Application.Interfaces;
+﻿using DailyRugby.Application.DTOs;
+using DailyRugby.Application.Interfaces;
 using DailyRugby.Application.Utilitaries;
 using DailyRugby.Domain;
 using DailyRugby.Shared;
@@ -14,6 +15,26 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
 {
     private readonly PriorityQueue<Schedule, DateTime> _schedules = new();
     public event EventHandler? GameEventHappened;
+    private ISpecificGameSimulator? _currentSimulator = null;
+    private Game? _ongoingGame = null;
+
+    public Result AddCheer(CheerAddRequest request)
+    {
+        if (_currentSimulator is null || _ongoingGame is null)
+        {
+            return Result.Failure("There isn't an ongoing game", Errors.Invalid);
+        }
+
+        Cheer cheer = new()
+        {
+            Id = Guid.NewGuid(),
+            ForTeamA = request.ForTeamA,
+            Yell = request.Yell ?? string.Empty,
+            UserId = request.UserId
+        };
+
+        return _currentSimulator.AddCheer(cheer, _ongoingGame);
+    }
 
     public async Task<Result> ScheduleGameAsync(Guid gameId, DateTime dateTimeUtc)
     {
@@ -122,6 +143,8 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
 
     private async Task SimulateGameAsync(Game game)
     {
+        _ongoingGame = game;
+
         if (game.CurrentState == GameState.Scheduled)
         {
             using var startScope = serviceProvider.CreateScope();
@@ -141,6 +164,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
 
         var simulator = new GameSimulatorFactory()
             .GetGameSimulator(game.Championship.Season);
+        _currentSimulator = simulator;
 
         while (game.CurrentMinute < 80)
         {
@@ -179,11 +203,6 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
                 GameEventHappened?.Invoke(this, halfTime);
                 await timer.WaitFifteenMinutesAsync();
                 continue;
-            }
-
-            if (game.CurrentMinute == 10)
-            {
-                5.ToString();
             }
         }
 
@@ -233,6 +252,9 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             game.TeamBScore,
             game);
         GameEventHappened?.Invoke(this, finished);
+
+        _ongoingGame = null;
+        _currentSimulator = null;
     }
 
     private async Task WaitDelay()
