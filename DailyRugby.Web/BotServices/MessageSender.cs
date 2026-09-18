@@ -225,6 +225,49 @@ public class MessageSender
                     $"replaced by #{gameEvent.ReplacementPlayer?.Number.ToString() ?? "UNKNOWN"}.");
                 break;
 
+            //-------------
+
+            case GameEventType.TeamAPlayerYellowCard:
+                await channel.SendMessageAsync($"{gameEvent.Game.CurrentMinute}' - A player from " +
+                    $"{gameEvent.Game.Teams[0].Team.Country} " +
+                    $"punched an opponent in the face. He receives a yellow card, and is therefore out " +
+                    $"of the field for 10 minutes. This is {gameEvent.PlayerInvolved?.Number.ToString() 
+                    ?? "UNKONWN"}.");
+                break;
+
+            case GameEventType.TeamAPlayerReturningFromYellowCard:
+                await channel.SendMessageAsync($"#{gameEvent.PlayerInvolved?.Number.ToString() ?? 
+                    "UNKONW"} from {gameEvent.Game.Teams[0].Team.Country} is back from his yellow card.");
+                break;
+
+            case GameEventType.TeamAPlayerRedCard:
+                await channel.SendMessageAsync($"{gameEvent.Game.CurrentMinute}' - A player from " +
+                    $"{gameEvent.Game.Teams[0].Team.Country} was seen downvoting comments on r/dailygames. " +
+                    $"He is immediatelly given a red card. This is #{gameEvent.PlayerInvolved?.Number
+                    .ToString() ?? "UNKOWN."}");
+                break;
+
+
+            case GameEventType.TeamBPlayerYellowCard:
+                await channel.SendMessageAsync($"{gameEvent.Game.CurrentMinute}' - A player from " +
+                    $"{gameEvent.Game.Teams[1].Team.Country} " +
+                    $"punched an opponent in the face. He receives a yellow card, and is therefore out " +
+                    $"of the field for 10 minutes. This is {gameEvent.PlayerInvolved?.Number.ToString()
+                    ?? "UNKONWN"}.");
+                break;
+
+            case GameEventType.TeamBPlayerReturningFromYellowCard:
+                await channel.SendMessageAsync($"#{gameEvent.PlayerInvolved?.Number.ToString() ??
+                    "UNKONW"} from {gameEvent.Game.Teams[1].Team.Country} is back from his yellow card.");
+                break;
+
+            case GameEventType.TeamBPlayerRedCard:
+                await channel.SendMessageAsync($"{gameEvent.Game.CurrentMinute}' - A player from " +
+                    $"{gameEvent.Game.Teams[1].Team.Country} was seen downvoting comments on r/dailygames. " +
+                    $"He is immediatelly given a red card. This is #{gameEvent.PlayerInvolved?.Number
+                    .ToString() ?? "UNKOWN."}");
+                break;
+
             default:
                 await channel.SendMessageAsync($"{gameEvent.Minute}' - Something happened: " +
                     $"{gameEvent.EventType}");
