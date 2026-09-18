@@ -245,4 +245,36 @@ public class GameSlashCommands(IGameCrudService gameService,
 
         await FollowupAsync(sb.ToString());
     }
+
+    [SlashCommand("cheer", "Cheer for a team!")]
+    public async Task Cheer(
+        [Summary("Team", "The team to cheer for")]
+        [Autocomplete(typeof(OngoingGameTeamsAutocomplete))]
+        string teamAorB,
+
+        [Summary("Yell", "What do you yell for the team?")]
+        string? yell = null)
+    {
+        bool teamParsed = Enum.TryParse(teamAorB, true, out Teams team);
+        if (!teamParsed)
+        {
+            await FollowupAsync("Invalid team to set tactic to");
+            return;
+        }
+
+        var user = Context.User;
+
+        CheerAddRequest request = new(user.Id,
+            team == Teams.TeamA,
+            yell);
+
+        var result = simulator.AddCheer(request);
+
+        if (!result.IsSuccessful)
+        {
+            await RespondAsync($"{result.Error}: {result.Message}");
+        }
+
+        await RespondAsync("Your cheer has been scheduled");
+    }
 }
