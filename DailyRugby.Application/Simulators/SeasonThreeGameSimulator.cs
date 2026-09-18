@@ -9,6 +9,7 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 {
     private readonly Random _random = new();
     private readonly List<PendingInjury> _pendingInjuries = [];
+    private readonly List<PendingYellowCard> _pendingYellowCards = [];
     private SeasonThreeStats? _teamAStats;
     private SeasonThreeStats? _teamBStats;
 
@@ -76,34 +77,41 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         var injuryCheck = CheckPendingInjuries(game);
         if (injuryCheck is not null) return injuryCheck;
 
+        var yellowCardCheck = CheckPendingYellowCards(game);
+        if (yellowCardCheck is not null) return yellowCardCheck;
+
         RandomEventList<GameEvent> eventList = new(new Random());
 
         eventList
-            .Add(_teamAStats.GetTryAttemptChance(_teamBStats),
-                () => HandleTryAttempt(_teamAStats, game, true))
-            .Add(_teamBStats.GetTryAttemptChance(_teamAStats),
-                () => HandleTryAttempt(_teamBStats, game, false))
+            //.Add(_teamAStats.GetTryAttemptChance(_teamBStats),
+            //    () => HandleTryAttempt(_teamAStats, game, true))
+            //.Add(_teamBStats.GetTryAttemptChance(_teamAStats),
+            //    () => HandleTryAttempt(_teamBStats, game, false))
 
-            .Add(_teamAStats.GetDropGoalAttemptChance(_teamBStats),
-                () => HandleDropGoalAttempt(_teamAStats, game, true))
-            .Add(_teamBStats.GetDropGoalAttemptChance(_teamAStats),
-                () => HandleDropGoalAttempt(_teamBStats, game, false))
+            //.Add(_teamAStats.GetDropGoalAttemptChance(_teamBStats),
+            //    () => HandleDropGoalAttempt(_teamAStats, game, true))
+            //.Add(_teamBStats.GetDropGoalAttemptChance(_teamAStats),
+            //    () => HandleDropGoalAttempt(_teamBStats, game, false))
 
-            .Add(_teamAStats.GetPenaltyKickAttemptChance(_teamBStats),
-                () => HandlePenaltyKickAttempt(_teamAStats, game, true))
-            .Add(_teamBStats.GetPenaltyKickAttemptChance(_teamAStats),
-                () => HandlePenaltyKickAttempt(_teamBStats, game, false))
+            //.Add(_teamAStats.GetPenaltyKickAttemptChance(_teamBStats),
+            //    () => HandlePenaltyKickAttempt(_teamAStats, game, true))
+            //.Add(_teamBStats.GetPenaltyKickAttemptChance(_teamAStats),
+            //    () => HandlePenaltyKickAttempt(_teamBStats, game, false))
 
-            .Add(SeasonThreeStats.GetAlienAbductionChance(),
-                () => HandlePlayerAbduction(game.Teams[0], game, true))
-            .Add(SeasonThreeStats.GetAlienAbductionChance(),
-                () => HandlePlayerAbduction(game.Teams[1], game, false))
+            //.Add(SeasonThreeStats.GetAlienAbductionChance(),
+            //    () => HandlePlayerAbduction(game.Teams[0], game, true))
+            //.Add(SeasonThreeStats.GetAlienAbductionChance(),
+            //    () => HandlePlayerAbduction(game.Teams[1], game, false))
 
-            .Add(_teamAStats.GetInjurySufferChance(_teamBStats),
-                () => HandlePlayerInjuryRisk(game.Teams[0], game, true))
+            //.Add(_teamAStats.GetInjurySufferChance(_teamBStats),
+            //    () => HandlePlayerInjuryRisk(game.Teams[0], game, true))
+            //.Add(_teamBStats.GetInjurySufferChance(_teamAStats),
+            //    () => HandlePlayerInjuryRisk(game.Teams[1], game, false))
 
-            .Add(_teamBStats.GetInjurySufferChance(_teamAStats),
-                () => HandlePlayerInjuryRisk(game.Teams[1], game, false))
+            .Add(0.5,
+                () => HandleOffence(game.Teams[0], game, true))
+            .Add(0.5,
+                () => HandleOffence(game.Teams[1], game, false))
 
             .AddFallback(() => new GameEvent(game.CurrentMinute,
                 GameEventType.Nothing,
@@ -426,6 +434,42 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         };
     }
 
+    private GameEvent HandleOffence(TeamGame team, Game game, bool isTeamA)
+    {
+        var offender = ChooseRandomPlayerOnField(team);
+
+        team.Players.RemoveAll(player => player.Id == offender.Id);
+        team.Players.Add(offender with { IsOnField = false, CanJoinField = false });
+
+        if (isTeamA) _teamAStats!.RemovePlayerStats(offender);
+        else _teamBStats!.RemovePlayerStats(offender);
+
+        double roll = _random.NextDouble();
+
+        if (roll <= SeasonThreeStats.GetCardBeingRedChance())
+        {
+            return new(game.CurrentMinute,
+                isTeamA ? GameEventType.TeamAPlayerRedCard : GameEventType.TeamBPlayerRedCard,
+                game.TeamAScore,
+                game.TeamBScore,
+                game)
+            {
+                PlayerInvolved = offender
+            };
+        }
+
+        _pendingYellowCards.Add(new(offender.Id, isTeamA, game.CurrentMinute + 10));
+
+        return new(game.CurrentMinute,
+            isTeamA ? GameEventType.TeamAPlayerYellowCard : GameEventType.TeamBPlayerYellowCard,
+            game.TeamAScore,
+            game.TeamBScore,
+            game)
+        {
+            PlayerInvolved = offender
+        };
+    }
+
     private GameEvent? CheckPendingInjuries(Game game)
     {
         var injury = _pendingInjuries
@@ -472,6 +516,36 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         {
             PlayerInvolved = injuriedPlayer,
             ReplacementPlayer = replacement
+        };
+    }
+
+    private GameEvent? CheckPendingYellowCards(Game game)
+    {
+        var yellowCard = _pendingYellowCards
+            .FirstOrDefault(card => card.ReturnMinute == game.CurrentMinute);
+
+        if (yellowCard is null) return null;
+
+        var team = yellowCard.IsTeamA ? game.Teams[0] : game.Teams[1];
+        var teamStats = yellowCard.IsTeamA ? _teamAStats! : _teamBStats!;
+
+        var offender = team.Players.First(player => player.Id == yellowCard.PlayerId);
+
+        team.Players.RemoveAll(player => player.Id == offender.Id);
+        team.Players.Add(offender with { IsOnField = true });
+        teamStats.AddPlayerStats(offender);
+
+        _pendingYellowCards.Remove(yellowCard);
+
+        return new(game.CurrentMinute,
+            yellowCard.IsTeamA ?
+                GameEventType.TeamAPlayerReturningFromYellowCard
+                : GameEventType.TeamBPlayerReturningFromYellowCard,
+            game.TeamAScore,
+            game.TeamBScore,
+            game)
+        {
+            PlayerInvolved = offender
         };
     }
 
@@ -674,4 +748,8 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         bool IsTeamA,
         int DecisionMinute,
         bool IsSerious);
+
+    private sealed record PendingYellowCard(Guid PlayerId,
+        bool IsTeamA,
+        int ReturnMinute);
 }

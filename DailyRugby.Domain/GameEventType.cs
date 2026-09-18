@@ -38,5 +38,13 @@ public enum GameEventType
 
     TeamBPlayerRisksInjury,
     TeamBPlayerSeriousInjury,
-    TeamBPlayerNonSeriousInjury
+    TeamBPlayerNonSeriousInjury,
+
+    TeamAPlayerYellowCard,
+    TeamAPlayerReturningFromYellowCard,
+    TeamAPlayerRedCard,
+
+    TeamBPlayerYellowCard,
+    TeamBPlayerReturningFromYellowCard,
+    TeamBPlayerRedCard
 }
