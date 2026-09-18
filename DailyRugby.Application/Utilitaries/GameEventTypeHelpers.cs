@@ -49,6 +49,9 @@ public static class GameEventTypeHelpers
                 GameEventType.TeamBPlayerSeriousInjury,
                 
                 GameEventType.TeamAPlayerReturningFromYellowCard,
-                GameEventType.TeamBPlayerReturningFromYellowCard);
+                GameEventType.TeamBPlayerReturningFromYellowCard,
+                
+                GameEventType.TeamAGetsCheer,
+                GameEventType.TeamBGetsCheer);
     }
 }

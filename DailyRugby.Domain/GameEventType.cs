@@ -46,5 +46,8 @@ public enum GameEventType
 
     TeamBPlayerYellowCard,
     TeamBPlayerReturningFromYellowCard,
-    TeamBPlayerRedCard
+    TeamBPlayerRedCard,
+
+    TeamAGetsCheer,
+    TeamBGetsCheer
 }

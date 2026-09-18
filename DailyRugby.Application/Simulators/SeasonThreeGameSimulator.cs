@@ -1,6 +1,7 @@
 ﻿using DailyRugby.Application.Interfaces;
 using DailyRugby.Application.Utilitaries;
 using DailyRugby.Domain;
+using DailyRugby.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace DailyRugby.Application.Simulators;
@@ -10,8 +11,27 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
     private readonly Random _random = new();
     private readonly List<PendingInjury> _pendingInjuries = [];
     private readonly List<PendingYellowCard> _pendingYellowCards = [];
+    private readonly List<GameCheer> _cheers = [];
+
     private SeasonThreeStats? _teamAStats;
     private SeasonThreeStats? _teamBStats;
+
+    public Result AddCheer(Cheer cheer, Game game)
+    {
+        if (cheer.Yell.Length > 1000)
+        {
+            return Result.Failure("Yell is too long", Errors.Invalid);
+        }
+
+        if (_cheers.Count(temp => temp.Cheer.UserId == cheer.UserId) > 3)
+        {
+            return Result.Failure("You already cheered 3 times", Errors.Invalid);
+        }
+
+        cheer.StartMinute = game.CurrentMinute + 1;
+        _cheers.Add(new(false, cheer));
+        return Result.Success();
+    }
 
     public async Task SaveGameAsync(GameEvent gameEvent, AppDbContext db)
     {
@@ -79,6 +99,9 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 
         var yellowCardCheck = CheckPendingYellowCards(game);
         if (yellowCardCheck is not null) return yellowCardCheck;
+
+        var cheerCheck = CheckCheers(game);
+        if (cheerCheck is not null) return cheerCheck;
 
         RandomEventList<GameEvent> eventList = new(new Random());
 
@@ -604,6 +627,37 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         };
     }
 
+    private GameEvent? CheckCheers(Game game)
+    {
+        var cheersToFinish = _cheers
+            .Where(temp => temp.Cheer.StartMinute + 2 == game.CurrentMinute)
+            .ToList();
+
+        foreach (var cheer in cheersToFinish)
+        {
+            var stats = cheer.Cheer.ForTeamA ? _teamAStats! : _teamBStats!;
+            stats.RemoveCheer();
+            cheer.Resolved = true;
+        }
+
+        var cheerToApply = _cheers
+            .FirstOrDefault(temp => temp.Cheer.StartMinute == game.CurrentMinute);
+
+        if (cheerToApply is null) return null;
+
+        var teamStats = cheerToApply.Cheer.ForTeamA ? _teamAStats! : _teamBStats!;
+
+        teamStats.AddCheer();
+
+        return new(game.CurrentMinute,
+            cheerToApply.Cheer.ForTeamA ?
+                GameEventType.TeamAGetsCheer
+                : GameEventType.TeamBGetsCheer,
+            game.TeamAScore,
+            game.TeamBScore,
+            game);
+    }
+
     private Player ChooseRandomPlayerOnField(TeamGame team)
     {
         var playersOnField = team
@@ -702,6 +756,20 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             Insight -= player.Insight;
             Physique -= player.Physique;
             Technique -= player.Technique;
+        }
+
+        public void AddCheer()
+        {
+            Insight += 1;
+            Physique += 1;
+            Technique += 1;
+        }
+
+        public void RemoveCheer()
+        {
+            Insight -= 1;
+            Physique -= 1;
+            Technique -= 1;
         }
 
         //the Get...Chance methods return the percentages in the range 0.0-1.0
@@ -807,4 +875,16 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
     private sealed record PendingYellowCard(Guid PlayerId,
         bool IsTeamA,
         int ReturnMinute);
+
+    private sealed record GameCheer
+    {
+        public bool Resolved { get; set; }
+        public Cheer Cheer { get; set; } = null!;
+
+        public GameCheer(bool resolved, Cheer cheer)
+        {
+            Resolved = resolved;
+            Cheer = cheer;
+        }
+    };
 }
