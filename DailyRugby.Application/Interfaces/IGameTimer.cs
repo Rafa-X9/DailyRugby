@@ -2,6 +2,7 @@
 
 public interface IGameTimer
 {
-    Task WaitOneMinuteAsync();
+    Task WaitUntilNextMinuteAsync();
+    Task WaitFifteenSecondsAsync();
     Task WaitFifteenMinutesAsync();
 }

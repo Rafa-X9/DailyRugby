@@ -146,6 +146,15 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
         {
             GameEvent gameEvent = simulator.SimulateNextMinute(game);
 
+            if (gameEvent.EventType.RequiresOwnMinute)
+            {
+                await timer.WaitUntilNextMinuteAsync();
+            }
+            else
+            {
+                await timer.WaitFifteenSecondsAsync();
+            }
+
             using (var eventScope = serviceProvider.CreateScope())
             {
                 var eventDb = eventScope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -153,9 +162,15 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             }
 
             GameEventHappened?.Invoke(this, gameEvent);
+
+            if (gameEvent.EventType.RequiresOwnMinute)
+            {
+                game.CurrentMinute++;
+            }
+
             if (game.CurrentMinute == 40)
             {
-                await timer.WaitOneMinuteAsync();
+                await timer.WaitUntilNextMinuteAsync();
                 GameEvent halfTime = new(40,
                     GameEventType.HalfTime,
                     game.TeamAScore,
@@ -166,10 +181,9 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
                 continue;
             }
 
-            if (gameEvent.EventType.RequiresOwnMinute)
+            if (game.CurrentMinute == 10)
             {
-                await timer.WaitOneMinuteAsync();
-                game.CurrentMinute++;
+                5.ToString();
             }
         }
 

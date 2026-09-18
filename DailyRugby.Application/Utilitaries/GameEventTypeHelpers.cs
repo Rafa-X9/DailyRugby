@@ -46,6 +46,9 @@ public static class GameEventTypeHelpers
             !type.IsIn(GameEventType.TeamAPlayerNonSeriousInjury,
                 GameEventType.TeamAPlayerSeriousInjury,
                 GameEventType.TeamBPlayerNonSeriousInjury,
-                GameEventType.TeamBPlayerSeriousInjury);
+                GameEventType.TeamBPlayerSeriousInjury,
+                
+                GameEventType.TeamAPlayerReturningFromYellowCard,
+                GameEventType.TeamBPlayerReturningFromYellowCard);
     }
 }
