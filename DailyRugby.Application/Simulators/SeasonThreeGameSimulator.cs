@@ -83,34 +83,34 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         RandomEventList<GameEvent> eventList = new(new Random());
 
         eventList
-            //.Add(_teamAStats.GetTryAttemptChance(_teamBStats),
-            //    () => HandleTryAttempt(_teamAStats, game, true))
-            //.Add(_teamBStats.GetTryAttemptChance(_teamAStats),
-            //    () => HandleTryAttempt(_teamBStats, game, false))
+            .Add(_teamAStats.GetTryAttemptChance(_teamBStats),
+                () => HandleTryAttempt(_teamAStats, game, true))
+            .Add(_teamBStats.GetTryAttemptChance(_teamAStats),
+                () => HandleTryAttempt(_teamBStats, game, false))
 
-            //.Add(_teamAStats.GetDropGoalAttemptChance(_teamBStats),
-            //    () => HandleDropGoalAttempt(_teamAStats, game, true))
-            //.Add(_teamBStats.GetDropGoalAttemptChance(_teamAStats),
-            //    () => HandleDropGoalAttempt(_teamBStats, game, false))
+            .Add(_teamAStats.GetDropGoalAttemptChance(_teamBStats),
+                () => HandleDropGoalAttempt(_teamAStats, game, true))
+            .Add(_teamBStats.GetDropGoalAttemptChance(_teamAStats),
+                () => HandleDropGoalAttempt(_teamBStats, game, false))
 
-            //.Add(_teamAStats.GetPenaltyKickAttemptChance(_teamBStats),
-            //    () => HandlePenaltyKickAttempt(_teamAStats, game, true))
-            //.Add(_teamBStats.GetPenaltyKickAttemptChance(_teamAStats),
-            //    () => HandlePenaltyKickAttempt(_teamBStats, game, false))
+            .Add(_teamAStats.GetPenaltyKickAttemptChance(_teamBStats),
+                () => HandlePenaltyKickAttempt(_teamAStats, game, true))
+            .Add(_teamBStats.GetPenaltyKickAttemptChance(_teamAStats),
+                () => HandlePenaltyKickAttempt(_teamBStats, game, false))
 
-            //.Add(SeasonThreeStats.GetAlienAbductionChance(),
-            //    () => HandlePlayerAbduction(game.Teams[0], game, true))
-            //.Add(SeasonThreeStats.GetAlienAbductionChance(),
-            //    () => HandlePlayerAbduction(game.Teams[1], game, false))
+            .Add(SeasonThreeStats.GetAlienAbductionChance(),
+                () => HandlePlayerAbduction(game.Teams[0], game, true))
+            .Add(SeasonThreeStats.GetAlienAbductionChance(),
+                () => HandlePlayerAbduction(game.Teams[1], game, false))
 
-            //.Add(_teamAStats.GetInjurySufferChance(_teamBStats),
-            //    () => HandlePlayerInjuryRisk(game.Teams[0], game, true))
-            //.Add(_teamBStats.GetInjurySufferChance(_teamAStats),
-            //    () => HandlePlayerInjuryRisk(game.Teams[1], game, false))
+            .Add(_teamAStats.GetInjurySufferChance(_teamBStats),
+                () => HandlePlayerInjuryRisk(game.Teams[0], game, true))
+            .Add(_teamBStats.GetInjurySufferChance(_teamAStats),
+                () => HandlePlayerInjuryRisk(game.Teams[1], game, false))
 
-            .Add(0.5,
+            .Add(_teamAStats.GetOffenceCommitChance(_teamBStats),
                 () => HandleOffence(game.Teams[0], game, true))
-            .Add(0.5,
+            .Add(_teamBStats.GetOffenceCommitChance(_teamAStats),
                 () => HandleOffence(game.Teams[1], game, false))
 
             .AddFallback(() => new GameEvent(game.CurrentMinute,
