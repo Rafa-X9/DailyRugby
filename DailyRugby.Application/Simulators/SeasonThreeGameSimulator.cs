@@ -436,29 +436,84 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 
     private GameEvent HandleOffence(TeamGame team, Game game, bool isTeamA)
     {
-        var offender = ChooseRandomPlayerOnField(team);
+        double roll;
 
-        team.Players.RemoveAll(player => player.Id == offender.Id);
-        team.Players.Add(offender with { IsOnField = false, CanJoinField = false });
+        var playersWithYellowCard = team
+            .Players
+            .Where(player => player.HasYellowCard && player.IsOnField)
+            .ToList();
 
-        if (isTeamA) _teamAStats!.RemovePlayerStats(offender);
-        else _teamBStats!.RemovePlayerStats(offender);
-
-        double roll = _random.NextDouble();
-
-        if (roll <= SeasonThreeStats.GetCardBeingRedChance())
+        if (playersWithYellowCard.Count == 0)
         {
+            var offender = ChooseRandomPlayerOnField(team);
+            var newOffender = offender with { IsOnField = false, CanJoinField = false };
+
+            team.Players.RemoveAll(player => player.Id == offender.Id);
+            team.Players.Add(newOffender);
+
+            if (isTeamA) _teamAStats!.RemovePlayerStats(offender);
+            else _teamBStats!.RemovePlayerStats(offender);
+
+            roll = _random.NextDouble();
+
+            if (roll <= SeasonThreeStats.GetCardBeingRedChance())
+            {
+                return new(game.CurrentMinute,
+                    isTeamA ? GameEventType.TeamAPlayerRedCard : GameEventType.TeamBPlayerRedCard,
+                    game.TeamAScore,
+                    game.TeamBScore,
+                    game)
+                {
+                    PlayerInvolved = offender
+                };
+            }
+
+            _pendingYellowCards.Add(new(offender.Id, isTeamA, game.CurrentMinute + 10));
+            team.Players.RemoveAll(player => player.Id == newOffender.Id);
+            team.Players.Add(newOffender with { HasYellowCard = true });
+
+            return new(game.CurrentMinute,
+                isTeamA ? GameEventType.TeamAPlayerYellowCard : GameEventType.TeamBPlayerYellowCard,
+                game.TeamAScore,
+                game.TeamBScore,
+                game)
+            {
+                PlayerInvolved = newOffender
+            };
+        }
+
+        roll = _random.NextDouble();
+        bool goesToSomeoneWithYellowCard = roll <= 0.5;
+
+        var playersWithoutYellowCard = team
+            .Players
+            .Where(temp => !temp.HasYellowCard && temp.IsOnField)
+            .ToList();
+
+        int index;
+        Player player;
+
+        if (goesToSomeoneWithYellowCard || playersWithoutYellowCard.Count == 0)
+        {
+            index = _random.Next(0, playersWithYellowCard.Count);
+            player = playersWithYellowCard[index];
+            team.Players.RemoveAll(temp => temp.Id == player.Id);
+            team.Players.Add(player with { IsOnField = false, CanJoinField = false });
+
             return new(game.CurrentMinute,
                 isTeamA ? GameEventType.TeamAPlayerRedCard : GameEventType.TeamBPlayerRedCard,
                 game.TeamAScore,
                 game.TeamBScore,
                 game)
             {
-                PlayerInvolved = offender
+                PlayerInvolved = player
             };
         }
 
-        _pendingYellowCards.Add(new(offender.Id, isTeamA, game.CurrentMinute + 10));
+        index = _random.Next(0, playersWithoutYellowCard.Count);
+        player = playersWithoutYellowCard[index];
+        team.Players.RemoveAll(temp => temp.Id == player.Id);
+        team.Players.Add(player with { IsOnField = false, CanJoinField = false, HasYellowCard = true });
 
         return new(game.CurrentMinute,
             isTeamA ? GameEventType.TeamAPlayerYellowCard : GameEventType.TeamBPlayerYellowCard,
@@ -466,7 +521,7 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             game.TeamBScore,
             game)
         {
-            PlayerInvolved = offender
+            PlayerInvolved = player
         };
     }
 
