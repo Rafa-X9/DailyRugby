@@ -67,20 +67,34 @@ public class MessageProvider
                 .Replace("{player3}", player3.ToString())
                 .Replace("{teamB}", defender),
 
-            Success = layout.Description
+            Success = layout.Success
                 .Replace("{teamA}", attempter)
                 .Replace("{player1}", player1.ToString())
                 .Replace("{player2}", player2.ToString())
                 .Replace("{player3}", player3.ToString())
                 .Replace("{teamB}", defender),
 
-            Failure = layout.Description
+            Failure = layout.Failure
                 .Replace("{teamA}", attempter)
                 .Replace("{player1}", player1.ToString())
                 .Replace("{player2}", player2.ToString())
                 .Replace("{player3}", player3.ToString())
                 .Replace("{teamB}", defender)
         };
+    }
+
+    public string GetConversionSuccessMessage(string team)
+    {
+        int index = _random.Next(0, _conversionSuccessMessages.Count);
+        return _conversionSuccessMessages[index]
+            .Replace("{teamA}", team);
+    }
+
+    public string GetConversionFailureMessage(string team)
+    {
+        int index = _random.Next(0, _conversionFailureMessages.Count);
+        return _conversionFailureMessages[index]
+            .Replace("{teamA}", team);
     }
 }
 
