@@ -128,6 +128,8 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             var earliestGame = _schedules.Peek();
             if (earliestGame.DateTimeUtc <= DateTime.UtcNow)
             {
+                Game game;
+
                 using (var scope = serviceProvider.CreateScope())
                 {
                     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -135,8 +137,16 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
                     await db.Schedules
                         .Where(temp => temp.Id == earliestGame.Id)
                         .ExecuteDeleteAsync();
+
+                    game = await db.Games
+                        .AsNoTracking()
+                        .AsSplitQuery()
+                        .Include(temp => temp.Teams.OrderBy(t => t.Team.Country))
+                            .ThenInclude(temp => temp.Team)
+                        .Where(temp => temp.Id == earliestGame.Game.Id)
+                        .FirstAsync(stoppingToken);
                 }
-                await SimulateGameAsync(earliestGame.Game);
+                await SimulateGameAsync(game);
             }
         }
     }
