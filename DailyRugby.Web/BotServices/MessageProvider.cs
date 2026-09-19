@@ -161,6 +161,24 @@ public class MessageProvider
         };
     }
 
+    public string GetYellowCardMessage(string offender, string victim)
+    {
+        int index = _random.Next(0, _yellowCardMessages.Count);
+
+        return _yellowCardMessages[index]
+            .Replace("{teamA}", offender)
+            .Replace("{teamB}", victim);
+    }
+
+    public string GetRedCardMessage(string offender, string victim)
+    {
+        int index = _random.Next(0, _redCardMessages.Count);
+
+        return _redCardMessages[index]
+            .Replace("{teamA}", offender)
+            .Replace("{teamB}", victim);
+    }
+
     public string GetRandomMessage(string team)
     {
         int index = _random.Next(0, _randomEvents.Count);
