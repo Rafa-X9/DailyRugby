@@ -11,6 +11,7 @@ public class MessageProvider
     private readonly List<InjuryRiskMessage> _injuryRiskMessages;
     private readonly List<string> _yellowCardMessages;
     private readonly List<string> _redCardMessages;
+    private readonly Random _random = new();
 
     public MessageProvider(IConfiguration configuration)
     {
@@ -49,6 +50,37 @@ public class MessageProvider
         _redCardMessages = configuration
             .GetSection("red card")
             .Get<List<string>>()!;
+    }
+
+    public TryAttemptMessage GetTryAttemptMessage(string attempter, string defender,
+        int player1, int player2, int player3)
+    {
+        int index = _random.Next(0, _tryAttemptMessages.Count);
+        var layout = _tryAttemptMessages[index];
+
+        return layout with
+        {
+            Description = layout.Description
+                .Replace("{teamA}", attempter)
+                .Replace("{player1}", player1.ToString())
+                .Replace("{player2}", player2.ToString())
+                .Replace("{player3}", player3.ToString())
+                .Replace("{teamB}", defender),
+
+            Success = layout.Description
+                .Replace("{teamA}", attempter)
+                .Replace("{player1}", player1.ToString())
+                .Replace("{player2}", player2.ToString())
+                .Replace("{player3}", player3.ToString())
+                .Replace("{teamB}", defender),
+
+            Failure = layout.Description
+                .Replace("{teamA}", attempter)
+                .Replace("{player1}", player1.ToString())
+                .Replace("{player2}", player2.ToString())
+                .Replace("{player3}", player3.ToString())
+                .Replace("{teamB}", defender)
+        };
     }
 }
 
