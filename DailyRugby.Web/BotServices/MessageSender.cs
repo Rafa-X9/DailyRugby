@@ -108,19 +108,43 @@ public class MessageSender
                 break;
 
             case GameEventType.TeamAFailedDropGoal:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + AttempDropGoal(gameEvent.Game.Teams[0].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync(FailedDropGoal(gameEvent.Game.Teams[0].Team.Country)
-                    + " " + CurrentScore(gameEvent));
+                (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[0]);
+                
+                var dropGoalMessage = _messageProvider.GetDropGoalMessage(
+                    gameEvent.Game.Teams[0].Team.Country,
+                    gameEvent.Game.Teams[1].Team.Country,
+                    n1, n2, n3);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - " +
+                    $"{dropGoalMessage.Description}");
+
+                seconds = Random.Shared.Next(dropGoalMessage.MinSeconds,
+                    dropGoalMessage.MaxSeconds + 1);
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+
+                await _channel.SendMessageAsync($"{dropGoalMessage.Failure} " +
+                    $"{CurrentScore(gameEvent)}");
+
                 break;
 
             case GameEventType.TeamAScoredDropGoal:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + AttempDropGoal(gameEvent.Game.Teams[0].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync(ScoredDropGoal(gameEvent.Game.Teams[0].Team.Country)
-                    + " " + CurrentScore(gameEvent));
+                (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[0]);
+
+                dropGoalMessage = _messageProvider.GetDropGoalMessage(
+                    gameEvent.Game.Teams[0].Team.Country,
+                    gameEvent.Game.Teams[1].Team.Country,
+                    n1, n2, n3);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - " +
+                    $"{dropGoalMessage.Description}");
+
+                seconds = Random.Shared.Next(dropGoalMessage.MinSeconds,
+                    dropGoalMessage.MaxSeconds + 1);
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+
+                await _channel.SendMessageAsync($"{dropGoalMessage.Success} " +
+                    $"{CurrentScore(gameEvent)}");
+
                 break;
 
             case GameEventType.TeamAMissedPenalty:
@@ -199,19 +223,43 @@ public class MessageSender
                 break;
 
             case GameEventType.TeamBFailedDropGoal:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + AttempDropGoal(gameEvent.Game.Teams[1].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync(FailedDropGoal(gameEvent.Game.Teams[1].Team.Country)
-                    + " " + CurrentScore(gameEvent));
+                (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[1]);
+
+                dropGoalMessage = _messageProvider.GetDropGoalMessage(
+                    gameEvent.Game.Teams[1].Team.Country,
+                    gameEvent.Game.Teams[0].Team.Country,
+                    n1, n2, n3);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - " +
+                    $"{dropGoalMessage.Description}");
+
+                seconds = Random.Shared.Next(dropGoalMessage.MinSeconds,
+                    dropGoalMessage.MaxSeconds + 1);
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+
+                await _channel.SendMessageAsync($"{dropGoalMessage.Failure} " +
+                    $"{CurrentScore(gameEvent)}");
+
                 break;
 
             case GameEventType.TeamBScoredDropGoal:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + AttempDropGoal(gameEvent.Game.Teams[1].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync(ScoredDropGoal(gameEvent.Game.Teams[1].Team.Country)
-                    + " " + CurrentScore(gameEvent));
+                (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[1]);
+
+                dropGoalMessage = _messageProvider.GetDropGoalMessage(
+                    gameEvent.Game.Teams[1].Team.Country,
+                    gameEvent.Game.Teams[0].Team.Country,
+                    n1, n2, n3);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - " +
+                    $"{dropGoalMessage.Description}");
+
+                seconds = Random.Shared.Next(dropGoalMessage.MinSeconds,
+                    dropGoalMessage.MaxSeconds + 1);
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+
+                await _channel.SendMessageAsync($"{dropGoalMessage.Success} " +
+                    $"{CurrentScore(gameEvent)}");
+
                 break;
 
             case GameEventType.TeamBMissedPenalty:
