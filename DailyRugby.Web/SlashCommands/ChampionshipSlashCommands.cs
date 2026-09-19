@@ -391,4 +391,45 @@ public class ChampionshipSlashCommands
         var json = JsonSerializer.Serialize(list);
         await FollowupAsync(json, ephemeral: true);
     }
+
+    [SlashCommand("see-full-schedules-json", "Shows the schedules of the entire championship as JSON")]
+    public async Task SeeFullSchedulesJson(
+        [Summary("Championship", "The championship to get the schedules from")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string champId)
+    {
+        await DeferAsync(ephemeral: true);
+
+        bool idParsed = Guid.TryParse(champId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        var champResult = await champService.GetByIdAsync(id);
+
+        if (!champResult.IsSuccessful)
+        {
+            await FollowupAsync($"{champResult.Error}: {champResult.Message}", ephemeral: true);
+            return;
+        }
+
+        Dictionary<int, List<string>> rounds = [];
+
+        foreach (var game in champResult.Item.Games)
+        {
+            if (rounds.TryGetValue(game.Round, out List<string>? list) && list is not null)
+            {
+                list.Add($"{game.TeamA.Team.Country} vs {game.TeamB.Team.Country}");
+            }
+            else
+            {
+                rounds[game.Round] = [$"{game.TeamA.Team.Country} vs {game.TeamB.Team.Country}"];
+            }
+        }
+
+        string json = JsonSerializer.Serialize(rounds);
+        await FollowupAsync(json, ephemeral: true);
+    }
 }
