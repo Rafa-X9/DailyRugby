@@ -4,7 +4,6 @@ using DailyRugby.Domain;
 using DailyRugby.Web.AutoCompletes;
 using DailyRugby.Web.BotServices;
 using Discord.Interactions;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Text;
 
 namespace DailyRugby.Web.SlashCommands;
@@ -31,19 +30,19 @@ public class TeamSlashCommands(ITeamCrudService teamService)
             await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
             return;
         }
-        await DeferAsync();
+        await DeferAsync(ephemeral: true);
 
         bool idParsed = Guid.TryParse(champId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
         bool coachParsed = Enum.TryParse(initialCoach, true, out Coaches coach);
         if (!coachParsed)
         {
-            await FollowupAsync("Invalid coach");
+            await FollowupAsync("Invalid coach", ephemeral: true);
             return;
         }
 
@@ -59,25 +58,28 @@ public class TeamSlashCommands(ITeamCrudService teamService)
 
         if (!addResult.IsSuccessful)
         {
-            await FollowupAsync($"{addResult.Error}: {addResult.Message}");
+            await FollowupAsync($"{addResult.Error}: {addResult.Message}", ephemeral: true);
             return;
         }
 
-        await FollowupAsync($"Created successfully with the id {addResult.Item.Id}");
+        await FollowupAsync($"Created successfully with the id {addResult.Item.Id}", ephemeral: true);
     }
 
     [SlashCommand("see-teams", "Shows all teams in a championship")]
     public async Task SeeTeams(
         [Summary("championship", "The championship to see the teams from")]
         [Autocomplete(typeof(ChampionshipAutoComplete))]
-        string champId)
+        string champId,
+
+        [Summary("Private", "Whether the response should be sent privately")]
+        bool @private = true)
     {
-        await DeferAsync();
+        await DeferAsync(ephemeral: @private);
 
         bool idParsed = Guid.TryParse(champId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
@@ -91,7 +93,7 @@ public class TeamSlashCommands(ITeamCrudService teamService)
                 $"I = {team.Insight}, T = {team.Technique}, P = {team.Physique}, " +
                 $"Coaches: {string.Join(", ", team.Coaches)}");
         }
-        await FollowupAsync(sb.ToString());
+        await FollowupAsync(sb.ToString(), ephemeral: @private);
     }
 
     [SlashCommand("delete-team", "Deletes a team from a championship")]
@@ -105,12 +107,12 @@ public class TeamSlashCommands(ITeamCrudService teamService)
             await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
             return;
         }
-        await DeferAsync();
+        await DeferAsync(ephemeral: true);
 
         bool idParsed = Guid.TryParse(teamId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
@@ -118,25 +120,28 @@ public class TeamSlashCommands(ITeamCrudService teamService)
 
         if (!result.IsSuccessful)
         {
-            await FollowupAsync($"{result.Error}: {result.Message}");
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
             return;
         }
 
-        await FollowupAsync("Deleted successfully");
+        await FollowupAsync("Deleted successfully", ephemeral: true);
     }
 
     [SlashCommand("see-team-stats", "Shows the stats of a team")]
     public async Task SeeTeamStats(
         [Summary("team", "The team to see the stats from")]
         [Autocomplete(typeof(TeamAutoComplete))]
-        string teamId)
+        string teamId,
+
+        [Summary("Private", "Whether the response should be sent privately")]
+        bool @private = true)
     {
-        await DeferAsync();
+        await DeferAsync(ephemeral: @private);
 
         bool idParsed = Guid.TryParse(teamId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
@@ -144,7 +149,7 @@ public class TeamSlashCommands(ITeamCrudService teamService)
 
         if (!result.IsSuccessful)
         {
-            await FollowupAsync($"{result.Error}: {result.Message}");
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
             return;
         }
 
@@ -162,7 +167,7 @@ public class TeamSlashCommands(ITeamCrudService teamService)
         sb.AppendLine($"- {result.Item.ScoredTriesCount} tries scored");
         sb.AppendLine($"- {result.Item.SufferedTriesCount} tries suffered");
 
-        await FollowupAsync(sb.ToString());
+        await FollowupAsync(sb.ToString(), ephemeral: @private);
     }
 
     [SlashCommand("add-to-stat", "Add to a team's stat")]
@@ -183,19 +188,19 @@ public class TeamSlashCommands(ITeamCrudService teamService)
             await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
             return;
         }
-        await DeferAsync();
+        await DeferAsync(ephemeral: true);
 
         bool idParsed = Guid.TryParse(teamId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
         bool enumParsed = Enum.TryParse(teamStat, true, out TeamStats stat);
         if (!enumParsed)
         {
-            await FollowupAsync("Invalid stat");
+            await FollowupAsync("Invalid stat", ephemeral: true);
             return;
         }
 
@@ -203,12 +208,12 @@ public class TeamSlashCommands(ITeamCrudService teamService)
 
         if (!result.IsSuccessful)
         {
-            await FollowupAsync($"{result.Error}: {result.Message}");
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
             return;
         }
 
         await FollowupAsync($"Added {amount} points to {result.Item.Country}'s {teamStat}. " +
             $"Its stats are now: I = {result.Item.Insight}, P = {result.Item.Physique}, " +
-            $"T = {result.Item.Technique}");
+            $"T = {result.Item.Technique}", ephemeral: true);
     }
 }

@@ -18,14 +18,17 @@ public class GameSlashCommands(IGameCrudService gameService,
     public async Task SeeGames(
         [Summary("championship", "The championship to show the games from")]
         [Autocomplete(typeof(ChampionshipAutoComplete))]
-        string champId)
+        string champId,
+
+        [Summary("Private", "Whether the response should be sent privately")]
+        bool @private = true)
     {
-        await DeferAsync();
+        await DeferAsync(ephemeral: @private);
 
         bool idParsed = Guid.TryParse(champId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
@@ -35,7 +38,7 @@ public class GameSlashCommands(IGameCrudService gameService,
 
         if (list.Count == 0)
         {
-            await FollowupAsync("That championship has no games");
+            await FollowupAsync("That championship has no games", ephemeral: true);
             return;
         }
 
@@ -47,21 +50,24 @@ public class GameSlashCommands(IGameCrudService gameService,
                 $"in Round {game.Round}");
         }
 
-        await FollowupAsync(sb.ToString());
+        await FollowupAsync(sb.ToString(), ephemeral: @private);
     }
 
     [SlashCommand("see-teams-games", "Sees all the games of a specific team")]
     public async Task SeeTeamsGames(
         [Summary("team", "The team to see the games")]
         [Autocomplete(typeof(TeamAutoComplete))]
-        string teamId)
+        string teamId,
+
+        [Summary("Private", "Whether the response should be sent privately")]
+        bool @private = true)
     {
-        await DeferAsync();
+        await DeferAsync(ephemeral: @private);
 
         bool idParsed = Guid.TryParse(teamId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
@@ -69,7 +75,7 @@ public class GameSlashCommands(IGameCrudService gameService,
 
         if (!gamesResult.IsSuccessful)
         {
-            await FollowupAsync($"{gamesResult.Error}: {gamesResult.Message}");
+            await FollowupAsync($"{gamesResult.Error}: {gamesResult.Message}", ephemeral: true);
             return;
         }
 
@@ -94,7 +100,7 @@ public class GameSlashCommands(IGameCrudService gameService,
             }
         }
 
-        await FollowupAsync(sb.ToString());
+        await FollowupAsync(sb.ToString(), ephemeral: @private);
     }
 
     [SlashCommand("schedule-game", "Schedules a game")]
@@ -113,12 +119,12 @@ public class GameSlashCommands(IGameCrudService gameService,
             await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
             return;
         }
-        await DeferAsync();
+        await DeferAsync(ephemeral: true);
 
         bool idParsed = Guid.TryParse(gameId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
@@ -128,23 +134,25 @@ public class GameSlashCommands(IGameCrudService gameService,
 
         if (!result.IsSuccessful)
         {
-            await FollowupAsync($"{result.Error}: {result.Message}");
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
             return;
         }
 
-        await FollowupAsync("Scheduled successfully");
+        await FollowupAsync("Scheduled successfully", ephemeral: true);
     }
 
     [SlashCommand("see-current-round", "Shows all games from the current round")]
-    public async Task SeeCurrentRound()
+    public async Task SeeCurrentRound(
+        [Summary("Private", "Whether the response should be sent privately")]
+        bool @private = true)
     {
-        await DeferAsync();
+        await DeferAsync(ephemeral: @private);
 
         var result = await gameService.GetCurrentRoundAsync();
 
         if (!result.IsSuccessful)
         {
-            await FollowupAsync($"{result.Error}: {result.Message}");
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
             return;
         }
 
@@ -155,7 +163,7 @@ public class GameSlashCommands(IGameCrudService gameService,
             sb.AppendLine($"- {game.TeamA.Team.Country} vs {game.TeamB.Team.Country}");
         }
 
-        await FollowupAsync(sb.ToString());
+        await FollowupAsync(sb.ToString(), ephemeral: @private);
     }
 
     [SlashCommand("set-tactic", "Sets a team's tactic")]
@@ -177,26 +185,26 @@ public class GameSlashCommands(IGameCrudService gameService,
             await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
             return;
         }
-        await DeferAsync();
+        await DeferAsync(ephemeral: true);
 
         bool idParsed = Guid.TryParse(gameId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
         bool tacticParsed = Enum.TryParse(tactic, true, out Tactics tacticEnum);
         if (!tacticParsed)
         {
-            await FollowupAsync("Invalid tactic");
+            await FollowupAsync("Invalid tactic", ephemeral: true);
             return;
         }
 
         bool teamParsed = Enum.TryParse(teamAorB, true, out Teams team);
         if (!teamParsed)
         {
-            await FollowupAsync("Invalid team to set tactic to");
+            await FollowupAsync("Invalid team to set tactic to", ephemeral: true);
             return;
         }
 
@@ -204,26 +212,29 @@ public class GameSlashCommands(IGameCrudService gameService,
 
         if (!result.IsSuccessful)
         {
-            await FollowupAsync($"{result.Error}: {result.Message}");
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
             return;
         }
 
         await FollowupAsync($"Successfully applied the tactic {result.Item.Tactic} " +
-            $"to {result.Item.Team.Country}");
+            $"to {result.Item.Team.Country}", ephemeral: true);
     }
 
     [SlashCommand("see-odds", "Shows the odds of a game")]
     public async Task SeeOdds(
         [Summary("Game", "The game to get odds from")]
         [Autocomplete(typeof(CurrentRoundAutocomplete))]
-        string gameId)
+        string gameId,
+
+        [Summary("Private", "Whether the response should be sent privately")]
+        bool @private = true)
     {
-        await DeferAsync();
+        await DeferAsync(ephemeral: @private);
 
         bool idParsed = Guid.TryParse(gameId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
@@ -231,7 +242,7 @@ public class GameSlashCommands(IGameCrudService gameService,
 
         if (!oddsResult.IsSuccessful)
         {
-            await FollowupAsync(oddsResult.Message);
+            await FollowupAsync(oddsResult.Message, ephemeral: true);
             await oddsCalculator.GetOddsAsync(id, passIfNotExists: false);
             return;
         }
@@ -240,7 +251,8 @@ public class GameSlashCommands(IGameCrudService gameService,
 
         if (!gameResult.IsSuccessful)
         {
-            await FollowupAsync("Somehow, getting the odds suceeded but getting the game failed");
+            await FollowupAsync("Somehow, getting the odds suceeded but getting the game failed",
+                ephemeral: true);
             return;
         }
 
@@ -254,7 +266,7 @@ public class GameSlashCommands(IGameCrudService gameService,
         sb.AppendLine($"{gameResult.Item.TeamA.Team.Country} wins: {teamAWins.ToString("F0", c)}%");
         sb.AppendLine($"{gameResult.Item.TeamB.Team.Country} wins: {teamBWins.ToString("F0", c)}%");
 
-        await FollowupAsync(sb.ToString());
+        await FollowupAsync(sb.ToString(), ephemeral: @private);
     }
 
     [SlashCommand("cheer", "Cheer for a team!")]
@@ -268,14 +280,14 @@ public class GameSlashCommands(IGameCrudService gameService,
     {
         if (yell is { Length: > 1000 })
         {
-            await RespondAsync("That yell is too long!");
+            await RespondAsync("That yell is too long!", ephemeral: true);
             return;
         }
 
         bool teamParsed = Enum.TryParse(teamAorB, true, out Teams team);
         if (!teamParsed)
         {
-            await RespondAsync("Invalid team to cheer for");
+            await RespondAsync("Invalid team to cheer for", ephemeral: true);
             return;
         }
 
@@ -289,10 +301,10 @@ public class GameSlashCommands(IGameCrudService gameService,
 
         if (!result.IsSuccessful)
         {
-            await RespondAsync($"{result.Error}: {result.Message}");
+            await RespondAsync($"{result.Error}: {result.Message}", ephemeral: true);
             return;
         }
 
-        await RespondAsync("Your cheer has been scheduled");
+        await RespondAsync("Your cheer has been scheduled", ephemeral: true);
     }
 }

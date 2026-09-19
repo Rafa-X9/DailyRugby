@@ -29,12 +29,12 @@ public class ChampionshipSlashCommands
             return;
         }
 
-        await DeferAsync();
+        await DeferAsync(ephemeral: true);
 
         bool parsed = Enum.TryParse(season, true, out Seasons enumSeason);
         if (!parsed)
         {
-            await FollowupAsync("Invalid season");
+            await FollowupAsync("Invalid season", ephemeral: true);
             return;
         }
 
@@ -43,17 +43,19 @@ public class ChampionshipSlashCommands
         var result = await champService.AddAsync(request);
         if (!result.IsSuccessful)
         {
-            await FollowupAsync($"{result.Error}: {result.Message}");
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
             return;
         }
         await FollowupAsync($"Success, the championship was created " +
-            $"with the Id {result.Item.Id}");
+            $"with the Id {result.Item.Id}", ephemeral: true);
     }
 
     [SlashCommand("see-championships", "See all created championships")]
-    public async Task SeeChampionships()
+    public async Task SeeChampionships(
+        [Summary("Private", "Whether the response of this command should be private")]
+        bool @private = true)
     {
-        await DeferAsync();
+        await DeferAsync(ephemeral: @private);
         var list = (await champService.GetAllAsync()).OrderByDescending(temp => temp.Id);
         StringBuilder sb = new();
         sb.AppendLine("These are all championships registered:");
@@ -64,7 +66,7 @@ public class ChampionshipSlashCommands
                 $"Season = {response.Season}, " +
                 $"Id = {response.Id}");
         }
-        await FollowupAsync(sb.ToString());
+        await FollowupAsync(sb.ToString(), ephemeral: @private);
     }
 
     [SlashCommand("delete-championship", "Deletes a championship")]
@@ -78,23 +80,23 @@ public class ChampionshipSlashCommands
             await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
             return;
         }
-        await DeferAsync();
+        await DeferAsync(ephemeral: true);
 
         bool parsed = Guid.TryParse(id, out Guid guid);
         if (!parsed)
         {
-            await FollowupAsync($"The id '{id}' isn't a valid Guid");
+            await FollowupAsync($"The id '{id}' isn't a valid Guid", ephemeral: true);
             return;
         }
 
         var result = await champService.DeleteAsync(guid);
         if (!result.IsSuccessful)
         {
-            await FollowupAsync($"{result.Error}: {result.Message}");
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
             return;
         }
 
-        await FollowupAsync("Deleted successfully");
+        await FollowupAsync("Deleted successfully", ephemeral: true);
     }
 
     [SlashCommand("start-championship", "Sets a championship as started and generates its rounds")]
@@ -108,19 +110,19 @@ public class ChampionshipSlashCommands
             await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
             return;
         }
-        await DeferAsync();
+        await DeferAsync(ephemeral: true);
 
         bool idParsed = Guid.TryParse(champId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
         var pairingsResult = await gameService.GenerateRounds(id);
         if (!pairingsResult.IsSuccessful)
         {
-            await FollowupAsync($"{pairingsResult.Error}: {pairingsResult.Message}");
+            await FollowupAsync($"{pairingsResult.Error}: {pairingsResult.Message}", ephemeral: true);
             return;
         }
 
@@ -141,7 +143,7 @@ public class ChampionshipSlashCommands
             sb.AppendLine();
         }
 
-        await FollowupAsync(sb.ToString());
+        await FollowupAsync(sb.ToString(), ephemeral: true);
     }
 
     [SlashCommand("restart-championship", "Deletes all games in a championship " +
@@ -156,19 +158,19 @@ public class ChampionshipSlashCommands
             await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
             return;
         }
-        await DeferAsync();
+        await DeferAsync(ephemeral: true);
 
         bool idParsed = Guid.TryParse(champId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
         var pairingsResult = await gameService.GenerateRounds(id, true);
         if (!pairingsResult.IsSuccessful)
         {
-            await FollowupAsync($"{pairingsResult.Error}: {pairingsResult.Message}");
+            await FollowupAsync($"{pairingsResult.Error}: {pairingsResult.Message}", ephemeral: true);
             return;
         }
 
@@ -189,7 +191,7 @@ public class ChampionshipSlashCommands
             sb.AppendLine();
         }
 
-        await FollowupAsync(sb.ToString());
+        await FollowupAsync(sb.ToString(), ephemeral: true);
     }
 
     [SlashCommand("set-as-main", "Sets a championship as the main one")]
@@ -203,12 +205,12 @@ public class ChampionshipSlashCommands
             await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
             return;
         }
-        await DeferAsync();
+        await DeferAsync(ephemeral: true);
 
         bool idParsed = Guid.TryParse(champId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
@@ -216,11 +218,11 @@ public class ChampionshipSlashCommands
 
         if (!result.IsSuccessful)
         {
-            await FollowupAsync($"{result.Error}: {result.Message}");
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
             return;
         }
 
-        await FollowupAsync($"{result.Item.Name} successfully set as the main championship");
+        await FollowupAsync($"{result.Item.Name} successfully set as the main championship", ephemeral: true);
     }
 
     [SlashCommand("unset-as-main", "Removes the main championship from its spot")]
@@ -234,12 +236,12 @@ public class ChampionshipSlashCommands
             await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
             return;
         }
-        await DeferAsync();
+        await DeferAsync(ephemeral: true);
 
         bool idParsed = Guid.TryParse(champId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
@@ -247,25 +249,28 @@ public class ChampionshipSlashCommands
 
         if (!result.IsSuccessful)
         {
-            await FollowupAsync($"{result.Error}: {result.Message}");
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
             return;
         }
 
-        await FollowupAsync($"{result.Item.Name} successfully unset as the main championship");
+        await FollowupAsync($"{result.Item.Name} successfully unset as the main championship", ephemeral: true);
     }
 
     [SlashCommand("see-standings", "Shows the standings of a championship")]
     public async Task SeeStandings(
         [Summary("Championship", "The championship to get the standings from")]
         [Autocomplete(typeof(ChampionshipAutoComplete))]
-        string champId)
+        string champId,
+
+        [Summary("Private", "Whether the response should be sent privately")]
+        bool @private = true)
     {
-        await DeferAsync();
+        await DeferAsync(ephemeral: @private);
 
         bool idParsed = Guid.TryParse(champId, out Guid id);
         if (!idParsed)
         {
-            await FollowupAsync("Id isn't a valid Guid");
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
@@ -283,19 +288,21 @@ public class ChampionshipSlashCommands
             sb.AppendLine($"{pair.Key}: {pair.Value.Country} ({wins}-{ties}-{loss})");
         }
 
-        await FollowupAsync(sb.ToString());
+        await FollowupAsync(sb.ToString(), ephemeral: @private);
     }
 
     [SlashCommand("see-schedules", "Shows the schedules of the current round")]
-    public async Task SeeSchedules()
+    public async Task SeeSchedules(
+        [Summary("Private", "Whether the response should be sent privately")]
+        bool @private = true)
     {
-        await DeferAsync();
+        await DeferAsync(ephemeral: @private);
 
         var result = await scheduleGetter.GetSchedulesAsync();
 
         if (!result.IsSuccessful)
         {
-            await FollowupAsync($"{result.Error}: {result.Message}");
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
             return;
         }
 
@@ -310,6 +317,6 @@ public class ChampionshipSlashCommands
                 $"<t:{timestamp}> (<t:{timestamp}:R>)");
         }
 
-        await FollowupAsync(sb.ToString());
+        await FollowupAsync(sb.ToString(), ephemeral: @private);
     }
 }
