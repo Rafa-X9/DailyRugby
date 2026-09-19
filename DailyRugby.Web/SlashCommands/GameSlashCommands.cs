@@ -6,6 +6,7 @@ using DailyRugby.Web.BotServices;
 using Discord.Interactions;
 using System.Globalization;
 using System.Text;
+using System.Text.Json;
 
 namespace DailyRugby.Web.SlashCommands;
 
@@ -306,5 +307,40 @@ public class GameSlashCommands(IGameCrudService gameService,
         }
 
         await RespondAsync("Your cheer has been scheduled", ephemeral: true);
+    }
+
+    [SlashCommand("see-current-round-json", "Get the current round as JSON")]
+    public async Task SeeCurrentRoundJson()
+    {
+        await DeferAsync(ephemeral: true);
+
+        var result = await gameService.GetCurrentRoundAsync();
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
+            return;
+        }
+
+        var games = new List<object>();
+
+        foreach (var game in result.Item)
+        {
+            games.Add(new
+            {
+                teamA = game.TeamA.Team.Country,
+                teamB = game.TeamB.Team.Country,
+
+                teamAHasMoraleBoost = game.TeamA.HasMoraleBoost,
+                teamBHasMoraleBoost = game.TeamB.HasMoraleBoost,
+
+                teamAGetsMoraleBoost = game.TeamA.GetsMoraleBoostIfWins,
+                teamBGetsMoraleBoost = game.TeamB.GetsMoraleBoostIfWins
+            });
+        }
+
+        string json = JsonSerializer.Serialize(games);
+
+        await FollowupAsync(json, ephemeral: true);
     }
 }
