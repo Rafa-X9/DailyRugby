@@ -51,7 +51,13 @@ public class ChampionshipCrudService(AppDbContext db) : IChampionshipCrudService
 
     public async Task<Result<ChampionshipResponse>> GetByIdAsync(Guid id)
     {
-        var match = await db.Championships.FirstOrDefaultAsync(temp => temp.Id == id);
+        var match = await db.Championships
+            .AsNoTracking()
+            .Include(temp => temp.Games)
+            .ThenInclude(temp => temp.Teams.OrderBy(team => team.Team.Country))
+            .ThenInclude(temp => temp.Team)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(temp => temp.Id == id);
 
         if (match is null)
         {
