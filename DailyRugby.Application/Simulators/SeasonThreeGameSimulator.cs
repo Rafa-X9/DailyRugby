@@ -28,6 +28,13 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             return Result.Failure("You already cheered 3 times", Errors.Invalid);
         }
 
+        if (_cheers.Any(temp => temp.Cheer.UserId == cheer.UserId
+            && !temp.Resolved))
+        {
+            return Result.Failure("You are already cheering; please wait 2 game minutes " +
+                "before cheering again", Errors.Invalid);
+        }
+
         cheer.StartMinute = game.CurrentMinute + 1;
         _cheers.Add(new(false, cheer));
         return Result.Success();
