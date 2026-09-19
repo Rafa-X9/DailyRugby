@@ -148,19 +148,44 @@ public class MessageSender
                 break;
 
             case GameEventType.TeamAMissedPenalty:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + AttemptedPenalty(gameEvent.Game.Teams[0].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync(MissedPenalty(gameEvent.Game.Teams[0].Team.Country)
-                    + " " + CurrentScore(gameEvent));
+
+                (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[0]);
+
+                var penaltyMessage = _messageProvider.GetPenaltyMessage(
+                    gameEvent.Game.Teams[0].Team.Country,
+                    gameEvent.Game.Teams[1].Team.Country,
+                    n1, n2, n3);
+
+                await _channel.SendMessageAsync($"{gameEvent.Game.CurrentMinute}' - " +
+                    $"{penaltyMessage.Description}");
+
+                seconds = Random.Shared.Next(penaltyMessage.MinSeconds,
+                    penaltyMessage.MaxSeconds + 1);
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+
+                await _channel.SendMessageAsync($"{penaltyMessage.Failure} " +
+                    $"{CurrentScore(gameEvent)}");
+
                 break;
 
             case GameEventType.TeamAScoredPenalty:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + AttemptedPenalty(gameEvent.Game.Teams[0].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync(ScoredPenalty(gameEvent.Game.Teams[0].Team.Country)
-                    + " " + CurrentScore(gameEvent));
+                (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[0]);
+
+                penaltyMessage = _messageProvider.GetPenaltyMessage(
+                    gameEvent.Game.Teams[0].Team.Country,
+                    gameEvent.Game.Teams[1].Team.Country,
+                    n1, n2, n3);
+
+                await _channel.SendMessageAsync($"{gameEvent.Game.CurrentMinute}' - " +
+                    $"{penaltyMessage.Description}");
+
+                seconds = Random.Shared.Next(penaltyMessage.MinSeconds,
+                    penaltyMessage.MaxSeconds + 1);
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+
+                await _channel.SendMessageAsync($"{penaltyMessage.Success} " +
+                    $"{CurrentScore(gameEvent)}");
+
                 break;
 
             //---------------------
@@ -263,19 +288,43 @@ public class MessageSender
                 break;
 
             case GameEventType.TeamBMissedPenalty:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + AttemptedPenalty(gameEvent.Game.Teams[1].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync(MissedPenalty(gameEvent.Game.Teams[1].Team.Country)
-                    + " " + CurrentScore(gameEvent));
+                (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[1]);
+
+                penaltyMessage = _messageProvider.GetPenaltyMessage(
+                    gameEvent.Game.Teams[1].Team.Country,
+                    gameEvent.Game.Teams[0].Team.Country,
+                    n1, n2, n3);
+
+                await _channel.SendMessageAsync($"{gameEvent.Game.CurrentMinute}' - " +
+                    $"{penaltyMessage.Description}");
+
+                seconds = Random.Shared.Next(penaltyMessage.MinSeconds,
+                    penaltyMessage.MaxSeconds + 1);
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+
+                await _channel.SendMessageAsync($"{penaltyMessage.Failure} " +
+                    $"{CurrentScore(gameEvent)}");
+
                 break;
 
             case GameEventType.TeamBScoredPenalty:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + AttemptedPenalty(gameEvent.Game.Teams[1].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync(ScoredPenalty(gameEvent.Game.Teams[1].Team.Country)
-                    + " " + CurrentScore(gameEvent));
+                (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[1]);
+
+                penaltyMessage = _messageProvider.GetPenaltyMessage(
+                    gameEvent.Game.Teams[1].Team.Country,
+                    gameEvent.Game.Teams[0].Team.Country,
+                    n1, n2, n3);
+
+                await _channel.SendMessageAsync($"{gameEvent.Game.CurrentMinute}' - " +
+                    $"{penaltyMessage.Description}");
+
+                seconds = Random.Shared.Next(penaltyMessage.MinSeconds,
+                    penaltyMessage.MaxSeconds + 1);
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+
+                await _channel.SendMessageAsync($"{penaltyMessage.Success} " +
+                    $"{CurrentScore(gameEvent)}");
+
                 break;
 
             case GameEventType.TeamAPlayerAbducted:
@@ -318,7 +367,6 @@ public class MessageSender
                     $"the slap, so he was sent back to the field. This is #{gameEvent
                     .PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. He is back on the game.");
                 break;
-
 
             case GameEventType.TeamBPlayerNonSeriousInjury:
                 await _channel.SendMessageAsync($"The injured player " +
