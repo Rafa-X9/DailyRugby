@@ -1,4 +1,6 @@
-﻿namespace DailyRugby.Web.BotServices;
+﻿using DailyRugby.Domain;
+
+namespace DailyRugby.Web.BotServices;
 
 public class MessageProvider
 {
@@ -95,6 +97,37 @@ public class MessageProvider
         int index = _random.Next(0, _conversionFailureMessages.Count);
         return _conversionFailureMessages[index]
             .Replace("{teamA}", team);
+    }
+
+    public DropGoalMessage GetDropGoalMessage(string attempter, string defender,
+        int player1, int player2, int player3)
+    {
+        int index = _random.Next(0, _dropGoalMessages.Count);
+        var layout = _dropGoalMessages[index];
+
+        return layout with
+        {
+            Description = layout.Description
+                .Replace("{teamA}", attempter)
+                .Replace("{player1}", player1.ToString())
+                .Replace("{player2}", player2.ToString())
+                .Replace("{player3}", player3.ToString())
+                .Replace("{teamB}", defender),
+
+            Success = layout.Success
+                .Replace("{teamA}", attempter)
+                .Replace("{player1}", player1.ToString())
+                .Replace("{player2}", player2.ToString())
+                .Replace("{player3}", player3.ToString())
+                .Replace("{teamB}", defender),
+
+            Failure = layout.Failure
+                .Replace("{teamA}", attempter)
+                .Replace("{player1}", player1.ToString())
+                .Replace("{player2}", player2.ToString())
+                .Replace("{player3}", player3.ToString())
+                .Replace("{teamB}", defender)
+        };
     }
 }
 
