@@ -392,11 +392,14 @@ public class MessageSender
             //-------------
 
             case GameEventType.TeamAPlayerYellowCard:
-                await _channel.SendMessageAsync($"{gameEvent.Game.CurrentMinute}' - A player from " +
-                    $"{gameEvent.Game.Teams[0].Team.Country} " +
-                    $"punched an opponent in the face. He receives a yellow card, and is therefore out " +
-                    $"of the field for 10 minutes. This is {gameEvent.PlayerInvolved?.Number.ToString()
-                    ?? "UNKONWN"}.");
+                string yellowCardMessage = _messageProvider.GetYellowCardMessage(
+                    gameEvent.Game.Teams[0].Team.Country,
+                    gameEvent.Game.Teams[1].Team.Country);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - {yellowCardMessage} " +
+                    $"This is #{gameEvent.PlayerInvolved?.Number.ToString() ?? "UNKNOWN"}. He " +
+                    $"is out of the field for 10 minutes.");
+
                 break;
 
             case GameEventType.TeamAPlayerReturningFromYellowCard:
@@ -405,19 +408,25 @@ public class MessageSender
                 break;
 
             case GameEventType.TeamAPlayerRedCard:
-                await _channel.SendMessageAsync($"{gameEvent.Game.CurrentMinute}' - A player from " +
-                    $"{gameEvent.Game.Teams[0].Team.Country} was seen downvoting comments on r/dailygames. " +
-                    $"He is immediatelly given a red card. This is #{gameEvent.PlayerInvolved?.Number
-                    .ToString() ?? "UNKOWN."}");
+                string redCardMessage = _messageProvider.GetRedCardMessage(
+                    gameEvent.Game.Teams[0].Team.Country,
+                    gameEvent.Game.Teams[1].Team.Country);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - {redCardMessage} " +
+                    $"This is #{gameEvent.PlayerInvolved?.Number.ToString() ?? "UNKNOWN"}. He " +
+                    $"is out of the field for the remaining of the game.");
+
                 break;
 
-
             case GameEventType.TeamBPlayerYellowCard:
-                await _channel.SendMessageAsync($"{gameEvent.Game.CurrentMinute}' - A player from " +
-                    $"{gameEvent.Game.Teams[1].Team.Country} " +
-                    $"punched an opponent in the face. He receives a yellow card, and is therefore out " +
-                    $"of the field for 10 minutes. This is {gameEvent.PlayerInvolved?.Number.ToString()
-                    ?? "UNKONWN"}.");
+                yellowCardMessage = _messageProvider.GetYellowCardMessage(
+                    gameEvent.Game.Teams[1].Team.Country,
+                    gameEvent.Game.Teams[0].Team.Country);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - {yellowCardMessage} " +
+                    $"This is #{gameEvent.PlayerInvolved?.Number.ToString() ?? "UNKNOWN"}. He " +
+                    $"is out of the field for 10 minutes.");
+
                 break;
 
             case GameEventType.TeamBPlayerReturningFromYellowCard:
@@ -426,10 +435,14 @@ public class MessageSender
                 break;
 
             case GameEventType.TeamBPlayerRedCard:
-                await _channel.SendMessageAsync($"{gameEvent.Game.CurrentMinute}' - A player from " +
-                    $"{gameEvent.Game.Teams[1].Team.Country} was seen downvoting comments on r/dailygames. " +
-                    $"He is immediatelly given a red card. This is #{gameEvent.PlayerInvolved?.Number
-                    .ToString() ?? "UNKOWN."}");
+                redCardMessage = _messageProvider.GetRedCardMessage(
+                    gameEvent.Game.Teams[1].Team.Country,
+                    gameEvent.Game.Teams[0].Team.Country);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - {redCardMessage} " +
+                    $"This is #{gameEvent.PlayerInvolved?.Number.ToString() ?? "UNKNOWN"}. He " +
+                    $"is out of the field for the remaining of the game.");
+
                 break;
 
             // -----------
