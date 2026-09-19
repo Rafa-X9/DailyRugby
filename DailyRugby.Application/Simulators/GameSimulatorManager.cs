@@ -236,7 +236,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             await db.Teams
                 .Where(temp => temp.Id == loser.Id)
                 .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(temp => temp.WinCount, temp => temp.LossCount + 1));
+                    .SetProperty(temp => temp.LossCount, temp => temp.LossCount + 1));
         }
         else
         {
