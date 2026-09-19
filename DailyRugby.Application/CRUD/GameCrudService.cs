@@ -222,9 +222,20 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         return Result<IList<GameResponse>>.Failure("There isn't an ongoing round", Errors.Invalid);
     }
 
-    public Task<Result<IList<GameResponse>>> GetRoundAsync(Guid champId, int round)
+    public async Task<Result<IList<GameResponse>>> GetRoundAsync(Guid champId, int round)
     {
-        throw new NotImplementedException();
+        var games = await db.Games
+            .AsNoTracking()
+            .Include(temp => temp.Championship)
+            .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
+            .ThenInclude(temp => temp.Team)
+            .Where(temp => temp.ChampionshipId == champId
+                && temp.Championship.IsMainChampionship
+                && temp.Round == round)
+            .Select(temp => temp.ToGameResponse())
+            .ToListAsync();
+
+        return Result<IList<GameResponse>>.Success(games);
     }
 
     public Task<Result<TeamGameResponse>> SetCoachAsync(Guid gameId, Teams team, Coaches coach)
