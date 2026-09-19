@@ -50,6 +50,8 @@ class Program
         builder.Services.AddSingleton<IGameSimulatorFactory, GameSimulatorFactory>();
         builder.Services.AddSingleton<IGameOddsCalculator, GameOddsCalculator>();
 
+        builder.Configuration.AddJsonFile("commentator_messages.json", false);
+
         var app = builder.Build();
 
         _ = app.Services.GetRequiredService<MessageSender>();
