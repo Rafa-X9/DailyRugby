@@ -5,6 +5,7 @@ using DailyRugby.Web.AutoCompletes;
 using DailyRugby.Web.BotServices;
 using Discord.Interactions;
 using System.Text;
+using System.Text.Json;
 
 namespace DailyRugby.Web.SlashCommands;
 
@@ -215,5 +216,42 @@ public class TeamSlashCommands(ITeamCrudService teamService)
         await FollowupAsync($"Added {amount} points to {result.Item.Country}'s {teamStat}. " +
             $"Its stats are now: I = {result.Item.Insight}, P = {result.Item.Physique}, " +
             $"T = {result.Item.Technique}", ephemeral: true);
+    }
+
+    [SlashCommand("see-teams-json", "Get the teams from a championship as JSON")]
+    public async Task SeeTeamsJson(
+        [Summary("Championship", "The championship to get the teams from")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string champId)
+    {
+        await DeferAsync(ephemeral: true);
+
+        bool idParsed = Guid.TryParse(champId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        var teams = await teamService.GetAllAsync(id);
+
+        var list = new List<object>();
+
+        foreach (var team in teams)
+        {
+            list.Add(new
+            {
+                country = team.Country,
+                username = team.PlayerUsername,
+                technique = team.Technique,
+                insight = team.Insight,
+                physique = team.Physique,
+                coaches = team.Coaches.Select(temp => temp.ToString())
+            });
+        }
+
+        string json = JsonSerializer.Serialize(list);
+
+        await FollowupAsync(json, ephemeral: true);
     }
 }
