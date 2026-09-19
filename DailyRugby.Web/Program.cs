@@ -41,6 +41,7 @@ class Program
         builder.Services.AddTransient<ITeamValidatorFactory, TeamValidatorFactory>();
         builder.Services.AddScoped<ITeamCrudService, TeamCrudService>();
         builder.Services.AddScoped<IGameCrudService, GameCrudService>();
+        builder.Services.AddScoped<IScheduleGetter, ScheduleGetter>();
         builder.Services.AddSingleton<GameSimulatorManager>();
         builder.Services.AddSingleton<IGameSimulatorManager>(
             provider => provider.GetRequiredService<GameSimulatorManager>());

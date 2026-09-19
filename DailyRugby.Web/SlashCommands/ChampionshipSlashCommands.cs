@@ -8,7 +8,9 @@ using System.Text;
 namespace DailyRugby.Web.SlashCommands;
 
 public class ChampionshipSlashCommands
-        (IChampionshipCrudService champService, IGameCrudService gameService)
+    (IChampionshipCrudService champService,
+    IGameCrudService gameService,
+    IScheduleGetter scheduleGetter)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("add-championship", "Creates a championship")]
@@ -247,6 +249,33 @@ public class ChampionshipSlashCommands
                 loss = pair.Value.LossCount;
 
             sb.AppendLine($"{pair.Key}: {pair.Value.Country} ({wins}-{ties}-{loss})");
+        }
+
+        await FollowupAsync(sb.ToString());
+    }
+
+    [SlashCommand("see-schedules", "Shows the schedules of the current round")]
+    public async Task SeeSchedules()
+    {
+        await DeferAsync();
+
+        var result = await scheduleGetter.GetSchedulesAsync();
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}");
+            return;
+        }
+
+        StringBuilder sb = new();
+        sb.AppendLine("These are the schedules of the current round:");
+
+        foreach (var schedule in result.Item)
+        {
+            long timestamp = new DateTimeOffset(schedule.Date, TimeSpan.Zero).ToUnixTimeSeconds();
+
+            sb.AppendLine($"- {schedule.TeamA} vs {schedule.TeamB} at " +
+                $"<t:{timestamp}> (<t:{timestamp}:R>)");
         }
 
         await FollowupAsync(sb.ToString());
