@@ -4,730 +4,730 @@
       "Description": "#{player1} of {teamA} created an overlap.",
       "Success": "#{player2} received the final pass and touched down for {teamA}! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} drifted across and pushed the attack into touch. No try was scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 25
+      "MinSeconds": 12,
+      "MaxSeconds": 25
     },
 
     {
       "Description": "{teamA} broke through the defensive line.",
       "Success": "{teamA} sprinted clear and touched the ball down! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} chased the runner down with a desperate cover tackle. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 30
+      "MinSeconds": 10,
+      "MaxSeconds": 30
     },
 
     {
       "Description": "#{player1} and #{player2} of {teamA} built pressure through several phases near the try line.",
       "Success": "{teamA} eventually found a gap and crashed over! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} defended every phase and forced a turnover. No try was scored.",
-      "Min_seconds": 25,
-      "Max_seconds": 40
+      "MinSeconds": 25,
+      "MaxSeconds": 40
     },
 
     {
       "Description": "{teamA} drove a powerful maul toward the line.",
       "Success": "{teamA} marched over for a forwards' try! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} stopped the drive and won the ball back. No try was scored.",
-      "Min_seconds": 20,
-      "Max_seconds": 45
+      "MinSeconds": 20,
+      "MaxSeconds": 45
     },
 
     {
       "Description": "#{player1} of {teamA} chipped the ball over the defensive line.",
       "Success": "#{player1} won the chase and grounded the ball! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} recovered first and cleared the danger. No try was scored.",
-      "Min_seconds": 15,
-      "Max_seconds": 35
+      "MinSeconds": 15,
+      "MaxSeconds": 35
     },
 
     {
       "Description": "{teamA} moved the ball through quick hands.",
       "Success": "{teamA} found the space and scored! A try was scored, resulting in 5 points.",
       "Failure": "{teamA} knocked the ball forward at the crucial moment. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 25
+      "MinSeconds": 10,
+      "MaxSeconds": 25
     },
 
     {
       "Description": "{teamA} sent #{player1} charging close to the line.",
       "Success": "#{player1} powered through the last tackle to score! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} held the ball carrier up over the line. No try was scored.",
-      "Min_seconds": 15,
-      "Max_seconds": 35
+      "MinSeconds": 15,
+      "MaxSeconds": 35
     },
 
     {
       "Description": "{teamA} launched a counterattack from deep inside their half.",
       "Success": "{teamA} ran the length of the field for a remarkable try! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} scrambled back and brought the runner down. No try was scored.",
-      "Min_seconds": 20,
-      "Max_seconds": 40
+      "MinSeconds": 20,
+      "MaxSeconds": 40
     },
 
     {
       "Description": "#{player1}, #{player2} and #{player3} of {teamA} launched a series of pick-and-go attacks near the line.",
       "Success": "{teamA} finally drove over after relentless pressure! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} held firm and forced a turnover at the breakdown. No try was scored.",
-      "Min_seconds": 25,
-      "Max_seconds": 40
+      "MinSeconds": 25,
+      "MaxSeconds": 40
     },
 
     {
       "Description": "{teamA} spotted a mismatch between the forwards.",
       "Success": "{teamA} exploited the gap and powered over for a try! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} wrapped up the ball carrier and prevented the offload. No try was scored.",
-      "Min_seconds": 15,
-      "Max_seconds": 35
+      "MinSeconds": 15,
+      "MaxSeconds": 35
     },
 
     {
       "Description": "#{player1} of {teamA} sent a grubber kick through the defensive line.",
       "Success": "{teamA} won the race to the ball and touched it down! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} got back first and grounded the ball safely. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 25
+      "MinSeconds": 10,
+      "MaxSeconds": 25
     },
 
     {
       "Description": "{teamA} broke the gain line with a powerful carry.",
       "Success": "{teamA} kept the momentum and crashed over the try line! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} slowed the attack and earned a turnover penalty. No try was scored.",
-      "Min_seconds": 15,
-      "Max_seconds": 40
+      "MinSeconds": 15,
+      "MaxSeconds": 40
     },
 
     {
       "Description": "#{player1} and #{player2} of {teamA} used a clever switch move to confuse the defence.",
       "Success": "{teamA} created a gap and raced away to score! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} read the move and brought the runner down. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 30
+      "MinSeconds": 10,
+      "MaxSeconds": 30
     },
 
     {
       "Description": "{teamA} attacked from a scrum close to the try line.",
       "Success": "{teamA} executed the move perfectly and crossed over! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} shut down the attack and forced a knock-on. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 30
+      "MinSeconds": 10,
+      "MaxSeconds": 30
     },
 
     {
       "Description": "#{player1} swung the ball from one side of the field to the other for {teamA}.",
       "Success": "{teamA} stretched the defence and found space! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} drifted quickly and tackled the attacker into touch. No try was scored.",
-      "Min_seconds": 15,
-      "Max_seconds": 35
+      "MinSeconds": 15,
+      "MaxSeconds": 35
     },
 
     {
       "Description": "{teamA} attacked with a delayed pass at the defensive line.",
       "Success": "{teamA} put the runner through a gap for a try! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} made a dominant tackle and won the collision. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 25
+      "MinSeconds": 10,
+      "MaxSeconds": 25
     },
 
     {
       "Description": "#{player1} of {teamA} kicked a cross-field ball towards #{player2} on the wing.",
       "Success": "#{player2} gathered the ball and scored! A try was scored, resulting in 5 points.",
       "Failure": "{teamB}'s winger won the aerial contest and secured possession. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 25
+      "MinSeconds": 10,
+      "MaxSeconds": 25
     },
 
     {
       "Description": "{teamA} attacked from a quick tap penalty before the defence was set.",
       "Success": "{teamA} caught the defence sleeping and scored a simple try! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} reacted quickly and dragged the runner down short. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 25
+      "MinSeconds": 10,
+      "MaxSeconds": 25
     },
 
     {
       "Description": "{teamA} set up a driving maul with #{player1}, #{player2} and #{player3} leading the charge from a lineout five metres out.",
       "Success": "{teamA} surged over the line with unstoppable forward power! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} legally disrupted the maul and turned it over. No try was scored.",
-      "Min_seconds": 20,
-      "Max_seconds": 45
+      "MinSeconds": 20,
+      "MaxSeconds": 45
     },
 
     {
       "Description": "{teamA} attacked off the back of a scrum with a planned move.",
       "Success": "{teamA} executed the set play perfectly and scored under pressure! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} read the move and shut it down behind the gain line. No try was scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 30
+      "MinSeconds": 12,
+      "MaxSeconds": 30
     },
 
     {
       "Description": "#{player1} spread the ball quickly for {teamA} after a turnover.",
       "Success": "{teamA} capitalised instantly and ran in a counterattack try! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} recovered well and forced a knock-on in contact. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 25
+      "MinSeconds": 10,
+      "MaxSeconds": 25
     },
 
     {
       "Description": "{teamA} used a wrap-around move from the fly-half.",
       "Success": "{teamA} created confusion and slipped through the gap to score! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} defended the switch and tackled the runner short. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 28
+      "MinSeconds": 10,
+      "MaxSeconds": 28
     },
 
     {
       "Description": "#{player1} of {teamA} kicked a high ball under pressure.",
       "Success": "#{player1} won the contest and grounded the ball! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} safely claimed the ball and cleared their lines. No try was scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 30
+      "MinSeconds": 12,
+      "MaxSeconds": 30
     },
 
     {
       "Description": "{teamA} carried hard through the middle to set up quick ruck ball.",
       "Success": "{teamA} recycled quickly and scored before the defence reset! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} slowed the ruck and forced a turnover penalty. No try was scored.",
-      "Min_seconds": 15,
-      "Max_seconds": 40
+      "MinSeconds": 15,
+      "MaxSeconds": 40
     },
 
     {
       "Description": "#{player1} of {teamA} exploited a defensive mismatch near the ruck.",
       "Success": "#{player1} broke the tackle and powered over the line! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} doubled up in defence and stopped the momentum. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 30
+      "MinSeconds": 10,
+      "MaxSeconds": 30
     },
 
     {
       "Description": "{teamA} ran a crash ball play off a short pass.",
       "Success": "{teamA} smashed through contact and grounded the ball! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} met the runner with a dominant tackle and held them up. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 25
+      "MinSeconds": 10,
+      "MaxSeconds": 25
     },
 
     {
       "Description": "#{player1} and #{player2} of {teamA} used a loop play to attack the edge.",
       "Success": "{teamA} timed it perfectly and scored! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} drifted well and shut down the space. No try was scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 30
+      "MinSeconds": 12,
+      "MaxSeconds": 30
     },
 
     {
       "Description": "{teamA} attacked from broken play after a loose ball.",
       "Success": "{teamA} reacted fastest and grounded the ball in the chaos! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} recovered possession before the try could be scored. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 35
+      "MinSeconds": 10,
+      "MaxSeconds": 35
     },
 
     {
       "Description": "#{player1} launched a wide attacking shift for {teamA} after several phases.",
       "Success": "{teamA} stretched the defence and finished! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} slid across in time and forced the attacker into touch. No try was scored.",
-      "Min_seconds": 15,
-      "Max_seconds": 35
+      "MinSeconds": 15,
+      "MaxSeconds": 35
     },
 
     {
       "Description": "{teamA} used a dummy switch move at the defensive line.",
       "Success": "{teamA} fooled the defence and broke through to score! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} stayed disciplined and shut down the space. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 25
+      "MinSeconds": 10,
+      "MaxSeconds": 25
     },
 
     {
       "Description": "#{player1} of {teamA} attacked off a penalty advantage with quick ball.",
       "Success": "{teamA} kept the tempo high and scored before the whistle! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} killed the momentum and forced a reset. No try was scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 30
+      "MinSeconds": 12,
+      "MaxSeconds": 30
     },
 
     {
       "Description": "{teamA} sent a forward on a hard line off the fly-half.",
       "Success": "{teamA} punched through the tackle line and scored! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} made a dominant hit and held the ball up. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 28
+      "MinSeconds": 10,
+      "MaxSeconds": 28
     },
 
     {
       "Description": "#{player1} of {teamA} kicked a grubber behind the defensive line from midfield.",
       "Success": "{teamA} chased hard and grounded the ball! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} covered the kick and cleared safely. No try was scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 25
+      "MinSeconds": 12,
+      "MaxSeconds": 25
     },
 
     {
       "Description": "{teamA} used quick hands from a set ruck near the 22.",
       "Success": "{teamA} found the overlap and scored! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} drifted across and stopped the final pass. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 30
+      "MinSeconds": 10,
+      "MaxSeconds": 30
     },
 
     {
       "Description": "{teamA} attacked with #{player2} as a decoy, drawing defenders away while #{player1} targeted the gap.",
       "Success": "{teamA} created space and sliced through for a try! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} ignored the decoy and tackled the ball carrier. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 30
+      "MinSeconds": 10,
+      "MaxSeconds": 30
     },
 
     {
       "Description": "{teamA} pushed through multiple phases on the goal line.",
       "Success": "{teamA} eventually forced their way over from close range! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} held firm and won a crucial turnover. No try was scored.",
-      "Min_seconds": 25,
-      "Max_seconds": 40
+      "MinSeconds": 25,
+      "MaxSeconds": 40
     },
 
     {
       "Description": "#{player1} exploited a turnover inside the opposition half for {teamA}.",
       "Success": "{teamA} ran through broken defence to score quickly! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} recovered and prevented the breakaway try. No try was scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 30
+      "MinSeconds": 10,
+      "MaxSeconds": 30
     },
 
     {
       "Description": "{teamA} attacked with a planned backline move off first phase.",
       "Success": "{teamA} executed it cleanly and scored through the gap! A try was scored, resulting in 5 points.",
       "Failure": "{teamB} read the play and shut it down early. No try was scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 28
+      "MinSeconds": 12,
+      "MaxSeconds": 28
     }
   ],
 
   "drop goal attempt": [
     {
-      "description": "#{player1} of {teamA} set up for a drop goal after several phases in midfield.",
+      "Description": "#{player1} of {teamA} set up for a drop goal after several phases in midfield.",
       "Success": "{teamA} struck it cleanly and slotted a drop goal! 3 points scored.",
       "Failure": "{teamB} charged it down and stopped the attempt. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 25
+      "MinSeconds": 10,
+      "MaxSeconds": 25
     },
     {
-      "description": "{teamA} worked the ball into drop goal range.",
+      "Description": "{teamA} worked the ball into drop goal range.",
       "Success": "{teamA} calmly dropped it between the posts for three points! 3 points scored.",
       "Failure": "{teamB} rushed the kicker and forced a miss. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "#{player1} quickly recycled the ball for {teamA} for a snap drop goal attempt.",
+      "Description": "#{player1} quickly recycled the ball for {teamA} for a snap drop goal attempt.",
       "Success": "{teamA} caught the defence off guard and nailed the drop goal! 3 points scored.",
       "Failure": "{teamB} reacted in time and smothered the kick. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "{teamA} shaped for a drop goal under heavy defensive pressure.",
+      "Description": "{teamA} shaped for a drop goal under heavy defensive pressure.",
       "Success": "{teamA} held their nerve and scored from the drop! 3 points scored.",
       "Failure": "{teamB} got through and blocked the kick at source. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 22
+      "MinSeconds": 10,
+      "MaxSeconds": 22
     },
     {
-      "description": "{teamA} used #{player1} and #{player2} in a forward pod to set up a drop goal platform.",
+      "Description": "{teamA} used #{player1} and #{player2} in a forward pod to set up a drop goal platform.",
       "Success": "{teamA} created space and the kicker slotted it cleanly! 3 points scored.",
       "Failure": "{teamB} disrupted the ruck and forced a rushed miss. 0 points scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 28
+      "MinSeconds": 12,
+      "MaxSeconds": 28
     },
     {
-      "description": "{teamA} attempted a drop goal from just outside the 22.",
+      "Description": "{teamA} attempted a drop goal from just outside the 22.",
       "Success": "{teamA} judged it perfectly and added three points! 3 points scored.",
       "Failure": "{teamB} closed the gap and charged it down. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "#{player1} spread the defence for {teamA} before a sudden drop goal attempt.",
+      "Description": "#{player1} spread the defence for {teamA} before a sudden drop goal attempt.",
       "Success": "{teamA} found the target and scored the drop goal! 3 points scored.",
       "Failure": "{teamB} recovered shape and pressured the kicker into a miss. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 25
+      "MinSeconds": 10,
+      "MaxSeconds": 25
     },
     {
-      "description": "{teamA} took advantage of slow defensive retreat for a drop goal.",
+      "Description": "{teamA} took advantage of slow defensive retreat for a drop goal.",
       "Success": "{teamA} calmly dropped it over for three points! 3 points scored.",
       "Failure": "{teamB} charged up fast enough to smother the attempt. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "#{player1} of {teamA} attempted a long-range drop goal under pressure.",
+      "Description": "#{player1} of {teamA} attempted a long-range drop goal under pressure.",
       "Success": "#{player1} nailed a remarkable long-distance drop goal! 3 points scored.",
       "Failure": "{teamB} watched it drift wide of the posts. 0 points scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 25
+      "MinSeconds": 12,
+      "MaxSeconds": 25
     },
     {
-      "description": "{teamA} created space off a ruck for a drop goal chance.",
+      "Description": "{teamA} created space off a ruck for a drop goal chance.",
       "Success": "{teamA} struck it sweetly and scored the drop goal! 3 points scored.",
       "Failure": "{teamB} timed their charge perfectly to block the kick. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 22
+      "MinSeconds": 10,
+      "MaxSeconds": 22
     },
     {
-      "description": "{teamA} held possession patiently, with #{player1} eventually setting up a drop goal attempt.",
+      "Description": "{teamA} held possession patiently, with #{player1} eventually setting up a drop goal attempt.",
       "Success": "{teamA} calmly dropped it over the crossbar for three points! 3 points scored.",
       "Failure": "{teamB} rushed up and pressured the kicker into a miss. 0 points scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 25
+      "MinSeconds": 12,
+      "MaxSeconds": 25
     },
     {
-      "description": "{teamA} attacked into the 22 and reset for a drop goal.",
+      "Description": "{teamA} attacked into the 22 and reset for a drop goal.",
       "Success": "{teamA} struck it cleanly and added three points! 3 points scored.",
       "Failure": "{teamB} closed space quickly and smothered the kick. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "{teamA} used #{player1}, #{player2} and #{player3} in forward carries to draw defenders in for a drop goal opportunity.",
+      "Description": "{teamA} used #{player1}, #{player2} and #{player3} in forward carries to draw defenders in for a drop goal opportunity.",
       "Success": "{teamA} created the space and nailed the drop goal! 3 points scored.",
       "Failure": "{teamB} disrupted the ruck and forced a rushed kick. 0 points scored.",
-      "Min_seconds": 15,
-      "Max_seconds": 30
+      "MinSeconds": 15,
+      "MaxSeconds": 30
     },
     {
-      "description": "{teamA} attempted a sudden drop goal from broken play.",
+      "Description": "{teamA} attempted a sudden drop goal from broken play.",
       "Success": "{teamA} reacted fastest and slotted it under pressure! 3 points scored.",
       "Failure": "{teamB} recovered shape and charged it down. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "{teamA} worked through phases with #{player1} carrying hard to set a stable platform for a drop goal.",
+      "Description": "{teamA} worked through phases with #{player1} carrying hard to set a stable platform for a drop goal.",
       "Success": "{teamA} executed the drop goal perfectly from midfield! 3 points scored.",
       "Failure": "{teamB} held the line and forced a turnover before the kick. 0 points scored.",
-      "Min_seconds": 18,
-      "Max_seconds": 40
+      "MinSeconds": 18,
+      "MaxSeconds": 40
     },
     {
-      "description": "{teamA} found space after a defensive kick return for a drop goal chance.",
+      "Description": "{teamA} found space after a defensive kick return for a drop goal chance.",
       "Success": "{teamA} took the chance and scored a drop goal! 3 points scored.",
       "Failure": "{teamB} recovered and pressured the kicker into a miss. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 22
+      "MinSeconds": 10,
+      "MaxSeconds": 22
     },
     {
-      "description": "#{player1} shifted the ball laterally for {teamA} to open a drop goal window.",
+      "Description": "#{player1} shifted the ball laterally for {teamA} to open a drop goal window.",
       "Success": "{teamA} dropped it cleanly between the posts! 3 points scored.",
       "Failure": "{teamB} drifted across and blocked the attempt. 0 points scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 25
+      "MinSeconds": 12,
+      "MaxSeconds": 25
     },
     {
-      "description": "{teamA} exploited slow defensive line speed for a drop goal attempt.",
+      "Description": "{teamA} exploited slow defensive line speed for a drop goal attempt.",
       "Success": "{teamA} calmly slotted the drop goal from range! 3 points scored.",
       "Failure": "{teamB} accelerated and charged the kick down. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "#{player1} of {teamA} took advantage of a penalty advantage situation to set up a drop goal.",
+      "Description": "#{player1} of {teamA} took advantage of a penalty advantage situation to set up a drop goal.",
       "Success": "{teamA} nailed the drop goal before the whistle stopped play! 3 points scored.",
       "Failure": "{teamB} forced the ball carrier into contact before the kick. 0 points scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 28
+      "MinSeconds": 12,
+      "MaxSeconds": 28
     },
     {
-      "description": "{teamA} created a quick recycle at the ruck for a drop goal opportunity.",
+      "Description": "{teamA} created a quick recycle at the ruck for a drop goal opportunity.",
       "Success": "{teamA} struck it sweetly and scored the drop goal! 3 points scored.",
       "Failure": "{teamB} got hands up and blocked the kick. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 22
+      "MinSeconds": 10,
+      "MaxSeconds": 22
     },
     {
-      "description": "#{player1} set up deep in opposition territory for {teamA} for a drop goal attempt.",
+      "Description": "#{player1} set up deep in opposition territory for {teamA} for a drop goal attempt.",
       "Success": "{teamA} calmly struck it through the posts for three points! 3 points scored.",
       "Failure": "{teamB} rushed the kicker and forced a mis-hit. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "{teamA} recycled quickly from a ruck to create a drop goal chance.",
+      "Description": "{teamA} recycled quickly from a ruck to create a drop goal chance.",
       "Success": "{teamA} judged it perfectly and slotted the drop goal! 3 points scored.",
       "Failure": "{teamB} shot out of the line and smothered the attempt. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 22
+      "MinSeconds": 10,
+      "MaxSeconds": 22
     },
     {
-      "description": "#{player1} of {teamA} carried into contact to draw defenders before #{player2} set up a drop goal.",
+      "Description": "#{player1} of {teamA} carried into contact to draw defenders before #{player2} set up a drop goal.",
       "Success": "{teamA} created just enough space and scored the drop goal! 3 points scored.",
       "Failure": "{teamB} disrupted the ball and forced a turnover before the kick. 0 points scored.",
-      "Min_seconds": 15,
-      "Max_seconds": 35
+      "MinSeconds": 15,
+      "MaxSeconds": 35
     },
     {
-      "description": "{teamA} spotted a gap in the defensive line and shaped for a drop goal.",
+      "Description": "{teamA} spotted a gap in the defensive line and shaped for a drop goal.",
       "Success": "{teamA} took the chance and nailed the drop goal! 3 points scored.",
       "Failure": "{teamB} closed the gap and charged the kick down. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "{teamA} moved the ball through multiple phases, with #{player1} controlling the tempo to settle into drop goal range.",
+      "Description": "{teamA} moved the ball through multiple phases, with #{player1} controlling the tempo to settle into drop goal range.",
       "Success": "{teamA} calmly executed the drop goal from midfield! 3 points scored.",
       "Failure": "{teamB} held firm and forced an error at the breakdown. 0 points scored.",
-      "Min_seconds": 18,
-      "Max_seconds": 40
+      "MinSeconds": 18,
+      "MaxSeconds": 40
     },
     {
-      "description": "{teamA} took advantage of a slow defensive reset for a drop goal attempt.",
+      "Description": "{teamA} took advantage of a slow defensive reset for a drop goal attempt.",
       "Success": "{teamA} struck quickly and scored the drop goal! 3 points scored.",
       "Failure": "{teamB} recovered in time to block the kick. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "{teamA} created space with #{player1} at first receiver using a short pass for a drop goal.",
+      "Description": "{teamA} created space with #{player1} at first receiver using a short pass for a drop goal.",
       "Success": "{teamA} slotted it cleanly between the posts! 3 points scored.",
       "Failure": "{teamB} pressured the kicker and forced a miss. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 22
+      "MinSeconds": 10,
+      "MaxSeconds": 22
     },
     {
-      "description": "{teamA} used forward pods to draw defenders before a drop goal attempt.",
+      "Description": "{teamA} used forward pods to draw defenders before a drop goal attempt.",
       "Success": "{teamA} opened the lane and scored the drop goal! 3 points scored.",
       "Failure": "{teamB} disrupted the ruck and rushed the kicker. 0 points scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 28
+      "MinSeconds": 12,
+      "MaxSeconds": 28
     },
     {
-      "description": "#{player1} of {teamA} launched a speculative drop goal from distance under pressure.",
+      "Description": "#{player1} of {teamA} launched a speculative drop goal from distance under pressure.",
       "Success": "#{player1} pulled off a stunning long-range drop goal! 3 points scored.",
       "Failure": "{teamB} closed down quickly and blocked the attempt. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 25
+      "MinSeconds": 10,
+      "MaxSeconds": 25
     },
     {
-      "description": "{teamA} took advantage of a broken defensive line for a drop goal opportunity.",
+      "Description": "{teamA} took advantage of a broken defensive line for a drop goal opportunity.",
       "Success": "{teamA} calmly slotted the drop goal from open play! 3 points scored.",
       "Failure": "{teamB} recovered and prevented the kick under pressure. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     }
   ],
 
   "penalty attempt": [
     {
-      "description": "{teamA} earned a penalty within kicking range, with #{player1} drawing the foul after sustained pressure.",
+      "Description": "{teamA} earned a penalty within kicking range, with #{player1} drawing the foul after sustained pressure.",
       "Success": "{teamA} slotted the penalty goal cleanly between the posts! 3 points scored.",
       "Failure": "{teamA} pushed the kick wide and missed the chance for points. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "{teamA} won a penalty at the breakdown for not releasing.",
+      "Description": "{teamA} won a penalty at the breakdown for not releasing.",
       "Success": "{teamA} calmly kicked the penalty goal for three points! 3 points scored.",
       "Failure": "{teamA} hit the post and the ball rebounded out. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "#{player1} of {teamA} forced an offside penalty just outside the 22.",
+      "Description": "#{player1} of {teamA} forced an offside penalty just outside the 22.",
       "Success": "{teamA} converted the penalty with a composed strike! 3 points scored.",
       "Failure": "{teamA} pulled the kick just wide of the upright. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 22
+      "MinSeconds": 10,
+      "MaxSeconds": 22
     },
     {
-      "description": "{teamA} won a scrum penalty under pressure in the opposition half.",
+      "Description": "{teamA} won a scrum penalty under pressure in the opposition half.",
       "Success": "{teamA} kicked accurately and added three points! 3 points scored.",
       "Failure": "{teamA} rushed the kick and missed to the left. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "{teamA} earned a penalty after #{player1} drew repeated infringements near the try line.",
+      "Description": "{teamA} earned a penalty after #{player1} drew repeated infringements near the try line.",
       "Success": "{teamA} took the easy three points from in front of the posts! 3 points scored.",
       "Failure": "{teamA} surprisingly missed a straightforward kick. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "{teamA} won a penalty after a high tackle from the defence.",
+      "Description": "{teamA} won a penalty after a high tackle from the defence.",
       "Success": "{teamA} punished the infringement with a successful penalty goal! 3 points scored.",
       "Failure": "{teamA} struck it too low and the ball stayed short. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "{teamA} earned a penalty advantage and #{player1} set up for a kick at goal.",
+      "Description": "{teamA} earned a penalty advantage and #{player1} set up for a kick at goal.",
       "Success": "{teamA} used the advantage and slotted the penalty! 3 points scored.",
       "Failure": "{teamA} lost focus and missed the attempt after the whistle. 0 points scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 25
+      "MinSeconds": 12,
+      "MaxSeconds": 25
     },
     {
-      "description": "{teamA} created pressure in the red zone and won a penalty for hands in ruck.",
+      "Description": "{teamA} created pressure in the red zone and won a penalty for hands in ruck.",
       "Success": "{teamA} calmly converted the penalty goal! 3 points scored.",
       "Failure": "{teamA} dragged the kick wide under pressure. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "{teamA} won a penalty with #{player1}, #{player2} and #{player3} driving the maul before it collapsed in front of the posts.",
+      "Description": "{teamA} won a penalty with #{player1}, #{player2} and #{player3} driving the maul before it collapsed in front of the posts.",
       "Success": "{teamA} made no mistake from the tee! 3 points scored.",
       "Failure": "{teamA} hit the upright and missed the chance. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "{teamA} earned a penalty in open play after a deliberate knock-on.",
+      "Description": "{teamA} earned a penalty in open play after a deliberate knock-on.",
       "Success": "{teamA} converted the penalty to add points to the scoreboard! 3 points scored.",
       "Failure": "{teamA} sliced the kick and missed to the right. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 22
+      "MinSeconds": 10,
+      "MaxSeconds": 22
     },
     {
-      "description": "#{player1} of {teamA} earned a penalty after the defence failed to roll away at the ruck.",
+      "Description": "#{player1} of {teamA} earned a penalty after the defence failed to roll away at the ruck.",
       "Success": "{teamA} slotted the penalty goal cleanly from midfield! 3 points scored.",
       "Failure": "{teamA} pushed the kick just wide of the posts. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "{teamA} won a penalty for a collapsed scrum under pressure.",
+      "Description": "{teamA} won a penalty for a collapsed scrum under pressure.",
       "Success": "{teamA} took the points with a composed strike at goal! 3 points scored.",
       "Failure": "{teamA} struck the post and the ball bounced out. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "#{player1} of {teamA} forced a penalty after the defence strayed offside.",
+      "Description": "#{player1} of {teamA} forced a penalty after the defence strayed offside.",
       "Success": "{teamA} converted the penalty from a central position! 3 points scored.",
       "Failure": "{teamA} dragged the attempt just short of the crossbar. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 22
+      "MinSeconds": 10,
+      "MaxSeconds": 22
     },
     {
-      "description": "{teamA} earned a penalty after repeated infringements at the breakdown.",
+      "Description": "{teamA} earned a penalty after repeated infringements at the breakdown.",
       "Success": "{teamA} calmly added three points from the tee! 3 points scored.",
       "Failure": "{teamA} hooked the kick left under pressure. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "{teamA} won a penalty with #{player1} held up until the tackler failed to release.",
+      "Description": "{teamA} won a penalty with #{player1} held up until the tackler failed to release.",
       "Success": "{teamA} made no mistake and slotted the penalty! 3 points scored.",
       "Failure": "{teamA} struck it too low and missed the target. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "{teamA} earned a penalty advantage near the 22 and opted for the posts.",
+      "Description": "{teamA} earned a penalty advantage near the 22 and opted for the posts.",
       "Success": "{teamA} used the advantage and scored the penalty goal! 3 points scored.",
       "Failure": "{teamA} lost composure and missed after the whistle. 0 points scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 25
+      "MinSeconds": 12,
+      "MaxSeconds": 25
     },
     {
-      "description": "#{player1} of {teamA} forced a penalty after the defence went off their feet at the ruck.",
+      "Description": "#{player1} of {teamA} forced a penalty after the defence went off their feet at the ruck.",
       "Success": "{teamA} slotted the kick between the uprights! 3 points scored.",
       "Failure": "{teamA} pushed it wide despite a good strike. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "{teamA} won a penalty from a high tackle just inside kicking range.",
+      "Description": "{teamA} won a penalty from a high tackle just inside kicking range.",
       "Success": "{teamA} calmly converted the penalty goal! 3 points scored.",
       "Failure": "{teamA} hit the upright and missed the rebound. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "{teamA} earned a penalty after #{player1} and #{player2} drove the maul and the defence collapsed it.",
+      "Description": "{teamA} earned a penalty after #{player1} and #{player2} drove the maul and the defence collapsed it.",
       "Success": "{teamA} added three points with a clean kick at goal! 3 points scored.",
       "Failure": "{teamA} pulled the kick just to the right. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "{teamA} created pressure and forced a penalty for hands in the ruck.",
+      "Description": "{teamA} created pressure and forced a penalty for hands in the ruck.",
       "Success": "{teamA} slotted the penalty from a central angle! 3 points scored.",
       "Failure": "{teamA} rushed the kick and missed narrowly. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 22
+      "MinSeconds": 10,
+      "MaxSeconds": 22
     },
     {
-      "description": "#{player1} of {teamA} earned a penalty after the defence failed to release at the breakdown.",
+      "Description": "#{player1} of {teamA} earned a penalty after the defence failed to release at the breakdown.",
       "Success": "{teamA} calmly slotted the penalty goal between the posts! 3 points scored.",
       "Failure": "{teamA} pushed the kick just wide after a solid strike. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "{teamA} won a penalty after an illegal entry at the ruck.",
+      "Description": "{teamA} won a penalty after an illegal entry at the ruck.",
       "Success": "{teamA} added three points with a composed kick at goal! 3 points scored.",
       "Failure": "{teamA} struck the post and the ball stayed out. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "#{player1} of {teamA} forced a penalty for offside as the defence rushed up too quickly.",
+      "Description": "#{player1} of {teamA} forced a penalty for offside as the defence rushed up too quickly.",
       "Success": "{teamA} converted the penalty cleanly from in front of the posts! 3 points scored.",
       "Failure": "{teamA} dragged the kick just left of the uprights. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 22
+      "MinSeconds": 10,
+      "MaxSeconds": 22
     },
     {
-      "description": "{teamA} earned a penalty after repeated infringements near the 22.",
+      "Description": "{teamA} earned a penalty after repeated infringements near the 22.",
       "Success": "{teamA} made no mistake from the tee and scored three points! 3 points scored.",
       "Failure": "{teamA} rushed the attempt and missed under pressure. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "{teamA} won a penalty with #{player1} and #{player2} leading the maul before the defence collapsed it illegally.",
+      "Description": "{teamA} won a penalty with #{player1} and #{player2} leading the maul before the defence collapsed it illegally.",
       "Success": "{teamA} slotted the penalty goal calmly from close range! 3 points scored.",
       "Failure": "{teamA} pushed it wide despite being well positioned. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "{teamA} earned a penalty after a deliberate knock-on stopped the attack.",
+      "Description": "{teamA} earned a penalty after a deliberate knock-on stopped the attack.",
       "Success": "{teamA} punished the infringement with a successful kick at goal! 3 points scored.",
       "Failure": "{teamA} struck it low and failed to clear the crossbar. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 22
+      "MinSeconds": 10,
+      "MaxSeconds": 22
     },
     {
-      "description": "#{player1} of {teamA} forced a penalty after the tackler failed to roll away.",
+      "Description": "#{player1} of {teamA} forced a penalty after the tackler failed to roll away.",
       "Success": "{teamA} calmly added three points from mid-range! 3 points scored.",
       "Failure": "{teamA} hooked the kick just wide of the posts. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 20
+      "MinSeconds": 10,
+      "MaxSeconds": 20
     },
     {
-      "description": "{teamA} won a penalty after hands were not released in the tackle.",
+      "Description": "{teamA} won a penalty after hands were not released in the tackle.",
       "Success": "{teamA} slotted the kick cleanly under minimal pressure! 3 points scored.",
       "Failure": "{teamA} hit the upright and the ball rebounded out. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 18
+      "MinSeconds": 10,
+      "MaxSeconds": 18
     },
     {
-      "description": "{teamA} earned a penalty advantage and #{player1} chose to kick at goal.",
+      "Description": "{teamA} earned a penalty advantage and #{player1} chose to kick at goal.",
       "Success": "{teamA} used the advantage and scored the penalty goal! 3 points scored.",
       "Failure": "{teamA} lost rhythm after the whistle and missed the kick. 0 points scored.",
-      "Min_seconds": 12,
-      "Max_seconds": 25
+      "MinSeconds": 12,
+      "MaxSeconds": 25
     },
     {
-      "description": "{teamA} created pressure deep in opposition territory and won a penalty at the breakdown.",
+      "Description": "{teamA} created pressure deep in opposition territory and won a penalty at the breakdown.",
       "Success": "{teamA} calmly converted the penalty from a central position! 3 points scored.",
       "Failure": "{teamA} pushed the attempt just wide under fatigue. 0 points scored.",
-      "Min_seconds": 10,
-      "Max_seconds": 22
+      "MinSeconds": 10,
+      "MaxSeconds": 22
     }
   ],
 
@@ -956,381 +956,381 @@
   "injury risk": [
     {
       "Description": "A {teamA} player stayed down after a heavy tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was cleared after further evaluation.",
-      "Description_not_recovered": "The injured {teamA} player required further medical treatment."
+      "DescriptionRecovered": "The injured {teamA} player was cleared after further evaluation.",
+      "DescriptionNotRecovered": "The injured {teamA} player required further medical treatment."
     },
     {
       "Description": "A {teamA} player twisted their ankle while changing direction. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player showed encouraging signs after assessment.",
-      "Description_not_recovered": "The injured {teamA} player was diagnosed with a more serious ankle injury."
+      "DescriptionRecovered": "The injured {teamA} player showed encouraging signs after assessment.",
+      "DescriptionNotRecovered": "The injured {teamA} player was diagnosed with a more serious ankle injury."
     },
     {
       "Description": "A {teamA} player landed awkwardly after contesting a high ball. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player avoided any significant injury.",
-      "Description_not_recovered": "The injured {teamA} player sustained a significant injury."
+      "DescriptionRecovered": "The injured {teamA} player avoided any significant injury.",
+      "DescriptionNotRecovered": "The injured {teamA} player sustained a significant injury."
     },
     {
       "Description": "A {teamA} player clutched their shoulder after a collision with a {teamB} defender. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player responded well to treatment.",
-      "Description_not_recovered": "The injured {teamA} player continued to experience shoulder pain."
+      "DescriptionRecovered": "The injured {teamA} player responded well to treatment.",
+      "DescriptionNotRecovered": "The injured {teamA} player continued to experience shoulder pain."
     },
     {
       "Description": "A {teamA} player appeared dazed after a head clash. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player passed the required medical checks.",
-      "Description_not_recovered": "The injured {teamA} player failed the required medical checks."
+      "DescriptionRecovered": "The injured {teamA} player passed the required medical checks.",
+      "DescriptionNotRecovered": "The injured {teamA} player failed the required medical checks."
     },
     {
       "Description": "A {teamA} player grabbed their hamstring during a sprint. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was found to have only minor tightness.",
-      "Description_not_recovered": "The injured {teamA} player suffered a hamstring strain."
+      "DescriptionRecovered": "The injured {teamA} player was found to have only minor tightness.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a hamstring strain."
     },
     {
       "Description": "A {teamA} player hurt their wrist while making a tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player regained comfortable movement.",
-      "Description_not_recovered": "The injured {teamA} player was unable to move the wrist comfortably."
+      "DescriptionRecovered": "The injured {teamA} player regained comfortable movement.",
+      "DescriptionNotRecovered": "The injured {teamA} player was unable to move the wrist comfortably."
     },
     {
       "Description": "A {teamA} player rolled their knee in a ruck. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player avoided ligament damage.",
-      "Description_not_recovered": "The injured {teamA} player was suspected of ligament damage."
+      "DescriptionRecovered": "The injured {teamA} player avoided ligament damage.",
+      "DescriptionNotRecovered": "The injured {teamA} player was suspected of ligament damage."
     },
     {
       "Description": "A {teamA} player took an accidental boot while competing for possession. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player recovered well after treatment.",
-      "Description_not_recovered": "The injured {teamA} player required stitches."
+      "DescriptionRecovered": "The injured {teamA} player recovered well after treatment.",
+      "DescriptionNotRecovered": "The injured {teamA} player required stitches."
     },
     {
       "Description": "A {teamA} player complained of neck pain after a collapsed maul. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player showed no lasting concerns.",
-      "Description_not_recovered": "The injured {teamA} player remained under close medical observation."
+      "DescriptionRecovered": "The injured {teamA} player showed no lasting concerns.",
+      "DescriptionNotRecovered": "The injured {teamA} player remained under close medical observation."
     },
     {
       "Description": "A {teamA} player fell heavily while scoring. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player escaped with bruising.",
-      "Description_not_recovered": "The injured {teamA} player sustained a painful impact injury."
+      "DescriptionRecovered": "The injured {teamA} player escaped with bruising.",
+      "DescriptionNotRecovered": "The injured {teamA} player sustained a painful impact injury."
     },
     {
       "Description": "A {teamA} player was slow to get up after a dominant {teamB} tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was feeling much better after examination.",
-      "Description_not_recovered": "The injured {teamA} player continued to experience discomfort."
+      "DescriptionRecovered": "The injured {teamA} player was feeling much better after examination.",
+      "DescriptionNotRecovered": "The injured {teamA} player continued to experience discomfort."
     },
     {
       "Description": "A {teamA} player injured their ribs in contact. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was found to have only bruised ribs.",
-      "Description_not_recovered": "The injured {teamA} player was suspected of rib damage."
+      "DescriptionRecovered": "The injured {teamA} player was found to have only bruised ribs.",
+      "DescriptionNotRecovered": "The injured {teamA} player was suspected of rib damage."
     },
     {
       "Description": "A {teamA} player caught their foot in the turf while sidestepping. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player avoided any serious damage.",
-      "Description_not_recovered": "The injured {teamA} player suffered a lower leg injury."
+      "DescriptionRecovered": "The injured {teamA} player avoided any serious damage.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a lower leg injury."
     },
     {
       "Description": "A {teamA} player was caught awkwardly beneath a collapsing scrum. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was relieved to avoid major injury.",
-      "Description_not_recovered": "The injured {teamA} player sustained a scrum-related injury."
+      "DescriptionRecovered": "The injured {teamA} player was relieved to avoid major injury.",
+      "DescriptionNotRecovered": "The injured {teamA} player sustained a scrum-related injury."
     },
     {
       "Description": "A {teamA} player took a knee to the thigh during a tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was diagnosed with heavy bruising.",
-      "Description_not_recovered": "The injured {teamA} player suffered a deep muscle injury."
+      "DescriptionRecovered": "The injured {teamA} player was diagnosed with heavy bruising.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a deep muscle injury."
     },
     {
       "Description": "A {teamA} player was accidentally struck in the face by a {teamB} player. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player required only precautionary treatment.",
-      "Description_not_recovered": "The injured {teamA} player suffered facial injuries."
+      "DescriptionRecovered": "The injured {teamA} player required only precautionary treatment.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered facial injuries."
     },
     {
       "Description": "A {teamA} player hurt their elbow while diving for the ball. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player regained full movement.",
-      "Description_not_recovered": "The injured {teamA} player continued to struggle with elbow pain."
+      "DescriptionRecovered": "The injured {teamA} player regained full movement.",
+      "DescriptionNotRecovered": "The injured {teamA} player continued to struggle with elbow pain."
     },
     {
       "Description": "A {teamA} player complained of dizziness after a tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player showed no ongoing symptoms.",
-      "Description_not_recovered": "The injured {teamA} player remained symptomatic."
+      "DescriptionRecovered": "The injured {teamA} player showed no ongoing symptoms.",
+      "DescriptionNotRecovered": "The injured {teamA} player remained symptomatic."
     },
     {
       "Description": "A {teamA} player awkwardly hyperextended their knee. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player avoided serious structural damage.",
-      "Description_not_recovered": "The injured {teamA} player suffered a knee injury."
+      "DescriptionRecovered": "The injured {teamA} player avoided serious structural damage.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a knee injury."
     },
 
     {
       "Description": "A {teamA} player suffered a heavy knock while clearing out a ruck. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player responded positively to treatment.",
-      "Description_not_recovered": "The injured {teamA} player required extensive treatment."
+      "DescriptionRecovered": "The injured {teamA} player responded positively to treatment.",
+      "DescriptionNotRecovered": "The injured {teamA} player required extensive treatment."
     },
     {
       "Description": "A {teamA} player pulled up suddenly during a chase. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was found to have only minor cramp.",
-      "Description_not_recovered": "The injured {teamA} player suffered a muscle injury."
+      "DescriptionRecovered": "The injured {teamA} player was found to have only minor cramp.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a muscle injury."
     },
     {
       "Description": "A {teamA} player was trapped awkwardly beneath several bodies. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player avoided any lasting injury.",
-      "Description_not_recovered": "The injured {teamA} player sustained a joint injury."
+      "DescriptionRecovered": "The injured {teamA} player avoided any lasting injury.",
+      "DescriptionNotRecovered": "The injured {teamA} player sustained a joint injury."
     },
     {
       "Description": "A {teamA} player grabbed their calf after accelerating. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was diagnosed with mild tightness.",
-      "Description_not_recovered": "The injured {teamA} player suffered a calf strain."
+      "DescriptionRecovered": "The injured {teamA} player was diagnosed with mild tightness.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a calf strain."
     },
     {
       "Description": "A {teamA} player took a shoulder to the midsection from a {teamB} tackler. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player recovered after precautionary checks.",
-      "Description_not_recovered": "The injured {teamA} player continued to experience abdominal pain."
+      "DescriptionRecovered": "The injured {teamA} player recovered after precautionary checks.",
+      "DescriptionNotRecovered": "The injured {teamA} player continued to experience abdominal pain."
     },
 
     {
       "Description": "A {teamA} player slipped while attempting a sidestep. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was found to have no serious injury.",
-      "Description_not_recovered": "The injured {teamA} player suffered a lower limb injury."
+      "DescriptionRecovered": "The injured {teamA} player was found to have no serious injury.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a lower limb injury."
     },
     {
       "Description": "A {teamA} player was winded after a crunching tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player recovered quickly after treatment.",
-      "Description_not_recovered": "The injured {teamA} player experienced ongoing breathing discomfort."
+      "DescriptionRecovered": "The injured {teamA} player recovered quickly after treatment.",
+      "DescriptionNotRecovered": "The injured {teamA} player experienced ongoing breathing discomfort."
     },
     {
       "Description": "A {teamA} player awkwardly bent a finger in contact. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player escaped with a minor sprain.",
-      "Description_not_recovered": "The injured {teamA} player suffered a finger injury."
+      "DescriptionRecovered": "The injured {teamA} player escaped with a minor sprain.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a finger injury."
     },
     {
       "Description": "A {teamA} player was slow to rise after landing on their back. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player recovered after careful examination.",
-      "Description_not_recovered": "The injured {teamA} player continued to experience back pain."
+      "DescriptionRecovered": "The injured {teamA} player recovered after careful examination.",
+      "DescriptionNotRecovered": "The injured {teamA} player continued to experience back pain."
     },
     {
       "Description": "A {teamA} player felt discomfort in their groin during open play. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player had only minor muscle tightness.",
-      "Description_not_recovered": "The injured {teamA} player suffered a groin strain."
+      "DescriptionRecovered": "The injured {teamA} player had only minor muscle tightness.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a groin strain."
     },
 
     {
       "Description": "A {teamA} player jarred their shoulder while diving on a loose ball. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player regained normal shoulder movement.",
-      "Description_not_recovered": "The injured {teamA} player sustained a shoulder injury."
+      "DescriptionRecovered": "The injured {teamA} player regained normal shoulder movement.",
+      "DescriptionNotRecovered": "The injured {teamA} player sustained a shoulder injury."
     },
     {
       "Description": "A {teamA} player collided heavily with a teammate. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player avoided significant injury.",
-      "Description_not_recovered": "The injured {teamA} player required further scans."
+      "DescriptionRecovered": "The injured {teamA} player avoided significant injury.",
+      "DescriptionNotRecovered": "The injured {teamA} player required further scans."
     },
     {
       "Description": "A {teamA} player appeared to roll their ankle in a tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was diagnosed with a mild sprain.",
-      "Description_not_recovered": "The injured {teamA} player suffered a serious ankle sprain."
+      "DescriptionRecovered": "The injured {teamA} player was diagnosed with a mild sprain.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a serious ankle sprain."
     },
     {
       "Description": "A {teamA} player took a heavy fall after competing in the lineout. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was cleared after observation.",
-      "Description_not_recovered": "The injured {teamA} player remained in considerable discomfort."
+      "DescriptionRecovered": "The injured {teamA} player was cleared after observation.",
+      "DescriptionNotRecovered": "The injured {teamA} player remained in considerable discomfort."
     },
     {
       "Description": "A {teamA} player was caught awkwardly in a tackle by {teamB}. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player recovered without complication.",
-      "Description_not_recovered": "The injured {teamA} player suffered a soft tissue injury."
+      "DescriptionRecovered": "The injured {teamA} player recovered without complication.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a soft tissue injury."
     },
     {
       "Description": "A {teamA} player strained their Achilles while accelerating into space. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was found to have only minor discomfort.",
-      "Description_not_recovered": "The injured {teamA} player suffered an Achilles injury."
+      "DescriptionRecovered": "The injured {teamA} player was found to have only minor discomfort.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered an Achilles injury."
     },
     {
       "Description": "A {teamA} player injured their thumb while competing at the breakdown. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player avoided any serious damage to the thumb.",
-      "Description_not_recovered": "The injured {teamA} player sustained a thumb injury."
+      "DescriptionRecovered": "The injured {teamA} player avoided any serious damage to the thumb.",
+      "DescriptionNotRecovered": "The injured {teamA} player sustained a thumb injury."
     },
     {
       "Description": "A {teamA} player took a heavy impact to their jaw from a {teamB} tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player showed no signs of a serious jaw injury.",
-      "Description_not_recovered": "The injured {teamA} player suffered a jaw injury."
+      "DescriptionRecovered": "The injured {teamA} player showed no signs of a serious jaw injury.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a jaw injury."
     },
     {
       "Description": "A {teamA} player landed on their hip after being brought down in a tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was cleared after examination.",
-      "Description_not_recovered": "The injured {teamA} player suffered a hip injury."
+      "DescriptionRecovered": "The injured {teamA} player was cleared after examination.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a hip injury."
     },
     {
       "Description": "A {teamA} player appeared to injure their quad while chasing a kick. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was diagnosed with minor muscle tightness.",
-      "Description_not_recovered": "The injured {teamA} player suffered a quad strain."
+      "DescriptionRecovered": "The injured {teamA} player was diagnosed with minor muscle tightness.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a quad strain."
     },
     {
       "Description": "A {teamA} player was caught awkwardly while jumping for a restart. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player recovered after precautionary checks.",
-      "Description_not_recovered": "The injured {teamA} player sustained a landing-related injury."
+      "DescriptionRecovered": "The injured {teamA} player recovered after precautionary checks.",
+      "DescriptionNotRecovered": "The injured {teamA} player sustained a landing-related injury."
     },
     {
       "Description": "A {teamA} player injured their shin after a collision with a {teamB} opponent. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was treated for bruising.",
-      "Description_not_recovered": "The injured {teamA} player suffered a significant shin injury."
+      "DescriptionRecovered": "The injured {teamA} player was treated for bruising.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a significant shin injury."
     },
     {
       "Description": "A {teamA} player felt pain in their lower back after a scrum. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player responded well to treatment.",
-      "Description_not_recovered": "The injured {teamA} player continued to experience back discomfort."
+      "DescriptionRecovered": "The injured {teamA} player responded well to treatment.",
+      "DescriptionNotRecovered": "The injured {teamA} player continued to experience back discomfort."
     },
     {
       "Description": "A {teamA} player injured their groin while attempting a tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was cleared of any major injury.",
-      "Description_not_recovered": "The injured {teamA} player suffered a groin injury."
+      "DescriptionRecovered": "The injured {teamA} player was cleared of any major injury.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a groin injury."
     },
     {
       "Description": "A {teamA} player received a blow to their ribs during a maul. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was diagnosed with minor bruising.",
-      "Description_not_recovered": "The injured {teamA} player suffered rib damage."
+      "DescriptionRecovered": "The injured {teamA} player was diagnosed with minor bruising.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered rib damage."
     },
     {
       "Description": "A {teamA} player twisted their knee while attempting a tackle on {teamB}. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player avoided serious knee damage.",
-      "Description_not_recovered": "The injured {teamA} player sustained a knee injury."
+      "DescriptionRecovered": "The injured {teamA} player avoided serious knee damage.",
+      "DescriptionNotRecovered": "The injured {teamA} player sustained a knee injury."
     },
     {
       "Description": "A {teamA} player was hit heavily while carrying into contact. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player recovered after being checked.",
-      "Description_not_recovered": "The injured {teamA} player required further medical attention."
+      "DescriptionRecovered": "The injured {teamA} player recovered after being checked.",
+      "DescriptionNotRecovered": "The injured {teamA} player required further medical attention."
     },
     {
       "Description": "A {teamA} player complained of pain in their shoulder after a tackle contest. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player had no significant shoulder damage.",
-      "Description_not_recovered": "The injured {teamA} player suffered shoulder trauma."
+      "DescriptionRecovered": "The injured {teamA} player had no significant shoulder damage.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered shoulder trauma."
     },
     {
       "Description": "A {teamA} player was struck in the eye during a ruck. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was cleared after an eye examination.",
-      "Description_not_recovered": "The injured {teamA} player suffered an eye injury."
+      "DescriptionRecovered": "The injured {teamA} player was cleared after an eye examination.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered an eye injury."
     },
     {
       "Description": "A {teamA} player felt a sharp pain while kicking the ball. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player showed no serious concerns.",
-      "Description_not_recovered": "The injured {teamA} player suffered a muscle injury."
+      "DescriptionRecovered": "The injured {teamA} player showed no serious concerns.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a muscle injury."
     },
     {
       "Description": "A {teamA} player was slow to recover after a powerful {teamB} tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player passed further checks.",
-      "Description_not_recovered": "The injured {teamA} player required additional treatment."
+      "DescriptionRecovered": "The injured {teamA} player passed further checks.",
+      "DescriptionNotRecovered": "The injured {teamA} player required additional treatment."
     },
     {
       "Description": "A {teamA} player injured their forearm while making a tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was cleared of any fracture concerns.",
-      "Description_not_recovered": "The injured {teamA} player suffered a forearm injury."
+      "DescriptionRecovered": "The injured {teamA} player was cleared of any fracture concerns.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a forearm injury."
     },
     {
       "Description": "A {teamA} player appeared to hurt their calf while retreating in defence. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was diagnosed with mild tightness.",
-      "Description_not_recovered": "The injured {teamA} player suffered a calf strain."
+      "DescriptionRecovered": "The injured {teamA} player was diagnosed with mild tightness.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a calf strain."
     },
     {
       "Description": "A {teamA} player collided with another player while contesting a high ball. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player showed no lasting symptoms.",
-      "Description_not_recovered": "The injured {teamA} player sustained a collision injury."
+      "DescriptionRecovered": "The injured {teamA} player showed no lasting symptoms.",
+      "DescriptionNotRecovered": "The injured {teamA} player sustained a collision injury."
     },
     {
       "Description": "A {teamA} player suffered a painful knock to their knee in a ruck. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was cleared after assessment.",
-      "Description_not_recovered": "The injured {teamA} player had concerns around knee damage."
+      "DescriptionRecovered": "The injured {teamA} player was cleared after assessment.",
+      "DescriptionNotRecovered": "The injured {teamA} player had concerns around knee damage."
     },
     {
       "Description": "A {teamA} player injured their hand while attempting to secure possession. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was treated for minor swelling.",
-      "Description_not_recovered": "The injured {teamA} player suffered a hand injury."
+      "DescriptionRecovered": "The injured {teamA} player was treated for minor swelling.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a hand injury."
     },
     {
       "Description": "A {teamA} player was hurt while being cleared out of a breakdown by {teamB}. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player avoided serious injury.",
-      "Description_not_recovered": "The injured {teamA} player sustained a contact injury."
+      "DescriptionRecovered": "The injured {teamA} player avoided serious injury.",
+      "DescriptionNotRecovered": "The injured {teamA} player sustained a contact injury."
     },
     {
       "Description": "A {teamA} player landed heavily on their shoulder after a tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player regained comfortable movement.",
-      "Description_not_recovered": "The injured {teamA} player suffered shoulder damage."
+      "DescriptionRecovered": "The injured {teamA} player regained comfortable movement.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered shoulder damage."
     },
     {
       "Description": "A {teamA} player pulled up with pain while supporting a counterattack. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was cleared of serious injury.",
-      "Description_not_recovered": "The injured {teamA} player suffered a soft tissue injury."
+      "DescriptionRecovered": "The injured {teamA} player was cleared of serious injury.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a soft tissue injury."
     },
     {
       "Description": "A {teamA} player took a heavy collision to their chest area. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player recovered after observation.",
-      "Description_not_recovered": "The injured {teamA} player continued to experience chest discomfort."
+      "DescriptionRecovered": "The injured {teamA} player recovered after observation.",
+      "DescriptionNotRecovered": "The injured {teamA} player continued to experience chest discomfort."
     },
     {
       "Description": "A {teamA} player injured their ankle while turning sharply. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was found to have a minor ankle issue.",
-      "Description_not_recovered": "The injured {teamA} player suffered an ankle injury."
+      "DescriptionRecovered": "The injured {teamA} player was found to have a minor ankle issue.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered an ankle injury."
     },
     {
       "Description": "A {teamA} player was forced off after a heavy collision at the breakdown. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was cleared after checks.",
-      "Description_not_recovered": "The injured {teamA} player required further medical care."
+      "DescriptionRecovered": "The injured {teamA} player was cleared after checks.",
+      "DescriptionNotRecovered": "The injured {teamA} player required further medical care."
     },
     {
       "Description": "A {teamA} player injured their shoulder while attempting a tackle on a charging {teamB} runner. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player avoided major shoulder damage.",
-      "Description_not_recovered": "The injured {teamA} player sustained a shoulder injury."
+      "DescriptionRecovered": "The injured {teamA} player avoided major shoulder damage.",
+      "DescriptionNotRecovered": "The injured {teamA} player sustained a shoulder injury."
     },
     {
       "Description": "A {teamA} player suffered a blow to their cheek during contact. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was cleared after facial checks.",
-      "Description_not_recovered": "The injured {teamA} player suffered facial damage."
+      "DescriptionRecovered": "The injured {teamA} player was cleared after facial checks.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered facial damage."
     },
     {
       "Description": "A {teamA} player injured their hamstring while supporting an attacking move. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player showed signs of only minor strain.",
-      "Description_not_recovered": "The injured {teamA} player suffered a hamstring injury."
+      "DescriptionRecovered": "The injured {teamA} player showed signs of only minor strain.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a hamstring injury."
     },
     {
       "Description": "A {teamA} player appeared to injure their ankle after stepping on another player's foot. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was cleared after treatment.",
-      "Description_not_recovered": "The injured {teamA} player suffered ankle ligament damage."
+      "DescriptionRecovered": "The injured {teamA} player was cleared after treatment.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered ankle ligament damage."
     },
     {
       "Description": "A {teamA} player was shaken after a collision with a {teamB} forward. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player showed no serious symptoms.",
-      "Description_not_recovered": "The injured {teamA} player required additional medical checks."
+      "DescriptionRecovered": "The injured {teamA} player showed no serious symptoms.",
+      "DescriptionNotRecovered": "The injured {teamA} player required additional medical checks."
     },
     {
       "Description": "A {teamA} player injured their elbow while hitting the ground after a tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player recovered after treatment.",
-      "Description_not_recovered": "The injured {teamA} player suffered an elbow injury."
+      "DescriptionRecovered": "The injured {teamA} player recovered after treatment.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered an elbow injury."
     },
     {
       "Description": "A {teamA} player felt discomfort in their shoulder after repeated tackles. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was assessed with minor soreness.",
-      "Description_not_recovered": "The injured {teamA} player suffered shoulder complications."
+      "DescriptionRecovered": "The injured {teamA} player was assessed with minor soreness.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered shoulder complications."
     },
     {
       "Description": "A {teamA} player hurt their knee while diving on a loose ball. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player avoided serious knee problems.",
-      "Description_not_recovered": "The injured {teamA} player suffered knee damage."
+      "DescriptionRecovered": "The injured {teamA} player avoided serious knee problems.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered knee damage."
     },
     {
       "Description": "A {teamA} player received treatment after being caught in a dangerous-looking tackle. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was cleared after medical checks.",
-      "Description_not_recovered": "The injured {teamA} player sustained an injury from the tackle."
+      "DescriptionRecovered": "The injured {teamA} player was cleared after medical checks.",
+      "DescriptionNotRecovered": "The injured {teamA} player sustained an injury from the tackle."
     },
     {
       "Description": "A {teamA} player injured their calf while sprinting back in defence. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player had only minor muscle soreness.",
-      "Description_not_recovered": "The injured {teamA} player suffered a calf injury."
+      "DescriptionRecovered": "The injured {teamA} player had only minor muscle soreness.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a calf injury."
     },
     {
       "Description": "A {teamA} player was slow to move after a collapsed maul. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player recovered after assessment.",
-      "Description_not_recovered": "The injured {teamA} player suffered a maul-related injury."
+      "DescriptionRecovered": "The injured {teamA} player recovered after assessment.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered a maul-related injury."
     },
     {
       "Description": "A {teamA} player injured their neck during a tackle contest. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was cleared after precautionary checks.",
-      "Description_not_recovered": "The injured {teamA} player experienced ongoing neck concerns."
+      "DescriptionRecovered": "The injured {teamA} player was cleared after precautionary checks.",
+      "DescriptionNotRecovered": "The injured {teamA} player experienced ongoing neck concerns."
     },
     {
       "Description": "A {teamA} player felt pain in their ribs while carrying into contact. They leave the field for medical assessment.",
-      "Description_recovered": "The injured {teamA} player was treated for bruising.",
-      "Description_not_recovered": "The injured {teamA} player suffered rib damage."
+      "DescriptionRecovered": "The injured {teamA} player was treated for bruising.",
+      "DescriptionNotRecovered": "The injured {teamA} player suffered rib damage."
     }
   ],
 
