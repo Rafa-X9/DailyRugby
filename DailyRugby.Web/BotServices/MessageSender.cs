@@ -10,12 +10,16 @@ public class MessageSender
     private readonly ulong _channelId;
     private bool _hasInitialized = false;
     private IMessageChannel _channel = null!;
+    private readonly MessageProvider _messageProvider;
 
-    public MessageSender(IGameSimulatorManager simulator, IConfiguration configuration)
+    public MessageSender(IGameSimulatorManager simulator,
+        IConfiguration configuration,
+        MessageProvider messageProvider)
     {
         simulator.GameEventHappened += OnGameEventHappened;
         _configuration = configuration;
         _channelId = ulong.Parse(_configuration["ChannelId"] ?? throw new Exception());
+        _messageProvider = messageProvider;
     }
 
     private async void OnGameEventHappened(object? sender, EventArgs e)
@@ -47,31 +51,60 @@ public class MessageSender
             //------------------------------
 
             case GameEventType.TeamAFailedTry:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + TryAttempt(gameEvent.Game.Teams[0].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync($"{FailedTry(gameEvent.Game.Teams[0].Team.Country)} " +
-                    $"{CurrentScore(gameEvent)}");
+                var (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[0]);
+
+                TryAttemptMessage tryAttemptMessage = _messageProvider
+                    .GetTryAttemptMessage(gameEvent.Game.Teams[0].Team.Country,
+                    gameEvent.Game.Teams[1].Team.Country,
+                    n1, n2, n3);
+
+                int seconds = Random.Shared.Next(tryAttemptMessage.MinSeconds,
+                    tryAttemptMessage.MaxSeconds + 1);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - {tryAttemptMessage.Description}");
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+                await _channel.SendMessageAsync($"{tryAttemptMessage.Failure} {CurrentScore(gameEvent)}.");
+
                 break;
 
             case GameEventType.TeamAUnconvertedTry:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + TryAttempt(gameEvent.Game.Teams[0].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync(ScoredTry(gameEvent.Game.Teams[0].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync($"{FailedConversion(gameEvent.Game.Teams[0].Team.Country)} " +
-                    $"{CurrentScore(gameEvent)}");
+                (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[0]);
+
+                tryAttemptMessage = _messageProvider
+                    .GetTryAttemptMessage(gameEvent.Game.Teams[0].Team.Country,
+                    gameEvent.Game.Teams[1].Team.Country,
+                    n1, n2, n3);
+
+                seconds = Random.Shared.Next(tryAttemptMessage.MinSeconds,
+                    tryAttemptMessage.MaxSeconds + 1);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - {tryAttemptMessage.Description}");
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+                await _channel.SendMessageAsync($"{tryAttemptMessage.Success}");
+                await Task.Delay(TimeSpan.FromSeconds(5));
+                await _channel.SendMessageAsync($"{_messageProvider.GetConversionFailureMessage(
+                    gameEvent.Game.Teams[0].Team.Country)} {CurrentScore(gameEvent)}.");
+
                 break;
 
             case GameEventType.TeamAConvertedTry:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - " +
-                    TryAttempt(gameEvent.Game.Teams[0].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync(ScoredTry(gameEvent.Game.Teams[0].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync($"{Converted(gameEvent.Game.Teams[0].Team.Country)} " +
-                    $"{CurrentScore(gameEvent)}");
+                (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[0]);
+
+                tryAttemptMessage = _messageProvider
+                    .GetTryAttemptMessage(gameEvent.Game.Teams[0].Team.Country,
+                    gameEvent.Game.Teams[1].Team.Country,
+                    n1, n2, n3);
+
+                seconds = Random.Shared.Next(tryAttemptMessage.MinSeconds,
+                    tryAttemptMessage.MaxSeconds + 1);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - {tryAttemptMessage.Description}");
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+                await _channel.SendMessageAsync($"{tryAttemptMessage.Success}");
+                await Task.Delay(TimeSpan.FromSeconds(5));
+                await _channel.SendMessageAsync($"{_messageProvider.GetConversionSuccessMessage(
+                    gameEvent.Game.Teams[0].Team.Country)} {CurrentScore(gameEvent)}.");
+
                 break;
 
             case GameEventType.TeamAFailedDropGoal:
@@ -109,31 +142,60 @@ public class MessageSender
             //---------------------
 
             case GameEventType.TeamBFailedTry:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + TryAttempt(gameEvent.Game.Teams[1].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync($"{FailedTry(gameEvent.Game.Teams[1].Team.Country)} " +
-                    $"{CurrentScore(gameEvent)}");
+                (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[1]);
+
+                tryAttemptMessage = _messageProvider
+                    .GetTryAttemptMessage(gameEvent.Game.Teams[1].Team.Country,
+                    gameEvent.Game.Teams[0].Team.Country,
+                    n1, n2, n3);
+
+                seconds = Random.Shared.Next(tryAttemptMessage.MinSeconds,
+                    tryAttemptMessage.MaxSeconds + 1);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - {tryAttemptMessage.Description}");
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+                await _channel.SendMessageAsync($"{tryAttemptMessage.Failure} {CurrentScore(gameEvent)}.");
+
                 break;
 
             case GameEventType.TeamBUnconvertedTry:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + TryAttempt(gameEvent.Game.Teams[1].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync(ScoredTry(gameEvent.Game.Teams[1].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync($"{FailedConversion(gameEvent.Game.Teams[1].Team.Country)} " +
-                    $"{CurrentScore(gameEvent)}");
+                (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[1]);
+
+                tryAttemptMessage = _messageProvider
+                    .GetTryAttemptMessage(gameEvent.Game.Teams[1].Team.Country,
+                    gameEvent.Game.Teams[0].Team.Country,
+                    n1, n2, n3);
+
+                seconds = Random.Shared.Next(tryAttemptMessage.MinSeconds,
+                    tryAttemptMessage.MaxSeconds + 1);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - {tryAttemptMessage.Description}");
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+                await _channel.SendMessageAsync($"{tryAttemptMessage.Success}");
+                await Task.Delay(TimeSpan.FromSeconds(5));
+                await _channel.SendMessageAsync($"{_messageProvider.GetConversionFailureMessage(
+                    gameEvent.Game.Teams[1].Team.Country)} {CurrentScore(gameEvent)}.");
+
                 break;
 
             case GameEventType.TeamBConvertedTry:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - "
-                    + TryAttempt(gameEvent.Game.Teams[1].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync(ScoredTry(gameEvent.Game.Teams[1].Team.Country));
-                await WaitDelay();
-                await _channel.SendMessageAsync($"{Converted(gameEvent.Game.Teams[1].Team.Country)} " +
-                    $"{CurrentScore(gameEvent)}");
+                (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[1]);
+
+                tryAttemptMessage = _messageProvider
+                    .GetTryAttemptMessage(gameEvent.Game.Teams[1].Team.Country,
+                    gameEvent.Game.Teams[0].Team.Country,
+                    n1, n2, n3);
+
+                seconds = Random.Shared.Next(tryAttemptMessage.MinSeconds,
+                    tryAttemptMessage.MaxSeconds + 1);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - {tryAttemptMessage.Description}");
+                await Task.Delay(TimeSpan.FromSeconds(seconds));
+                await _channel.SendMessageAsync($"{tryAttemptMessage.Success}");
+                await Task.Delay(TimeSpan.FromSeconds(5));
+                await _channel.SendMessageAsync($"{_messageProvider.GetConversionSuccessMessage(
+                    gameEvent.Game.Teams[1].Team.Country)} {CurrentScore(gameEvent)}.");
+
                 break;
 
             case GameEventType.TeamBFailedDropGoal:
@@ -324,6 +386,25 @@ public class MessageSender
     }
 
     private async Task WaitDelay() { await Task.Delay(TimeSpan.FromSeconds(5)); }
+
+    private (int n1, int n2, int n3) GetThreePlayersOnField(TeamGame team)
+    {
+        int[] numbers = team.Players
+            .Where(temp => temp.IsOnField)
+            .Select(temp => temp.Number)
+            .ToArray();
+
+        HashSet<int> set = [];
+
+        while (set.Count < 3)
+        {
+            set.Add(numbers[Random.Shared.Next(0, numbers.Length)]);
+        }
+
+        List<int> chosenNumbers = [..set];
+
+        return (chosenNumbers[0], chosenNumbers[1], chosenNumbers[2]);
+    }
 
     private async Task AnnounceIntervalAsync(IMessageChannel channel,
         GameEvent gameEvent,
