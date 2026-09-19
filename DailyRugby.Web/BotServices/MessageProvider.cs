@@ -129,6 +129,37 @@ public class MessageProvider
                 .Replace("{teamB}", defender)
         };
     }
+
+    public PenaltyMessage GetPenaltyMessage(string attempter, string defender,
+        int player1, int player2, int player3)
+    {
+        int index = _random.Next(0, _penaltyMessages.Count);
+        var layout = _penaltyMessages[index];
+
+        return layout with
+        {
+            Description = layout.Description
+                .Replace("{teamA}", attempter)
+                .Replace("{player1}", player1.ToString())
+                .Replace("{player2}", player2.ToString())
+                .Replace("{player3}", player3.ToString())
+                .Replace("{teamB}", defender),
+
+            Success = layout.Success
+                .Replace("{teamA}", attempter)
+                .Replace("{player1}", player1.ToString())
+                .Replace("{player2}", player2.ToString())
+                .Replace("{player3}", player3.ToString())
+                .Replace("{teamB}", defender),
+
+            Failure = layout.Failure
+                .Replace("{teamA}", attempter)
+                .Replace("{player1}", player1.ToString())
+                .Replace("{player2}", player2.ToString())
+                .Replace("{player3}", player3.ToString())
+                .Replace("{teamB}", defender)
+        };
+    }
 }
 
 public sealed record TryAttemptMessage(string Description,
