@@ -23,7 +23,7 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             return Result.Failure("Yell is too long", Errors.Invalid);
         }
 
-        if (_cheers.Count(temp => temp.Cheer.UserId == cheer.UserId) > 3)
+        if (_cheers.Count(temp => temp.Cheer.UserId == cheer.UserId) >= 3)
         {
             return Result.Failure("You already cheered 3 times", Errors.Invalid);
         }
@@ -630,7 +630,7 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
     private GameEvent? CheckCheers(Game game)
     {
         var cheersToFinish = _cheers
-            .Where(temp => temp.Cheer.StartMinute + 2 == game.CurrentMinute)
+            .Where(temp => temp.Cheer.StartMinute + 2 == game.CurrentMinute && !temp.Resolved)
             .ToList();
 
         foreach (var cheer in cheersToFinish)
@@ -641,7 +641,8 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
         }
 
         var cheerToApply = _cheers
-            .FirstOrDefault(temp => temp.Cheer.StartMinute == game.CurrentMinute);
+            .FirstOrDefault(temp => temp.Cheer.StartMinute == game.CurrentMinute
+                && !temp.Resolved && !temp.Applied);
 
         if (cheerToApply is null) return null;
 
@@ -649,13 +650,18 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 
         teamStats.AddCheer();
 
+        cheerToApply.Applied = true;
+
         return new(game.CurrentMinute,
             cheerToApply.Cheer.ForTeamA ?
                 GameEventType.TeamAGetsCheer
                 : GameEventType.TeamBGetsCheer,
             game.TeamAScore,
             game.TeamBScore,
-            game);
+            game)
+        {
+            Cheer = cheerToApply.Cheer
+        };
     }
 
     private Player ChooseRandomPlayerOnField(TeamGame team)
@@ -878,6 +884,7 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 
     private sealed record GameCheer
     {
+        public bool Applied { get; set; } = false;
         public bool Resolved { get; set; }
         public Cheer Cheer { get; set; } = null!;
 
