@@ -5,6 +5,7 @@ using DailyRugby.Web.AutoCompletes;
 using DailyRugby.Web.BotServices;
 using Discord.Interactions;
 using System.Text;
+using System.Text.Json;
 
 namespace DailyRugby.Web.SlashCommands;
 
@@ -318,5 +319,76 @@ public class ChampionshipSlashCommands
         }
 
         await FollowupAsync(sb.ToString(), ephemeral: @private);
+    }
+
+    [SlashCommand("see-full-leaderboard-json", "Get the full leaderboard as JSON")]
+    public async Task SeeFullLeaderboardJson(
+        [Summary("Championship", "The championship to get the standings from")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string champId)
+    {
+        await DeferAsync(ephemeral: true);
+
+        bool idParsed = Guid.TryParse(champId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        var champResult = await champService.GetByIdAsync(id);
+        if (!champResult.IsSuccessful)
+        {
+            await FollowupAsync("Id was not found", ephemeral: true);
+            return;
+        }
+
+        var teams = await champService.GetStandingsAsync(id);
+
+        List<object> list = [];
+
+        int roundCount = champResult.Item.Games.Max(game => game.Round);
+
+        foreach (var pair in teams)
+        {
+            TeamResponse team = pair.Value;
+            int gamesPlayedCount = team.WinCount + team.TieCount + team.LossCount;
+
+            List<string> teamsBeaten = [];
+            var gamesPlayed = champResult.Item.Games
+                .Where(game => game.TeamA.Team.Id == team.Id
+                    || game.TeamB.Team.Id == team.Id);
+
+            foreach (var gamePlayed in gamesPlayed)
+            {
+                if (gamePlayed.TeamA.Team.Id == team.Id
+                    && gamePlayed.TeamAScore > gamePlayed.TeamBScore)
+                {
+                    teamsBeaten.Add(gamePlayed.TeamB.Team.Country);
+                }
+                else if (gamePlayed.TeamB.Team.Id == team.Id
+                    && gamePlayed.TeamBScore > gamePlayed.TeamAScore)
+                {
+                    teamsBeaten.Add(gamePlayed.TeamA.Team.Country);
+                }
+            }
+
+            list.Add(new
+            {
+                country = team.Country,
+                wins = team.WinCount,
+                ties = team.TieCount,
+                losses = team.LossCount,
+                hasBeaten = teamsBeaten,
+                pointBalance = team.PointsScored - team.PointsTaken,
+                tryBalance = team.ScoredTriesCount - team.SufferedTriesCount,
+                tries = team.ScoredTriesCount,
+                points = team.PointsScored,
+                matchesLeft = roundCount - gamesPlayedCount
+            });
+        }
+
+        var json = JsonSerializer.Serialize(list);
+        await FollowupAsync(json, ephemeral: true);
     }
 }
