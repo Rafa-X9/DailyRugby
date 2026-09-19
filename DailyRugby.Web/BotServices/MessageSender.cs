@@ -456,6 +456,18 @@ public class MessageSender
                     $"is cheering for {gameEvent.Game.Teams[1].Team.Country}{yell}");
                 break;
 
+            case GameEventType.Nothing:
+                if (Random.Shared.Next() % 2 == 0) break;
+
+                int teamIndex = Random.Shared.Next() % 2 == 0 ? 0 : 1;
+
+                string randomMessage = _messageProvider.GetRandomMessage(
+                    gameEvent.Game.Teams[teamIndex].Team.Country);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - " +
+                    $"{randomMessage}");
+
+                break;
 
             default:
                 await _channel.SendMessageAsync($"{gameEvent.Minute}' - Something happened: " +

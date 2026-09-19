@@ -160,6 +160,14 @@ public class MessageProvider
                 .Replace("{teamB}", defender)
         };
     }
+
+    public string GetRandomMessage(string team)
+    {
+        int index = _random.Next(0, _randomEvents.Count);
+
+        return _randomEvents[index]
+            .Replace("{teamA}", team);
+    }
 }
 
 public sealed record TryAttemptMessage(string Description,
