@@ -258,6 +258,7 @@ public class GameSlashCommands(IGameCrudService gameService,
         if (yell is { Length: > 1000 })
         {
             await RespondAsync("That yell is too long!");
+            return;
         }
 
         bool teamParsed = Enum.TryParse(teamAorB, true, out Teams team);
@@ -278,6 +279,7 @@ public class GameSlashCommands(IGameCrudService gameService,
         if (!result.IsSuccessful)
         {
             await RespondAsync($"{result.Error}: {result.Message}");
+            return;
         }
 
         await RespondAsync("Your cheer has been scheduled");
