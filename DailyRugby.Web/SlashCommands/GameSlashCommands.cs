@@ -255,10 +255,15 @@ public class GameSlashCommands(IGameCrudService gameService,
         [Summary("Yell", "What do you yell for the team?")]
         string? yell = null)
     {
+        if (yell is { Length: > 1000 })
+        {
+            await RespondAsync("That yell is too long!");
+        }
+
         bool teamParsed = Enum.TryParse(teamAorB, true, out Teams team);
         if (!teamParsed)
         {
-            await FollowupAsync("Invalid team to set tactic to");
+            await RespondAsync("Invalid team to cheer for");
             return;
         }
 

@@ -274,6 +274,31 @@ public class MessageSender
                     .ToString() ?? "UNKOWN."}");
                 break;
 
+            // -----------
+
+            case GameEventType.TeamAGetsCheer:
+                string yell = "!";
+
+                if (gameEvent.Cheer?.Yell is { Length: > 0 })
+                {
+                    yell = ": " + gameEvent.Cheer.Yell;
+                }
+                await _channel.SendMessageAsync($"<@{gameEvent.Cheer?.UserId.ToString() ?? "???"}> " +
+                    $"is cheering for {gameEvent.Game.Teams[0].Team.Country}{yell}");
+                break;
+
+            case GameEventType.TeamBGetsCheer:
+                yell = "!";
+
+                if (gameEvent.Cheer?.Yell is { Length: > 0 })
+                {
+                    yell = ": " + gameEvent.Cheer.Yell;
+                }
+                await _channel.SendMessageAsync($"<@{gameEvent.Cheer?.UserId.ToString() ?? "???"}> " +
+                    $"is cheering for {gameEvent.Game.Teams[1].Team.Country}{yell}");
+                break;
+
+
             default:
                 await _channel.SendMessageAsync($"{gameEvent.Minute}' - Something happened: " +
                     $"{gameEvent.EventType}");
