@@ -343,4 +343,66 @@ public class GameSlashCommands(IGameCrudService gameService,
 
         await FollowupAsync(json, ephemeral: true);
     }
+
+    [SlashCommand("see-previous-round-json", "Get the previous round as JSON")]
+    public async Task SeePreviousRoundJson()
+    {
+        await DeferAsync(ephemeral: true);
+
+        var currentRoundResult = await gameService.GetCurrentRoundAsync();
+
+        if (!currentRoundResult.IsSuccessful)
+        {
+            await FollowupAsync($"{currentRoundResult.Error}: {currentRoundResult.Message}",
+                ephemeral: true);
+            return;
+        }
+
+        if (currentRoundResult.Item.Count == 0)
+        {
+            await FollowupAsync("There is no previous round.");
+            return;
+        }
+
+        Guid champId = currentRoundResult.Item[0].ChampId;
+        int round = currentRoundResult.Item[0].Round - 1;
+
+        var result = await gameService.GetRoundAsync(champId, round);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}");
+            return;
+        }
+
+        var games = new List<object>();
+
+        foreach (var game in result.Item)
+        {
+            games.Add(new
+            {
+                teamA = game.TeamA.Team.Country,
+                teamB = game.TeamB.Team.Country,
+
+                teamAScore = game.TeamAScore,
+                teamBScore = game.TeamBScore,
+
+                teamATactic = game.TeamA.Tactic.ToString(),
+                teamBTactic = game.TeamB.Tactic.ToString(),
+
+                teamAUsedCake = game.TeamA.IsUsingCake,
+                teamBUsedCake = game.TeamB.IsUsingCake,
+
+                teamAHadMoraleBoost = game.TeamA.HasMoraleBoost,
+                teamBHadMoraleBoost = game.TeamB.HasMoraleBoost,
+
+                teamAGotMoraleBoost = game.TeamA.GetsMoraleBoostIfWins,
+                teamBGotMoraleBoost = game.TeamB.GetsMoraleBoostIfWins
+            });
+        }
+
+        string json = JsonSerializer.Serialize(games);
+
+        await FollowupAsync(json, ephemeral: true);
+    }
 }
