@@ -2,6 +2,7 @@
 using DailyRugby.Application.Interfaces;
 using DailyRugby.Domain;
 using DailyRugby.Web.AutoCompletes;
+using DailyRugby.Web.BotServices;
 using Discord.Interactions;
 using System.Text;
 
@@ -22,6 +23,12 @@ public class ChampionshipSlashCommands
         [Autocomplete(typeof(SeasonAutoComplete))]
         string season)
     {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
+
         await DeferAsync();
 
         bool parsed = Enum.TryParse(season, true, out Seasons enumSeason);
@@ -66,6 +73,11 @@ public class ChampionshipSlashCommands
         [Autocomplete(typeof(ChampionshipAutoComplete))]
         string id)
     {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
         await DeferAsync();
 
         bool parsed = Guid.TryParse(id, out Guid guid);
@@ -91,6 +103,11 @@ public class ChampionshipSlashCommands
         [Autocomplete(typeof(ChampionshipAutoComplete))]
         string champId)
     {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
         await DeferAsync();
 
         bool idParsed = Guid.TryParse(champId, out Guid id);
@@ -134,6 +151,11 @@ public class ChampionshipSlashCommands
         [Autocomplete(typeof(ChampionshipAutoComplete))]
         string champId)
     {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
         await DeferAsync();
 
         bool idParsed = Guid.TryParse(champId, out Guid id);
@@ -176,6 +198,11 @@ public class ChampionshipSlashCommands
         [Autocomplete(typeof(ChampionshipAutoComplete))]
         string champId)
     {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
         await DeferAsync();
 
         bool idParsed = Guid.TryParse(champId, out Guid id);
@@ -202,6 +229,11 @@ public class ChampionshipSlashCommands
         [Autocomplete(typeof(ChampionshipAutoComplete))]
         string champId)
     {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
         await DeferAsync();
 
         bool idParsed = Guid.TryParse(champId, out Guid id);

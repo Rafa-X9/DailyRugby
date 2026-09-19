@@ -2,6 +2,7 @@
 using DailyRugby.Application.Interfaces;
 using DailyRugby.Domain;
 using DailyRugby.Web.AutoCompletes;
+using DailyRugby.Web.BotServices;
 using Discord.Interactions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Text;
@@ -25,6 +26,11 @@ public class TeamSlashCommands(ITeamCrudService teamService)
         [Autocomplete(typeof(CoachAutoComplete))]
         string initialCoach)
     {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
         await DeferAsync();
 
         bool idParsed = Guid.TryParse(champId, out Guid id);
@@ -94,6 +100,11 @@ public class TeamSlashCommands(ITeamCrudService teamService)
         [Autocomplete(typeof(TeamAutoComplete))]
         string teamId)
     {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
         await DeferAsync();
 
         bool idParsed = Guid.TryParse(teamId, out Guid id);
@@ -167,6 +178,11 @@ public class TeamSlashCommands(ITeamCrudService teamService)
         [Summary("amount", "The amount to add, can be positive or negative")]
         int amount)
     {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
         await DeferAsync();
 
         bool idParsed = Guid.TryParse(teamId, out Guid id);

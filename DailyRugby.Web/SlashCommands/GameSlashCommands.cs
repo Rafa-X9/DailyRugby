@@ -2,6 +2,7 @@
 using DailyRugby.Application.Interfaces;
 using DailyRugby.Domain;
 using DailyRugby.Web.AutoCompletes;
+using DailyRugby.Web.BotServices;
 using Discord.Interactions;
 using System.Globalization;
 using System.Text;
@@ -107,6 +108,11 @@ public class GameSlashCommands(IGameCrudService gameService,
         int hourUtc,
         int minuteUtc)
     {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
         await DeferAsync();
 
         bool idParsed = Guid.TryParse(gameId, out Guid id);
@@ -166,6 +172,11 @@ public class GameSlashCommands(IGameCrudService gameService,
         [Autocomplete(typeof(TeamAorBAutocomplete))]
         string teamAorB)
     {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
         await DeferAsync();
 
         bool idParsed = Guid.TryParse(gameId, out Guid id);
