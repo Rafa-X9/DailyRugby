@@ -1,6 +1,7 @@
 ﻿using DailyRugby.Application.Interfaces;
 using DailyRugby.Domain;
 using Discord;
+using System.Text;
 
 namespace DailyRugby.Web.BotServices;
 
@@ -35,6 +36,57 @@ public class MessageSender
         {
             case GameEventType.GameStarted:
                 await AnnounceGameStartAsync(_channel, gameEvent);
+                await WaitDelay();
+
+                string teamATacticMessage;
+
+                if (gameEvent.Game.Teams[0].Tactic == Tactics.None)
+                {
+                    teamATacticMessage = "no tactic";
+                }
+                else
+                {
+                    teamATacticMessage = $"the {gameEvent.Game.Teams[0].Tactic
+                        .ToString().ToLower()} tactic";
+                }
+
+                string teamBTacticMessage;
+
+                if (gameEvent.Game.Teams[1].Tactic == Tactics.None)
+                {
+                    teamBTacticMessage = "no tactic";
+                }
+                else
+                {
+                    teamBTacticMessage = $"the {gameEvent.Game.Teams[1].Tactic
+                        .ToString().ToLower()} tactic";
+                }
+
+                await _channel.SendMessageAsync($"{gameEvent.Game.Teams[0].Team.Country} is using " +
+                $"{teamATacticMessage}, while {gameEvent.Game.Teams[1].Team.Country} is using " +
+                $"{teamBTacticMessage}.");
+
+                StringBuilder cakesMessage = new();
+
+                if (gameEvent.Game.Teams[0].Cake is not null)
+                {
+                    cakesMessage.Append($"{gameEvent.Game.Teams[0].Team.Country}'s coach " +
+                        $"bought a {gameEvent.Game.Teams[0].Cake!.Name} cake for the team, " +
+                        $"giving them a morale boost.");
+                }
+                if (gameEvent.Game.Teams[1].Cake is not null)
+                {
+                    cakesMessage.Append($"{gameEvent.Game.Teams[1].Team.Country}'s coach " +
+                        $"bought a {gameEvent.Game.Teams[1].Cake!.Name} cake for the team, " +
+                        $"giving them a morale boost.");
+                }
+
+                if (!string.IsNullOrWhiteSpace(cakesMessage.ToString()))
+                {
+                    await WaitDelay();
+                    await _channel.SendMessageAsync(cakesMessage.ToString());
+                }
+
                 break;
 
             case GameEventType.GameFinished:
@@ -109,7 +161,7 @@ public class MessageSender
 
             case GameEventType.TeamAFailedDropGoal:
                 (n1, n2, n3) = GetThreePlayersOnField(gameEvent.Game.Teams[0]);
-                
+
                 var dropGoalMessage = _messageProvider.GetDropGoalMessage(
                     gameEvent.Game.Teams[0].Team.Country,
                     gameEvent.Game.Teams[1].Team.Country,
@@ -493,10 +545,6 @@ public class MessageSender
     {
         await channel.SendMessageAsync($"The game between {gameEvent.Game.Teams[0].Team.Country} and " +
             $"{gameEvent.Game.Teams[1].Team.Country} begins!");
-
-        await channel.SendMessageAsync($"{gameEvent.Game.Teams[0].Team.Country} has chosen the " +
-            $"{gameEvent.Game.Teams[0].Tactic} tactic, while {gameEvent.Game.Teams[1].Team.Country} " +
-            $"has chosen the {gameEvent.Game.Teams[1].Tactic} tactic");
     }
 
     private async Task AnnounceGameEndAsync(IMessageChannel channel, GameEvent gameEvent)
@@ -522,7 +570,7 @@ public class MessageSender
             set.Add(numbers[Random.Shared.Next(0, numbers.Length)]);
         }
 
-        List<int> chosenNumbers = [..set];
+        List<int> chosenNumbers = [.. set];
 
         return (chosenNumbers[0], chosenNumbers[1], chosenNumbers[2]);
     }
