@@ -254,6 +254,37 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         return Result<IList<GameResponse>>.Success(games);
     }
 
+    public async Task<Result<TeamGameResponse>> SetCakeAsync(Guid gameId, Teams team, string cake)
+    {
+        var game = await db.Games
+            .Include(temp => temp.Teams.OrderBy(t => t.Team.Country))
+                .ThenInclude(temp => temp.Team)
+            .Include(temp => temp.Teams.OrderBy(t => t.Team.Country))
+                .ThenInclude(temp => temp.Cake)
+            .FirstOrDefaultAsync(temp => temp.Id == gameId);
+
+        if (game is null)
+        {
+            return Result<TeamGameResponse>.Failure("Id not found", Errors.NotFound);
+        }
+
+        TeamGame teamGame = team == Teams.TeamA ? game.Teams[0] : game.Teams[1];
+
+        var cakeToUse = teamGame.Team.Cakes
+            .FirstOrDefault(temp => temp.Name.Equals(cake, StringComparison.OrdinalIgnoreCase));
+
+        if (cakeToUse is null)
+        {
+            return Result<TeamGameResponse>.Failure("Cake not found. The cakes " +
+                $"{teamGame.Team.Country} has are: {string.Join(", ", teamGame.Team.Cakes
+                .Select(temp => temp.Name))}", Errors.NotFound);
+        }
+
+        teamGame.Cake = cakeToUse;
+        await db.SaveChangesAsync();
+        return Result<TeamGameResponse>.Success(teamGame.ToTeamGameResponse());
+    }
+
     public async Task<Result<TeamGameResponse>> SetCoachAsync(Guid gameId, Teams team, Coaches coach)
     {
         var game = await db.Games
