@@ -540,37 +540,4 @@ public class MessageSender
     private string CurrentScore(GameEvent gameEvent)
         => $"Current score: {gameEvent.Game.Teams[0].Team.Country} {gameEvent.TeamAScore} " +
         $"x {gameEvent.TeamBScore} {gameEvent.Game.Teams[1].Team.Country}";
-
-    private string TryAttempt(string team)
-        => $"{team} has advanced in the ruck or smt idk and is attempting a try.";
-
-    private string ScoredTry(string team)
-        => $"{team} has put the ball on the floor and scores! 5 points added.";
-
-    private string FailedTry(string team)
-        => $"{team}'s player tripped and fell before reaching the line. No try was scored.";
-
-    private string Converted(string team)
-        => $"{team} has shot it correctly and converts! 2 points added.";
-
-    private string FailedConversion(string team)
-        => $"{team} shot it wide and failed the conversion. No conversion was scored.";
-
-    private string AttempDropGoal(string team)
-        => $"{team} created space for a drop goal chance.";
-
-    private string ScoredDropGoal(string team)
-        => $"{team} made no mistake and scored the drop goal! 3 points added.";
-
-    private string FailedDropGoal(string team)
-        => $"The defense held firm and stopped {team}'s drop goal attempt. No drop goal was scored.";
-
-    private string AttemptedPenalty(string team)
-        => $"{team} got a penalty advantage after hands were not released in the tackle.";
-
-    private string ScoredPenalty(string team)
-        => $"{team} converted the penalty cleanly and scores! 3 points added.";
-
-    private string MissedPenalty(string team)
-        => $"{team} struck it too low and missed the target. No penalty was scored.";
 }
