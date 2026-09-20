@@ -267,7 +267,7 @@ public class GameSlashCommands(IGameCrudService gameService,
 
     [SlashCommand("set-coach", "Set the coach a team will use for a game")]
     public async Task SetCoach(
-        [Summary("Game", "The game to set a tactic")]
+        [Summary("Game", "The game to set a coach")]
         [Autocomplete(typeof(CurrentRoundAutocomplete))]
         string gameId,
 
@@ -317,6 +317,52 @@ public class GameSlashCommands(IGameCrudService gameService,
 
         await FollowupAsync($"Successfully applied the coach {result.Item.Coach} " +
             $"to {result.Item.Team.Country}", ephemeral: true);
+    }
+
+    [SlashCommand("set-cake", "Set the cake a team will use in a game")]
+    public async Task SetCake(
+        [Summary("Game", "The game to set a cake")]
+        [Autocomplete(typeof(CurrentRoundAutocomplete))]
+        string gameId,
+
+        [Summary("Cake", "The flavor of the cake that will be used")]
+        string cake,
+
+        [Summary("Team", "Which team will use the cake")]
+        [Autocomplete(typeof(TeamAorBAutocomplete))]
+        string teamAorB)
+    {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
+        await DeferAsync(ephemeral: true);
+
+        bool idParsed = Guid.TryParse(gameId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        bool teamParsed = Enum.TryParse(teamAorB, true, out Teams team);
+        if (!teamParsed)
+        {
+            await FollowupAsync("Invalid team to set cake to", ephemeral: true);
+            return;
+        }
+
+        var result = await gameService.SetCakeAsync(id, team, cake);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
+            return;
+        }
+
+        await FollowupAsync($"Successfully set the {result.Item.Cake!.Name} cake to " +
+            $"{result.Item.Team.Country}'s next game.", ephemeral: true);
     }
 
     [SlashCommand("see-odds", "Shows the odds of a game")]

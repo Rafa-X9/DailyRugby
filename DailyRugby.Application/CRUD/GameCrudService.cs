@@ -261,6 +261,7 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         var game = await db.Games
             .Include(temp => temp.Teams.OrderBy(t => t.Team.Country))
                 .ThenInclude(temp => temp.Team)
+                .ThenInclude(temp => temp.Cakes)
             .Include(temp => temp.Teams.OrderBy(t => t.Team.Country))
                 .ThenInclude(temp => temp.Cake)
             .FirstOrDefaultAsync(temp => temp.Id == gameId);
