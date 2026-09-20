@@ -19,4 +19,6 @@ public interface ITeamCrudService
     Task<Result<TeamResponse>> AddToStatAsync(int amount, TeamStats stat, Guid teamId);
 
     Task<Result<TeamResponse>> AddCoachAsync(Coaches coach, Guid teamId);
+
+    Task<Result<TeamResponse>> RemoveCoachAsync(Coaches coach, Guid teamId);
 }
