@@ -143,6 +143,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
                         .AsSplitQuery()
                         .Include(temp => temp.Teams.OrderBy(t => t.Team.Country))
                             .ThenInclude(temp => temp.Team)
+                        .Include(temp => temp.Championship)
                         .Where(temp => temp.Id == earliestGame.Game.Id)
                         .FirstAsync(stoppingToken);
                 }
