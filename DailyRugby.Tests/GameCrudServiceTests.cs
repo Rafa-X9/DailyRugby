@@ -321,6 +321,33 @@ public class GameCrudServiceTests : IAsyncLifetime
 
     #endregion
 
+    #region Cakes
+
+    [Fact]
+    public async Task AddCake_ValidInput_AddsCake()
+    {
+        var champ = await SetUpChampionship();
+        var team = await SetUpTeamA(champ.Id, 95);
+
+        const string medovik = "Medovik";
+        const string uranium = "Uranium";
+
+        var result1 = await _teamService.AddCakeAsync(team.Id, medovik, 2);
+        var result2 = await _teamService.AddCakeAsync(team.Id, uranium, 1);
+
+        var updatedTeam = await _teamService.GetByIdAsync(team.Id);
+
+        Assert.True(result1.IsSuccessful);
+        Assert.True(result2.IsSuccessful);
+        Assert.True(updatedTeam.IsSuccessful);
+
+        Assert.Equal(2, updatedTeam.Item.Cakes.Count(temp => temp.Name == medovik));
+        Assert.Equal(1, updatedTeam.Item.Cakes.Count(temp => temp.Name == uranium));
+        Assert.Equal(3, updatedTeam.Item.Cakes.Count);
+    }
+
+    #endregion
+
     #region Helpers
 
     private async Task<ChampionshipResponse> SetUpChampionship(Seasons season = Seasons.Season1)

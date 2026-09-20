@@ -167,12 +167,47 @@ public class TeamCrudService(AppDbContext db, ITeamValidatorFactory teamValidato
     public async Task<Result<TeamResponse>> GetByIdAsync(Guid id)
     {
         Team? team = await db.Teams
+            .AsNoTracking()
+            .Include(temp => temp.Cakes)
             .FirstOrDefaultAsync(temp => temp.Id == id);
 
         if (team is null)
         {
             return Result<TeamResponse>.Failure("Given id wasn't found", Errors.NotFound);
         }
+
+        return Result<TeamResponse>.Success(team.ToTeamResponse());
+    }
+
+    public async Task<Result<TeamResponse>> AddCakeAsync(Guid teamId, string cakeName, int amount = 1)
+    {
+        if (cakeName.Length <= 0 || cakeName.Length > 100)
+        {
+            return Result<TeamResponse>.Failure("Cake name must be between 1-100 characters",
+                Errors.Invalid);
+        }
+
+        var team = await db.Teams
+            .Include(temp => temp.Cakes)
+            .FirstOrDefaultAsync(temp => temp.Id == teamId);
+
+        if (team is null)
+        {
+            return Result<TeamResponse>.Failure("Id not found", Errors.NotFound);
+        }
+
+        for (int i = 0; i < amount; i++)
+        {
+            Cake cake = new()
+            {
+                Id = Guid.CreateVersion7(),
+                Name = cakeName,
+                TeamId = team.Id
+            };
+            team.Cakes.Add(cake);
+        }
+
+        await db.SaveChangesAsync();
 
         return Result<TeamResponse>.Success(team.ToTeamResponse());
     }

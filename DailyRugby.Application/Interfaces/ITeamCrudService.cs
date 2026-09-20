@@ -21,4 +21,6 @@ public interface ITeamCrudService
     Task<Result<TeamResponse>> AddCoachAsync(Coaches coach, Guid teamId);
 
     Task<Result<TeamResponse>> RemoveCoachAsync(Coaches coach, Guid teamId);
+
+    Task<Result<TeamResponse>> AddCakeAsync(Guid teamId, string cakeName, int amount = 1);
 }
