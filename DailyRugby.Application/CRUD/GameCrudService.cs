@@ -153,6 +153,8 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
             .Where(temp => temp.ChampionshipId == champId)
             .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
                 .ThenInclude(temp => temp.Team)
+            .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
+                .ThenInclude(temp => temp.Cake)
             .ToListAsync())
             .Select(temp => temp.ToGameResponse())
             .ToList();
@@ -164,6 +166,8 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
             .AsNoTracking()
             .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
                 .ThenInclude(temp => temp.Team)
+            .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
+                .ThenInclude(temp => temp.Cake)
             .ToListAsync())
             .Select(temp => temp.ToGameResponse())
             .ToList();
@@ -214,7 +218,9 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
             .AsNoTracking()
             .Include(temp => temp.Championship)
             .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
-            .ThenInclude(temp => temp.Team)
+                .ThenInclude(temp => temp.Team)
+            .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
+                .ThenInclude(temp => temp.Cake)
             .Where(temp => temp.Championship.IsMainChampionship)
             .ToListAsync();
         
@@ -246,7 +252,9 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
             .AsNoTracking()
             .Include(temp => temp.Championship)
             .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
-            .ThenInclude(temp => temp.Team)
+                .ThenInclude(temp => temp.Team)
+            .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
+                .ThenInclude(temp => temp.Cake)
             .Where(temp => temp.ChampionshipId == champId
                 && temp.Championship.IsMainChampionship
                 && temp.Round == round)
@@ -261,7 +269,7 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         var game = await db.Games
             .Include(temp => temp.Teams.OrderBy(t => t.Team.Country))
                 .ThenInclude(temp => temp.Team)
-                .ThenInclude(temp => temp.Cakes)
+                    .ThenInclude(temp => temp.Cakes)
             .Include(temp => temp.Teams.OrderBy(t => t.Team.Country))
                 .ThenInclude(temp => temp.Cake)
             .FirstOrDefaultAsync(temp => temp.Id == gameId);
@@ -274,13 +282,14 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         TeamGame teamGame = team == Teams.TeamA ? game.Teams[0] : game.Teams[1];
 
         var cakeToUse = teamGame.Team.Cakes
-            .FirstOrDefault(temp => temp.Name.Equals(cake, StringComparison.OrdinalIgnoreCase));
+            .FirstOrDefault(temp => temp.Name.Equals(cake, StringComparison.OrdinalIgnoreCase)
+                && !temp.IsUsed);
 
         if (cakeToUse is null)
         {
             return Result<TeamGameResponse>.Failure("Cake not found. The cakes " +
                 $"{teamGame.Team.Country} has are: {string.Join(", ", teamGame.Team.Cakes
-                .Select(temp => temp.Name))}", Errors.NotFound);
+                .Where(temp => !temp.IsUsed).Select(temp => temp.Name))}", Errors.NotFound);
         }
 
         teamGame.Cake = cakeToUse;

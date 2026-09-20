@@ -159,7 +159,7 @@ public class TeamCrudService(AppDbContext db, ITeamValidatorFactory teamValidato
     {
         return await db.Teams
             .AsNoTracking()
-            .Include(temp => temp.Cakes)
+            .Include(temp => temp.Cakes.Where(cake => !cake.IsUsed))
             .Where(temp => temp.ChampionshipId == champId)
             .Select(temp => temp.ToTeamResponse())
             .ToListAsync();
@@ -169,7 +169,7 @@ public class TeamCrudService(AppDbContext db, ITeamValidatorFactory teamValidato
     {
         Team? team = await db.Teams
             .AsNoTracking()
-            .Include(temp => temp.Cakes)
+            .Include(temp => temp.Cakes.Where(cake => !cake.IsUsed))
             .FirstOrDefaultAsync(temp => temp.Id == id);
 
         if (team is null)
@@ -216,7 +216,7 @@ public class TeamCrudService(AppDbContext db, ITeamValidatorFactory teamValidato
     public async Task<IList<CakeResponse>> GetCakesFromTeamAsync(Guid teamId)
         => await db.Cakes
         .AsNoTracking()
-        .Where(temp => temp.TeamId == teamId)
+        .Where(temp => temp.TeamId == teamId && !temp.IsUsed)
         .Select(temp => temp.ToCakeResponse())
         .ToListAsync();
 }
