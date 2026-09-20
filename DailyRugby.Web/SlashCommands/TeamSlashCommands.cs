@@ -261,6 +261,49 @@ public class TeamSlashCommands(ITeamCrudService teamService)
             $"to {result.Item.Country}", ephemeral: true);
     }
 
+    [SlashCommand("remove-coach", "Remove a coach from a team")]
+    public async Task RemoveCoachFromTeam(
+        [Summary("team", "The team to add a coach to")]
+        [Autocomplete(typeof(TeamAutoComplete))]
+        string teamId,
+
+        [Summary("coach", "The coach to add")]
+        [Autocomplete(typeof(CoachAutoComplete))]
+        string coach)
+    {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
+        await DeferAsync(ephemeral: true);
+
+        bool idParsed = Guid.TryParse(teamId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        bool coachParsed = Enum.TryParse(coach, true, out Coaches enumCoach);
+        if (!coachParsed)
+        {
+            await FollowupAsync("Invalid coach", ephemeral: true);
+            return;
+        }
+
+        var result = await teamService.RemoveCoachAsync(enumCoach, id);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
+            return;
+        }
+
+        await FollowupAsync($"Successfully removed the {enumCoach} coach " +
+            $"from {result.Item.Country}", ephemeral: true);
+    }
+
     [SlashCommand("see-teams-json", "Get the teams from a championship as JSON")]
     public async Task SeeTeamsJson(
         [Summary("Championship", "The championship to get the teams from")]
