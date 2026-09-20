@@ -71,8 +71,8 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
     [Fact]
     public async Task OddsCalculator_Test()
     {
-        var champ = await SetUpChampionship();
-        await SetUpThreeTeams(champ.Id, 95);
+        var champ = await SetUpChampionship(Seasons.Season3);
+        await SetUpThreeTeams(champ.Id, 100);
         await _gameService.GenerateRounds(champ.Id);
 
         var game = await _db.Games
@@ -138,8 +138,8 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
         TeamAddRequest request = new(champId,
             "RafaX9",
             "Brazil",
-            //statBudget - 2, 1, 1,
-            Insight: 68, Physique: 27, Technique: 0,
+            statBudget - 2, 1, 1,
+            //Insight: 68, Physique: 27, Technique: 0,
             Coaches.General);
         var result = await _teamService.AddAsync(request);
         if (!result.IsSuccessful) throw new Exception();
@@ -151,8 +151,8 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
         TeamAddRequest request = new(champId,
             "Terrs34",
             "Ireland",
-            //10, statBudget - 20, 10,
-            Insight: 45, Physique: 25, Technique: 25,
+            10, statBudget - 20, 10,
+            //Insight: 45, Physique: 25, Technique: 25,
             Coaches.General);
         var result = await _teamService.AddAsync(request);
         if (!result.IsSuccessful) throw new Exception();
@@ -164,8 +164,8 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
         TeamAddRequest request = new(champId,
             "ChelseaFan",
             "Singapore",
-            //10, 10, statBudget - 20,
-            Insight: 30, Physique: 30, Technique: 35,
+            10, 10, statBudget - 20,
+            //Insight: 30, Physique: 30, Technique: 35,
             Coaches.General);
         var result = await _teamService.AddAsync(request);
         if (!result.IsSuccessful) throw new Exception();

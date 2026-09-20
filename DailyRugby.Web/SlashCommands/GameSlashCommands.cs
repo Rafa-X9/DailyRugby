@@ -298,7 +298,7 @@ public class GameSlashCommands(IGameCrudService gameService,
         if (!oddsResult.IsSuccessful)
         {
             await FollowupAsync(oddsResult.Message, ephemeral: true);
-            await oddsCalculator.GetOddsAsync(id, passIfNotExists: false);
+            _ = oddsCalculator.GetOddsAsync(id, passIfNotExists: false);
             return;
         }
 
