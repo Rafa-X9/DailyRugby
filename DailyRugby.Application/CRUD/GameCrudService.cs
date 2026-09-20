@@ -175,6 +175,8 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
             .AsNoTracking()
             .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
                 .ThenInclude(temp => temp.Team)
+            .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
+                .ThenInclude(temp => temp.Cake)
             .FirstOrDefaultAsync(temp => temp.Id == id);
 
         if (game is null)

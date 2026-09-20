@@ -105,6 +105,49 @@ public class GameSlashCommands(IGameCrudService gameService,
         await FollowupAsync(sb.ToString(), ephemeral: @private);
     }
 
+    [SlashCommand("see-game-details", "Shows all details of a game, including tactics and cakes")]
+    public async Task SeeGameDetails(
+        [Summary("Game", "The game to set a tactic")]
+        [Autocomplete(typeof(CurrentRoundAutocomplete))]
+        string gameId)
+    {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
+        await DeferAsync(ephemeral: true);
+
+        bool idParsed = Guid.TryParse(gameId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        var gameResult = await gameService.GetByIdAsync(id);
+
+        if (!gameResult.IsSuccessful)
+        {
+            await FollowupAsync($"{gameResult.Error}: {gameResult.Message}", ephemeral: true);
+            return;
+        }
+
+        var game = gameResult.Item;
+
+        await FollowupAsync($"# {game.TeamA.Team.Country} vs {game.TeamB.Team.Country}\n" +
+            $"\n" +
+            $"**{game.TeamA.Team.Country}**:\n" +
+            $"- {game.TeamA.Coach} coach\n" +
+            $"- {game.TeamA.Tactic} tactic\n" +
+            $"- {game.TeamA.Cake?.Name ?? "no"} cake\n" +
+            $"\n" +
+            $"**{game.TeamB.Team.Country}**:\n" +
+            $"- {game.TeamB.Coach} coach\n" +
+            $"- {game.TeamB.Tactic} tactic\n" +
+            $"- {game.TeamB.Cake?.Name ?? "no"} cake\n", ephemeral: true);
+    }
+
     [SlashCommand("schedule-game", "Schedules a game")]
     public async Task ScheduleGame(
         [Summary("game", "The game to schedule")]
