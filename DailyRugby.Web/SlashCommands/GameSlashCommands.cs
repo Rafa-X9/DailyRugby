@@ -221,6 +221,60 @@ public class GameSlashCommands(IGameCrudService gameService,
             $"to {result.Item.Team.Country}", ephemeral: true);
     }
 
+    [SlashCommand("set-coach", "Set the coach a team will use for a game")]
+    public async Task SetCoach(
+        [Summary("Game", "The game to set a tactic")]
+        [Autocomplete(typeof(CurrentRoundAutocomplete))]
+        string gameId,
+
+        [Summary("Coach", "The coach to set")]
+        [Autocomplete(typeof(CoachAutoComplete))]
+        string coach,
+
+        [Summary("Team", "The team that should have the tactic applied to")]
+        [Autocomplete(typeof(TeamAorBAutocomplete))]
+        string teamAorB)
+    {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
+        await DeferAsync(ephemeral: true);
+
+        bool idParsed = Guid.TryParse(gameId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        bool coachParsed = Enum.TryParse(coach, true, out Coaches enumCoach);
+        if (!coachParsed)
+        {
+            await FollowupAsync("Invalid coach", ephemeral: true);
+            return;
+        }
+
+        bool teamParsed = Enum.TryParse(teamAorB, true, out Teams team);
+        if (!teamParsed)
+        {
+            await FollowupAsync("Invalid team to set tactic to", ephemeral: true);
+            return;
+        }
+
+        var result = await gameService.SetCoachAsync(id, team, enumCoach);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
+            return;
+        }
+
+        await FollowupAsync($"Successfully applied the coach {result.Item.Coach} " +
+            $"to {result.Item.Team.Country}", ephemeral: true);
+    }
+
     [SlashCommand("see-odds", "Shows the odds of a game")]
     public async Task SeeOdds(
         [Summary("Game", "The game to get odds from")]
