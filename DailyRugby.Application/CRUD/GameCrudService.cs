@@ -238,9 +238,38 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         return Result<IList<GameResponse>>.Success(games);
     }
 
-    public Task<Result<TeamGameResponse>> SetCoachAsync(Guid gameId, Teams team, Coaches coach)
+    public async Task<Result<TeamGameResponse>> SetCoachAsync(Guid gameId, Teams team, Coaches coach)
     {
-        throw new NotImplementedException();
+        var game = await db.Games
+            .Include(temp => temp.Teams.OrderBy(t => t.Team.Country))
+                .ThenInclude(temp => temp.Team)
+            .FirstOrDefaultAsync(temp => temp.Id == gameId);
+
+        if (game is null)
+        {
+            return Result<TeamGameResponse>.Failure("Id not found", Errors.NotFound);
+        }
+
+        TeamGame teamGame = team == Teams.TeamA ? game.Teams[0] : game.Teams[1];
+
+        bool hasCoach = coach switch
+        {
+            Coaches.General => teamGame.Team.HasGeneralCoach,
+            Coaches.Insight => teamGame.Team.HasInsigthCoach,
+            Coaches.Physique => teamGame.Team.HasPhysiqueCoach,
+            Coaches.Technique => teamGame.Team.HasTechniqueCoach,
+            _ => false
+        };
+
+        if (!hasCoach)
+        {
+            return Result<TeamGameResponse>.Failure($"{teamGame.Team.Country} does not " +
+                $"have the {coach} coach", Errors.Invalid);
+        }
+
+        teamGame.Coach = coach;
+        await db.SaveChangesAsync();
+        return Result<TeamGameResponse>.Success(teamGame.ToTeamGameResponse());
     }
 
     public async Task<Result<TeamGameResponse>> SetTacticAsync(Guid gameId, Teams team, Tactics tactic)
