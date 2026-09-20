@@ -268,26 +268,18 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
 
         if (game.Teams[0].Cake is not null)
         {
-            await db.TeamGames
-                .Where(temp => temp.Cake != null && temp.Cake.Id == game.Teams[0].Cake!.Id)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(temp => EF.Property<Guid?>(temp, "CakeId"), (Guid?)null));
-
             await db.Cakes
                 .Where(temp => temp.Id == game.Teams[0].Cake!.Id)
-                .ExecuteDeleteAsync();
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(temp => temp.IsUsed, true));
         }
 
         if (game.Teams[1].Cake is not null)
         {
-            await db.TeamGames
-                .Where(temp => temp.Cake != null && temp.Cake.Id == game.Teams[1].Cake!.Id)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(temp => EF.Property<Guid?>(temp, "CakeId"), (Guid?)null));
-
             await db.Cakes
                 .Where(temp => temp.Id == game.Teams[1].Cake!.Id)
-                .ExecuteDeleteAsync();
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(temp => temp.IsUsed, true));
         }
 
         _ongoingGame = null;
