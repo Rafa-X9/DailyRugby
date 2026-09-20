@@ -77,7 +77,6 @@ public class SeasonThreeGameSimulatorTests(ITestOutputHelper output)
             GameId = Guid.NewGuid(),
             GetsMoraleBoostIfWins = false,
             HasMoraleBoost = false,
-            IsUsingCake = false,
             Players = [],
             Tactic = Tactics.Insight,
             Team = new()

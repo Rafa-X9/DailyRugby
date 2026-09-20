@@ -6,7 +6,7 @@ public sealed record TeamGameResponse(Guid Id,
     TeamResponse Team,
     Coaches Coach,
     Tactics Tactic,
-    bool IsUsingCake,
+    CakeResponse? Cake,
     bool HasMoraleBoost,
     bool GetsMoraleBoostIfWins);
 
@@ -17,7 +17,7 @@ public static class TeamGameExtensions
             teamGame.Team.ToTeamResponse(),
             teamGame.Coach,
             teamGame.Tactic,
-            teamGame.IsUsingCake,
+            teamGame.Cake?.ToCakeResponse(),
             teamGame.HasMoraleBoost,
             teamGame.GetsMoraleBoostIfWins);
 }

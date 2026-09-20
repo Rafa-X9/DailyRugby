@@ -132,8 +132,8 @@ public class JsonGetter(IGameCrudService gameService,
                 teamATactic = game.TeamA.Tactic.ToString(),
                 teamBTactic = game.TeamB.Tactic.ToString(),
 
-                teamAUsedCake = game.TeamA.IsUsingCake,
-                teamBUsedCake = game.TeamB.IsUsingCake,
+                teamAUsedCake = game.TeamA.Cake is not null,
+                teamBUsedCake = game.TeamB.Cake is not null,
 
                 teamAHadMoraleBoost = game.TeamA.HasMoraleBoost,
                 teamBHadMoraleBoost = game.TeamB.HasMoraleBoost,

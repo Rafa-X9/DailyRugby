@@ -156,7 +156,7 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
     {
         int minimum = 4
             + (team.HasMoraleBoost ? 1 : 0)
-            + (team.IsUsingCake ? 1 : 0);
+            + (team.Cake is not null ? 1 : 0);
 
         int teamTotal = team.Team.Insight + team.Team.Physique + team.Team.Technique;
 

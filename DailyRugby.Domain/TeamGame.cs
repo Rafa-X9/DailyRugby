@@ -12,7 +12,7 @@ public class TeamGame
     public Team Team { get; set; }
     public Coaches Coach { get; set; } = Coaches.None;
     public Tactics Tactic { get; set; } = Tactics.None;
-    public bool IsUsingCake { get; set; }
+    public Cake? Cake { get; set; }
     public bool HasMoraleBoost { get; set; }
     public bool GetsMoraleBoostIfWins { get; set; }
 
