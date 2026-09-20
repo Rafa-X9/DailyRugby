@@ -99,6 +99,16 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
 
             CreatePlayers(game.Teams[0]);
             CreatePlayers(game.Teams[1]);
+
+            if (game.Teams[0].Cake is not null)
+            {
+                _teamAStats.AddCakeBonus();
+            }
+
+            if (game.Teams[1].Cake is not null)
+            {
+                _teamBStats.AddCakeBonus();
+            }
         }
 
         var injuryCheck = CheckPendingInjuries(game);
@@ -784,6 +794,14 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             Physique -= 1;
             Technique -= 1;
         }
+        
+        public void AddCakeBonus()
+        {
+            Insight += 3;
+            Technique += 3;
+            Physique += 3;
+        }
+
 
         //the Get...Chance methods return the percentages in the range 0.0-1.0
 

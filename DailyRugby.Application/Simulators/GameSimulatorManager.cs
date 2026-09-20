@@ -143,9 +143,25 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
                         .AsSplitQuery()
                         .Include(temp => temp.Teams.OrderBy(t => t.Team.Country))
                             .ThenInclude(temp => temp.Team)
+                        .Include(temp => temp.Teams.OrderBy(t => t.Team.Country))
+                            .ThenInclude(temp => temp.Cake)
                         .Include(temp => temp.Championship)
                         .Where(temp => temp.Id == earliestGame.Game.Id)
                         .FirstAsync(stoppingToken);
+
+                    if (game.Teams[0].Cake is not null)
+                    {
+                        await db.Cakes
+                            .Where(temp => temp.Id == game.Teams[0].Cake!.Id)
+                            .ExecuteDeleteAsync(stoppingToken);
+                    }
+
+                    if (game.Teams[1].Cake is not null)
+                    {
+                        await db.Cakes
+                            .Where(temp => temp.Id == game.Teams[1].Cake!.Id)
+                            .ExecuteDeleteAsync(stoppingToken);
+                    }
                 }
                 await SimulateGameAsync(game);
             }
