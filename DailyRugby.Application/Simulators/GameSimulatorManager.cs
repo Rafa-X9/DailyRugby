@@ -148,20 +148,6 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
                         .Include(temp => temp.Championship)
                         .Where(temp => temp.Id == earliestGame.Game.Id)
                         .FirstAsync(stoppingToken);
-
-                    if (game.Teams[0].Cake is not null)
-                    {
-                        await db.Cakes
-                            .Where(temp => temp.Id == game.Teams[0].Cake!.Id)
-                            .ExecuteDeleteAsync(stoppingToken);
-                    }
-
-                    if (game.Teams[1].Cake is not null)
-                    {
-                        await db.Cakes
-                            .Where(temp => temp.Id == game.Teams[1].Cake!.Id)
-                            .ExecuteDeleteAsync(stoppingToken);
-                    }
                 }
                 await SimulateGameAsync(game);
             }
@@ -279,6 +265,30 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             game.TeamBScore,
             game);
         GameEventHappened?.Invoke(this, finished);
+
+        if (game.Teams[0].Cake is not null)
+        {
+            await db.TeamGames
+                .Where(temp => temp.Cake != null && temp.Cake.Id == game.Teams[0].Cake!.Id)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(temp => EF.Property<Guid?>(temp, "CakeId"), (Guid?)null));
+
+            await db.Cakes
+                .Where(temp => temp.Id == game.Teams[0].Cake!.Id)
+                .ExecuteDeleteAsync();
+        }
+
+        if (game.Teams[1].Cake is not null)
+        {
+            await db.TeamGames
+                .Where(temp => temp.Cake != null && temp.Cake.Id == game.Teams[1].Cake!.Id)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(temp => EF.Property<Guid?>(temp, "CakeId"), (Guid?)null));
+
+            await db.Cakes
+                .Where(temp => temp.Id == game.Teams[1].Cake!.Id)
+                .ExecuteDeleteAsync();
+        }
 
         _ongoingGame = null;
         _currentSimulator = null;
