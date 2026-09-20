@@ -331,4 +331,89 @@ public class TeamSlashCommands(ITeamCrudService teamService, IJsonGetter jsonGet
 
         await FollowupAsync(json, ephemeral: true);
     }
+
+    [SlashCommand("add-cake", "Add cakes to a team")]
+    public async Task AddCake(
+        [Summary("team", "The team to add cakes to")]
+        [Autocomplete(typeof(TeamAutoComplete))]
+        string teamId,
+
+        [Summary("cake", "The name/flavor of the cake")]
+        string cakeName,
+
+        [Summary("amount", "The amount of cakes to add")]
+        int amount = 1)
+    {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
+        await DeferAsync(ephemeral: true);
+
+        bool idParsed = Guid.TryParse(teamId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        var result = await teamService.AddCakeAsync(id, cakeName, amount);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
+            return;
+        }
+
+        StringBuilder sb = new();
+
+        sb.AppendLine($"Successfully added {amount} cakes to {result.Item.Country}");
+        sb.AppendLine();
+        sb.AppendLine($"These are all their cakes now:");
+
+        foreach (var cake in result.Item.Cakes)
+        {
+            sb.AppendLine($"- {cake.Name}");
+        }
+
+        await FollowupAsync(sb.ToString(), ephemeral: true);
+    }
+
+    [SlashCommand("see-cakes", "See all cakes a team has")]
+    public async Task SeeCakes(
+        [Summary("team", "The team to add cakes to")]
+        [Autocomplete(typeof(TeamAutoComplete))]
+        string teamId,
+
+        [Summary("Private", "Whether the response should be sent privately")]
+        bool @private = true)
+    {
+        await DeferAsync(ephemeral: @private);
+
+        bool idParsed = Guid.TryParse(teamId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        var result = await teamService.GetByIdAsync(id);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}");
+            return;
+        }
+
+        StringBuilder sb = new();
+        sb.AppendLine($"These are all {result.Item.Country}'s cakes:");
+
+        foreach (var cake in result.Item.Cakes)
+        {
+            sb.AppendLine($"- {cake.Name}");
+        }
+
+        await FollowupAsync(sb.ToString(), ephemeral: @private);
+    }
 }
