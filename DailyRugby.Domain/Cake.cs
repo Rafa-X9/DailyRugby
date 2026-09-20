@@ -10,4 +10,6 @@ public class Cake
 
     [StringLength(100)]
     public string Name { get; set; } = string.Empty;
+
+    public bool IsUsed { get; set; } = false;
 }
