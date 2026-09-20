@@ -187,7 +187,8 @@ public class JsonGetter(IGameCrudService gameService,
                 technique = team.Technique,
                 insight = team.Insight,
                 physique = team.Physique,
-                coaches = team.Coaches.Select(temp => temp.ToString())
+                coaches = team.Coaches.Select(temp => temp.ToString()),
+                cakes = team.Cakes.Select(temp => temp.Name)
             });
         }
 

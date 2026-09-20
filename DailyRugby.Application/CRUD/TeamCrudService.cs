@@ -157,11 +157,12 @@ public class TeamCrudService(AppDbContext db, ITeamValidatorFactory teamValidato
 
     public async Task<IList<TeamResponse>> GetAllAsync(Guid champId)
     {
-        return (await db.Teams
+        return await db.Teams
+            .AsNoTracking()
+            .Include(temp => temp.Cakes)
             .Where(temp => temp.ChampionshipId == champId)
-            .ToListAsync())
             .Select(temp => temp.ToTeamResponse())
-            .ToList();
+            .ToListAsync();
     }
 
     public async Task<Result<TeamResponse>> GetByIdAsync(Guid id)
