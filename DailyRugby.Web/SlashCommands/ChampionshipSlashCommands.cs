@@ -376,4 +376,35 @@ public class ChampionshipSlashCommands
         string json = JsonSerializer.Serialize(dataResult.Item);
         await FollowupAsync(json, ephemeral: true);
     }
+
+    [SlashCommand("see-championship-json", "Get a JSON file containing all the championship's data")]
+    public async Task SeeChampionshipJson(
+        [Summary("Championship", "The championship to get the data from")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string champId)
+    {
+        await DeferAsync(ephemeral: true);
+
+        bool idParsed = Guid.TryParse(champId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        var data = new
+        {
+            previousRound = (await jsonGetter.GetPreviousRoundAsync()).Item,
+            currentRound = (await jsonGetter.GetCurrentRoundAsync()).Item,
+            leaderboard = (await jsonGetter.GetLeaderBoardAsync(id)).Item,
+            teams = (await jsonGetter.GetTeamsAsync(id)).Item,
+            schedules = (await jsonGetter.GetSchedulesAsync(id)).Item
+        };
+
+        string json = JsonSerializer.Serialize(data);
+
+        using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
+
+        await FollowupWithFileAsync(memoryStream, "championship.json", "Here is the JSON file");
+    }
 }
