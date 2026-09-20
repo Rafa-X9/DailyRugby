@@ -97,9 +97,44 @@ public class JsonGetter(IGameCrudService gameService,
     {
         var currentRoundResult = await gameService.GetCurrentRoundAsync();
 
+        var games = new List<object>();
+
         if (!currentRoundResult.IsSuccessful)
         {
-            return Result<object>.Failure(currentRoundResult.Message, currentRoundResult.Error);
+            var mainChampResult = await champService.GetMainChampionshipAsync();
+
+            if (!mainChampResult.IsSuccessful)
+            {
+                return Result<object>.Failure(mainChampResult.Message, mainChampResult.Error);
+            }
+
+            int finalRound = mainChampResult.Item.Games.Max(temp => temp.Round);
+
+            foreach (var game in mainChampResult.Item.Games.Where(temp => temp.Round == finalRound))
+            {
+                games.Add(new
+                {
+                    teamA = game.TeamA.Team.Country,
+                    teamB = game.TeamB.Team.Country,
+
+                    teamAScore = game.TeamAScore,
+                    teamBScore = game.TeamBScore,
+
+                    teamATactic = game.TeamA.Tactic.ToString(),
+                    teamBTactic = game.TeamB.Tactic.ToString(),
+
+                    teamACake = game.TeamA.Cake?.Name,
+                    teamBCake = game.TeamB.Cake?.Name,
+
+                    teamAHadMoraleBoost = game.TeamA.HasMoraleBoost,
+                    teamBHadMoraleBoost = game.TeamB.HasMoraleBoost,
+
+                    teamAGotMoraleBoost = game.TeamA.GetsMoraleBoostIfWins,
+                    teamBGotMoraleBoost = game.TeamB.GetsMoraleBoostIfWins
+                });
+            }
+
+            return Result<object>.Success(games);
         }
 
         if (currentRoundResult.Item.Count == 0)
@@ -116,8 +151,6 @@ public class JsonGetter(IGameCrudService gameService,
         {
             return Result<object>.Failure(result.Message, result.Error);
         }
-
-        var games = new List<object>();
 
         foreach (var game in result.Item)
         {
