@@ -211,4 +211,11 @@ public class TeamCrudService(AppDbContext db, ITeamValidatorFactory teamValidato
 
         return Result<TeamResponse>.Success(team.ToTeamResponse());
     }
+
+    public async Task<IList<CakeResponse>> GetCakesFromTeamAsync(Guid teamId)
+        => await db.Cakes
+        .AsNoTracking()
+        .Where(temp => temp.TeamId == teamId)
+        .Select(temp => temp.ToCakeResponse())
+        .ToListAsync();
 }
