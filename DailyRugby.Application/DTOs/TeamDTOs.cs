@@ -18,14 +18,18 @@ public sealed record TeamResponse(Guid Id,
     int Physique,
     int Technique,
     List<Coaches> Coaches,
-    int CakesAmount,
     int PointsScored,
     int PointsTaken,
     int ScoredTriesCount,
     int SufferedTriesCount,
     int WinCount,
     int TieCount,
-    int LossCount);
+    int LossCount,
+    List<CakeResponse> Cakes);
+
+public sealed record CakeResponse(Guid Id,
+    Guid TeamId,
+    string Name);
 
 public enum Teams { TeamA, TeamB }
 
@@ -65,14 +69,14 @@ public static partial class TeamExtensions
             team.Physique,
             team.Technique,
             [],
-            team.CakesAmount,
             team.PointsScored,
             team.PointsTaken,
             team.ScoredTriesCount,
             team.SufferedTriesCount,
             team.WinCount,
             team.TieCount,
-            team.LossCount);
+            team.LossCount,
+            team.Cakes.Select(temp => temp.ToCakeResponse()).ToList());
 
         if (team.HasGeneralCoach) response.Coaches.Add(Coaches.General);
         if (team.HasInsigthCoach) response.Coaches.Add(Coaches.Insight);
@@ -81,4 +85,7 @@ public static partial class TeamExtensions
 
         return response;
     }
+
+    public static CakeResponse ToCakeResponse(this Cake cake)
+        => new(cake.Id, cake.TeamId, cake.Name);
 }

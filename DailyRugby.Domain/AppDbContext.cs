@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<TeamGame> TeamGames { get; set; }
     public DbSet<Schedule> Schedules { get; set; }
     public DbSet<GameOdds> GameOdds { get; set; }
+    public DbSet<Cake> Cakes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,6 +22,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<TeamGame>().ToTable(nameof(TeamGames));
         modelBuilder.Entity<Schedule>().ToTable(nameof(Schedules));
         modelBuilder.Entity<GameOdds>().ToTable(nameof(GameOdds));
+        modelBuilder.Entity<Cake>().ToTable(nameof(Cakes));
 
         modelBuilder.Entity<Championship>()
             .Property(temp => temp.Id)
@@ -42,6 +44,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .Property(temp => temp.Id)
             .ValueGeneratedNever();
 
+        modelBuilder.Entity<Cake>()
+            .Property(temp => temp.Id)
+            .ValueGeneratedNever();
+
         modelBuilder.Entity<Championship>(builder =>
         {
             builder.HasMany(champ => champ.Teams).WithOne();
@@ -55,6 +61,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             builder.HasOne(schedule => schedule.Game)
                 .WithOne();
+        });
+
+        modelBuilder.Entity<Team>(builder =>
+        {
+            builder.HasMany(temp => temp.Cakes);
         });
     }
 }
