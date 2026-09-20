@@ -17,5 +17,7 @@ public interface IChampionshipCrudService
 
     Task<Result<ChampionshipResponse>> UnsetAsMainAsync(Guid id);
 
+    Task<Result<ChampionshipResponse>> GetMainChampionshipAsync();
+
     Task<Result> DeleteAsync(Guid id);
 }

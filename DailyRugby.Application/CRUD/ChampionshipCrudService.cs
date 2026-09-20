@@ -54,8 +54,12 @@ public class ChampionshipCrudService(AppDbContext db) : IChampionshipCrudService
         var match = await db.Championships
             .AsNoTracking()
             .Include(temp => temp.Games)
-            .ThenInclude(temp => temp.Teams.OrderBy(team => team.Team.Country))
-            .ThenInclude(temp => temp.Team)
+                .ThenInclude(temp => temp.Teams.OrderBy(team => team.Team.Country))
+                    .ThenInclude(temp => temp.Team)
+                        .ThenInclude(temp => temp.Cakes)
+            .Include(temp => temp.Games)
+                .ThenInclude(temp => temp.Teams.OrderBy(team => team.Team.Country))
+                    .ThenInclude(temp => temp.Cake)
             .AsSplitQuery()
             .FirstOrDefaultAsync(temp => temp.Id == id);
 
@@ -65,6 +69,30 @@ public class ChampionshipCrudService(AppDbContext db) : IChampionshipCrudService
         }
 
         return Result<ChampionshipResponse>.Success(match.ToChampionshipResponse());
+    }
+
+    public async Task<Result<ChampionshipResponse>> GetMainChampionshipAsync()
+    {
+        var match = await db.Championships
+            .AsNoTracking()
+            .Include(temp => temp.Games)
+                .ThenInclude(temp => temp.Teams.OrderBy(team => team.Team.Country))
+                    .ThenInclude(temp => temp.Team)
+                        .ThenInclude(temp => temp.Cakes)
+            .Include(temp => temp.Games)
+                .ThenInclude(temp => temp.Teams.OrderBy(team => team.Team.Country))
+                    .ThenInclude(temp => temp.Cake)
+            .AsSplitQuery()
+            .Where(temp => temp.IsMainChampionship)
+            .Select(temp => temp.ToChampionshipResponse())
+            .FirstOrDefaultAsync();
+
+        if (match is null)
+        {
+            return Result<ChampionshipResponse>.Failure("There isn't a main championship", Errors.NotFound);
+        }
+
+        return Result<ChampionshipResponse>.Success(match);
     }
 
     public async Task<SortedDictionary<int, TeamResponse>> GetStandingsAsync(Guid id)
