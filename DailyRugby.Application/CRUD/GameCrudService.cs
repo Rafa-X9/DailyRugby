@@ -97,16 +97,32 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
             var homeTeam = champ.Teams.First(t => t.Id == homeId);
             var awayTeam = champ.Teams.First(t => t.Id == awayId);
 
+            Coaches homeCoach;
+            if (homeTeam.HasGeneralCoach) homeCoach = Coaches.General;
+            else if (homeTeam.HasInsigthCoach) homeCoach = Coaches.Insight;
+            else if (homeTeam.HasPhysiqueCoach) homeCoach = Coaches.Physique;
+            else if (homeTeam.HasTechniqueCoach) homeCoach = Coaches.Technique;
+            else homeCoach = Coaches.None;
+
+            Coaches awayCoach;
+            if (awayTeam.HasGeneralCoach) awayCoach = Coaches.General;
+            else if (awayTeam.HasInsigthCoach) awayCoach = Coaches.Insight;
+            else if (awayTeam.HasPhysiqueCoach) awayCoach = Coaches.Physique;
+            else if (awayTeam.HasTechniqueCoach) awayCoach = Coaches.Technique;
+            else awayCoach = Coaches.None;
+
             teamGames.Add(new TeamGame
             {
                 TeamId = homeTeam.Id,
-                GameId = game.Id
+                GameId = game.Id,
+                Coach = homeCoach
             });
 
             teamGames.Add(new TeamGame
             {
                 TeamId = awayTeam.Id,
-                GameId = game.Id
+                GameId = game.Id,
+                Coach = awayCoach
             });
         }
 
