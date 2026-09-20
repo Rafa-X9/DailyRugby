@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace DailyRugby.Web.SlashCommands;
 
-public class TeamSlashCommands(ITeamCrudService teamService)
+public class TeamSlashCommands(ITeamCrudService teamService, IJsonGetter jsonGetter)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("add-team", "Adds a team")]
@@ -319,24 +319,15 @@ public class TeamSlashCommands(ITeamCrudService teamService)
             return;
         }
 
-        var teams = await teamService.GetAllAsync(id);
+        var dataResult = await jsonGetter.GetTeamsAsync(id);
 
-        var list = new List<object>();
-
-        foreach (var team in teams)
+        if (!dataResult.IsSuccessful)
         {
-            list.Add(new
-            {
-                country = team.Country,
-                username = team.PlayerUsername,
-                technique = team.Technique,
-                insight = team.Insight,
-                physique = team.Physique,
-                coaches = team.Coaches.Select(temp => temp.ToString())
-            });
+            await FollowupAsync($"{dataResult.Error}: {dataResult.Message}");
+            return;
         }
 
-        string json = JsonSerializer.Serialize(list);
+        string json = JsonSerializer.Serialize(dataResult.Item);
 
         await FollowupAsync(json, ephemeral: true);
     }

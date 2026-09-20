@@ -37,11 +37,14 @@ class Program
             options.UseSqlite(connection);
         });
 
-        builder.Services.AddScoped<IChampionshipCrudService, ChampionshipCrudService>();
         builder.Services.AddTransient<ITeamValidatorFactory, TeamValidatorFactory>();
+
+        builder.Services.AddScoped<IChampionshipCrudService, ChampionshipCrudService>();
         builder.Services.AddScoped<ITeamCrudService, TeamCrudService>();
         builder.Services.AddScoped<IGameCrudService, GameCrudService>();
         builder.Services.AddScoped<IScheduleGetter, ScheduleGetter>();
+        builder.Services.AddScoped<IJsonGetter, JsonGetter>();
+        
         builder.Services.AddSingleton<GameSimulatorManager>();
         builder.Services.AddSingleton<IGameSimulatorManager>(
             provider => provider.GetRequiredService<GameSimulatorManager>());

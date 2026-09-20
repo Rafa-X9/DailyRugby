@@ -12,7 +12,8 @@ namespace DailyRugby.Web.SlashCommands;
 public class ChampionshipSlashCommands
     (IChampionshipCrudService champService,
     IGameCrudService gameService,
-    IScheduleGetter scheduleGetter)
+    IScheduleGetter scheduleGetter,
+    IJsonGetter jsonGetter)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("add-championship", "Creates a championship")]
@@ -330,65 +331,22 @@ public class ChampionshipSlashCommands
         await DeferAsync(ephemeral: true);
 
         bool idParsed = Guid.TryParse(champId, out Guid id);
+
         if (!idParsed)
         {
             await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
             return;
         }
 
-        var champResult = await champService.GetByIdAsync(id);
-        if (!champResult.IsSuccessful)
+        var dataResult = await jsonGetter.GetLeaderBoardAsync(id);
+
+        if (!dataResult.IsSuccessful)
         {
-            await FollowupAsync("Id was not found", ephemeral: true);
+            await FollowupAsync($"{dataResult.Error}: {dataResult.Message}", ephemeral: true);
             return;
         }
 
-        var teams = await champService.GetStandingsAsync(id);
-
-        List<object> list = [];
-
-        int roundCount = champResult.Item.Games.Max(game => game.Round);
-
-        foreach (var pair in teams)
-        {
-            TeamResponse team = pair.Value;
-            int gamesPlayedCount = team.WinCount + team.TieCount + team.LossCount;
-
-            List<string> teamsBeaten = [];
-            var gamesPlayed = champResult.Item.Games
-                .Where(game => game.TeamA.Team.Id == team.Id
-                    || game.TeamB.Team.Id == team.Id);
-
-            foreach (var gamePlayed in gamesPlayed)
-            {
-                if (gamePlayed.TeamA.Team.Id == team.Id
-                    && gamePlayed.TeamAScore > gamePlayed.TeamBScore)
-                {
-                    teamsBeaten.Add(gamePlayed.TeamB.Team.Country);
-                }
-                else if (gamePlayed.TeamB.Team.Id == team.Id
-                    && gamePlayed.TeamBScore > gamePlayed.TeamAScore)
-                {
-                    teamsBeaten.Add(gamePlayed.TeamA.Team.Country);
-                }
-            }
-
-            list.Add(new
-            {
-                country = team.Country,
-                wins = team.WinCount,
-                ties = team.TieCount,
-                losses = team.LossCount,
-                hasBeaten = teamsBeaten,
-                pointBalance = team.PointsScored - team.PointsTaken,
-                tryBalance = team.ScoredTriesCount - team.SufferedTriesCount,
-                tries = team.ScoredTriesCount,
-                points = team.PointsScored,
-                matchesLeft = roundCount - gamesPlayedCount
-            });
-        }
-
-        var json = JsonSerializer.Serialize(list);
+        var json = JsonSerializer.Serialize(dataResult.Item);
         await FollowupAsync(json, ephemeral: true);
     }
 
@@ -407,29 +365,15 @@ public class ChampionshipSlashCommands
             return;
         }
 
-        var champResult = await champService.GetByIdAsync(id);
+        var dataResult = await jsonGetter.GetSchedulesAsync(id);
 
-        if (!champResult.IsSuccessful)
+        if (!dataResult.IsSuccessful)
         {
-            await FollowupAsync($"{champResult.Error}: {champResult.Message}", ephemeral: true);
+            await FollowupAsync($"{dataResult.Error}: {dataResult.Message}", ephemeral: true);
             return;
         }
 
-        Dictionary<int, List<string>> rounds = [];
-
-        foreach (var game in champResult.Item.Games)
-        {
-            if (rounds.TryGetValue(game.Round, out List<string>? list) && list is not null)
-            {
-                list.Add($"{game.TeamA.Team.Country} vs {game.TeamB.Team.Country}");
-            }
-            else
-            {
-                rounds[game.Round] = [$"{game.TeamA.Team.Country} vs {game.TeamB.Team.Country}"];
-            }
-        }
-
-        string json = JsonSerializer.Serialize(rounds);
+        string json = JsonSerializer.Serialize(dataResult.Item);
         await FollowupAsync(json, ephemeral: true);
     }
 }

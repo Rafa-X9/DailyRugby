@@ -12,7 +12,8 @@ namespace DailyRugby.Web.SlashCommands;
 
 public class GameSlashCommands(IGameCrudService gameService,
     IGameSimulatorManager simulator,
-    IGameOddsCalculator oddsCalculator)
+    IGameOddsCalculator oddsCalculator,
+    IJsonGetter jsonGetter)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("see-games", "Shows all games from a championship")]
@@ -368,32 +369,15 @@ public class GameSlashCommands(IGameCrudService gameService,
     {
         await DeferAsync(ephemeral: true);
 
-        var result = await gameService.GetCurrentRoundAsync();
+        var dataResult = await jsonGetter.GetCurrentRoundAsync();
 
-        if (!result.IsSuccessful)
+        if (!dataResult.IsSuccessful)
         {
-            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
+            await FollowupAsync($"{dataResult.Error}: {dataResult.Message}", ephemeral: true);
             return;
         }
 
-        var games = new List<object>();
-
-        foreach (var game in result.Item)
-        {
-            games.Add(new
-            {
-                teamA = game.TeamA.Team.Country,
-                teamB = game.TeamB.Team.Country,
-
-                teamAHasMoraleBoost = game.TeamA.HasMoraleBoost,
-                teamBHasMoraleBoost = game.TeamB.HasMoraleBoost,
-
-                teamAGetsMoraleBoost = game.TeamA.GetsMoraleBoostIfWins,
-                teamBGetsMoraleBoost = game.TeamB.GetsMoraleBoostIfWins
-            });
-        }
-
-        string json = JsonSerializer.Serialize(games);
+        string json = JsonSerializer.Serialize(dataResult.Item);
 
         await FollowupAsync(json, ephemeral: true);
     }
@@ -403,60 +387,16 @@ public class GameSlashCommands(IGameCrudService gameService,
     {
         await DeferAsync(ephemeral: true);
 
-        var currentRoundResult = await gameService.GetCurrentRoundAsync();
+        var dataResult = await jsonGetter.GetPreviousRoundAsync();
 
-        if (!currentRoundResult.IsSuccessful)
+        if (!dataResult.IsSuccessful)
         {
-            await FollowupAsync($"{currentRoundResult.Error}: {currentRoundResult.Message}",
-                ephemeral: true);
+            await FollowupAsync($"{dataResult.Error}: {dataResult.Message}");
             return;
         }
 
-        if (currentRoundResult.Item.Count == 0)
-        {
-            await FollowupAsync("There is no previous round.");
-            return;
-        }
-
-        Guid champId = currentRoundResult.Item[0].ChampId;
-        int round = currentRoundResult.Item[0].Round - 1;
-
-        var result = await gameService.GetRoundAsync(champId, round);
-
-        if (!result.IsSuccessful)
-        {
-            await FollowupAsync($"{result.Error}: {result.Message}");
-            return;
-        }
-
-        var games = new List<object>();
-
-        foreach (var game in result.Item)
-        {
-            games.Add(new
-            {
-                teamA = game.TeamA.Team.Country,
-                teamB = game.TeamB.Team.Country,
-
-                teamAScore = game.TeamAScore,
-                teamBScore = game.TeamBScore,
-
-                teamATactic = game.TeamA.Tactic.ToString(),
-                teamBTactic = game.TeamB.Tactic.ToString(),
-
-                teamAUsedCake = game.TeamA.IsUsingCake,
-                teamBUsedCake = game.TeamB.IsUsingCake,
-
-                teamAHadMoraleBoost = game.TeamA.HasMoraleBoost,
-                teamBHadMoraleBoost = game.TeamB.HasMoraleBoost,
-
-                teamAGotMoraleBoost = game.TeamA.GetsMoraleBoostIfWins,
-                teamBGotMoraleBoost = game.TeamB.GetsMoraleBoostIfWins
-            });
-        }
-
-        string json = JsonSerializer.Serialize(games);
-
+        string json = JsonSerializer.Serialize(dataResult.Item);
+        
         await FollowupAsync(json, ephemeral: true);
     }
 }
