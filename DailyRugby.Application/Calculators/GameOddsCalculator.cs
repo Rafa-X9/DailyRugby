@@ -10,7 +10,7 @@ namespace DailyRugby.Application.Calculators;
 public class GameOddsCalculator(IServiceProvider serviceProvider)
     : IGameOddsCalculator
 {
-    private const int _repetitions = 5_000;
+    private const int _repetitions = 15_000;
     private Game _game = null!;
     private IGameSimulatorFactory _factory = null!;
 
