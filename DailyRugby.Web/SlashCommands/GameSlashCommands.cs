@@ -1,6 +1,7 @@
 ﻿using DailyRugby.Application.DTOs;
 using DailyRugby.Application.Interfaces;
 using DailyRugby.Domain;
+using DailyRugby.Domain.Migrations;
 using DailyRugby.Web.AutoCompletes;
 using DailyRugby.Web.BotServices;
 using Discord.Interactions;
@@ -147,7 +148,7 @@ public class GameSlashCommands(IGameCrudService gameService,
             $"- {game.TeamB.Coach} coach\n" +
             $"- {game.TeamB.Tactic} tactic\n" +
             $"- {game.TeamB.Cake?.Name ?? "no"} cake\n" + 
-            $"- {(game.TeamA.HasMoraleBoost ? "has morale boost" : "doesn't have morale boost")}",
+            $"- {(game.TeamB.HasMoraleBoost ? "has morale boost" : "doesn't have morale boost")}",
             
             ephemeral: true);
     }
@@ -367,6 +368,52 @@ public class GameSlashCommands(IGameCrudService gameService,
 
         await FollowupAsync($"Successfully set the {result.Item.Cake!.Name} cake to " +
             $"{result.Item.Team.Country}'s next game.", ephemeral: true);
+    }
+
+    [SlashCommand("set-morale-boost", "Add the morale boost for a team")]
+    public async Task SetMoraleBoost(
+        [Summary("Game", "The game to set a morale boost")]
+        [Autocomplete(typeof(CurrentRoundAutocomplete))]
+        string gameId,
+
+        [Summary("Team", "Which team will get the morale boost")]
+        [Autocomplete(typeof(TeamAorBAutocomplete))]
+        string teamAorB,
+
+        [Summary("MoraleBoost", "Whether the team should have a morale boost added or removed")]
+        bool hasMoraleBoost)
+    {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
+        await DeferAsync(ephemeral: true);
+
+        bool idParsed = Guid.TryParse(gameId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        bool teamParsed = Enum.TryParse(teamAorB, true, out Teams team);
+        if (!teamParsed)
+        {
+            await FollowupAsync("Invalid team to set morale boost to", ephemeral: true);
+            return;
+        }
+
+        var result = await gameService.SetMoraleBoostAsync(id, team, hasMoraleBoost);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}", ephemeral: true);
+            return;
+        }
+
+        await FollowupAsync($"{result.Item.Team.Country}'s morale boost has been set " +
+            $"set to {result.Item.HasMoraleBoost}.");
     }
 
     [SlashCommand("see-odds", "Shows the odds of a game")]
