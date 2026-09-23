@@ -3,6 +3,7 @@ using DailyRugby.Domain;
 using DailyRugby.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Concurrent;
 
 namespace DailyRugby.Application.Calculators;
 
@@ -50,11 +51,17 @@ public class GameOddsCalculator(IServiceProvider serviceProvider)
 
         _factory = serviceProvider.GetRequiredService<IGameSimulatorFactory>();
 
-        List<GameResult> simulationResults = [];
-        for (int i = 0; i < _repetitions; i++)
+        var options = new ParallelOptions
         {
-            await Task.Run(() => simulationResults.Add(Simulate()));
-        }
+            MaxDegreeOfParallelism = Environment.ProcessorCount
+        };
+
+        var simulationResults = new ConcurrentBag<GameResult>();
+
+        Parallel.For(0, _repetitions, options, i =>
+        {
+            simulationResults.Add(Simulate());
+        });
 
         result.TotalSimulations = simulationResults.Count;
         foreach (var gameResult in simulationResults)
@@ -81,7 +88,24 @@ public class GameOddsCalculator(IServiceProvider serviceProvider)
             CurrentState = GameState.Started,
             TeamAScore = 0,
             TeamBScore = 0,
-            Teams = _game.Teams
+            Teams = _game.Teams.Select(temp => new TeamGame()
+            {
+                Players = temp.Players.Select(p => new Player(p.Id,
+                    p.Number,
+                    p.Insight,
+                    p.Physique,
+                    p.Technique,
+                    p.IsOnField,
+                    p.HasYellowCard,
+                    p.CanJoinField))
+                    .ToList(),
+                Team = temp.Team,
+                Cake = temp.Cake,
+                Tactic = temp.Tactic,
+                Coach = temp.Coach,
+                HasMoraleBoost = temp.HasMoraleBoost,
+                Id = temp.Id
+            }).ToList()
         };
 
         var simulator = _factory.GetGameSimulator(_game.Championship.Season);
