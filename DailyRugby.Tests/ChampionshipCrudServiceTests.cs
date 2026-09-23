@@ -2,6 +2,7 @@
 using DailyRugby.Application.DTOs;
 using DailyRugby.Application.Interfaces;
 using DailyRugby.Application.Simulators;
+using DailyRugby.Application.Utilitaries;
 using DailyRugby.Application.Validators;
 using DailyRugby.Domain;
 using DailyRugby.Shared;
@@ -205,6 +206,7 @@ public class ChampionshipCrudServiceTests : IAsyncLifetime
             while (game.CurrentMinute <= 80)
             {
                 var gameEvent = simulator.SimulateNextMinute(game);
+                if (gameEvent.EventType.RequiresOwnMinute) game.CurrentMinute++;
                 await simulator.SaveGameAsync(gameEvent, _db);
             }
         }
