@@ -12,7 +12,6 @@ public class GameOddsCalculator(IServiceProvider serviceProvider)
     private const int _repetitions = 5_000;
     private Game _game = null!;
     private IGameSimulatorFactory _factory = null!;
-    private GameOdds _result = new();
 
     public async Task<Result<GameOdds>> GetOddsAsync(Guid gameId, bool passIfNotExists = false)
     {
@@ -39,31 +38,42 @@ public class GameOddsCalculator(IServiceProvider serviceProvider)
                 Errors.Invalid);
         }
 
-        _result = new() { Id = Guid.NewGuid() };
+        GameOdds result = new() { Id = Guid.NewGuid() };
 
         if (game is null) return Result<GameOdds>.Failure("Id not found", Errors.NotFound);
 
         _game = game;
-        _result.GameId = gameId;
+        result.GameId = gameId;
 
         _game.Teams[0].Tactic = Tactics.None;
         _game.Teams[1].Tactic = Tactics.None;
 
         _factory = serviceProvider.GetRequiredService<IGameSimulatorFactory>();
 
-        await Task.Run(Simulate);
+        List<GameResult> simulationResults = [];
+        for (int i = 0; i < _repetitions; i++)
+        {
+            await Task.Run(() => simulationResults.Add(Simulate()));
+        }
+
+        result.TotalSimulations = simulationResults.Count;
+        foreach (var gameResult in simulationResults)
+        {
+            if (gameResult == GameResult.TeamAWon) result.TeamAWins++;
+            else if (gameResult == GameResult.TeamBWon) result.TeamBWins++;
+        }
 
         using (var scope = serviceProvider.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            db.GameOdds.Add(_result);
+            db.GameOdds.Add(result);
             await db.SaveChangesAsync();
         }
 
-        return Result<GameOdds>.Success(_result);
+        return Result<GameOdds>.Success(result);
     }
 
-    private void Simulate()
+    private GameResult Simulate()
     {
         Game clone = new()
         {
@@ -74,25 +84,27 @@ public class GameOddsCalculator(IServiceProvider serviceProvider)
             Teams = _game.Teams
         };
 
-        for (int repetition = 0; repetition < _repetitions; repetition++)
+        var simulator = _factory.GetGameSimulator(_game.Championship.Season);
+
+        for (int minute = 0; minute < 80; minute++)
         {
-            var simulator = _factory.GetGameSimulator(_game.Championship.Season);
-
-            for (int minute = 0; minute < 80; minute++)
-            {
-                simulator.SimulateNextMinute(clone);
-            }
-
-            _result.TotalSimulations++;
-
-            if (clone.TeamAScore > clone.TeamBScore)
-            {
-                _result.TeamAWins++;
-            }
-            else if (clone.TeamAScore < clone.TeamBScore)
-            {
-                _result.TeamBWins++;
-            }
+            simulator.SimulateNextMinute(clone);
         }
+
+        if (clone.TeamAScore > clone.TeamBScore)
+        {
+            return GameResult.TeamAWon;
+        }
+        else if (clone.TeamAScore < clone.TeamBScore)
+        {
+            return GameResult.TeamBWon;
+        }
+
+        return GameResult.Tie;
+    }
+
+    private enum GameResult
+    {
+        TeamAWon, TeamBWon, Tie
     }
 }
