@@ -109,6 +109,16 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             {
                 _teamBStats.AddCakeBonus();
             }
+
+            if (game.Teams[0].HasMoraleBoost)
+            {
+                _teamAStats.AddMoraleBoostBonus();
+            }
+
+            if (game.Teams[1].HasMoraleBoost)
+            {
+                _teamBStats.AddMoraleBoostBonus();
+            }
         }
 
         var injuryCheck = CheckPendingInjuries(game);
@@ -794,12 +804,19 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             Physique -= 1;
             Technique -= 1;
         }
-        
+
         public void AddCakeBonus()
         {
             Insight += 3;
             Technique += 3;
             Physique += 3;
+        }
+
+        public void AddMoraleBoostBonus()
+        {
+            Insight += 3;
+            Physique += 3;
+            Technique += 3;
         }
 
 
