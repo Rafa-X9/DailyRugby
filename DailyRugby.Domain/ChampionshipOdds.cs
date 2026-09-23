@@ -10,6 +10,7 @@ public class ChampionshipOdds
     [ForeignKey(nameof(Championship))]
     public Guid ChampionshipId { get; set; }
     public Championship Championship { get; set; } = null!;
+    public int CompletedGamesCount { get; set; }
 
     public string FirstPlaceOddsJson { get; set; } = null!;
 
