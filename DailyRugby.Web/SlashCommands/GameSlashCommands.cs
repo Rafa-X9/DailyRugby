@@ -485,7 +485,73 @@ public class GameSlashCommands(IGameCrudService gameService,
         }
 
         string json = JsonSerializer.Serialize(dataResult.Item);
-        
+
         await FollowupAsync(json, ephemeral: true);
+    }
+
+    [SlashCommand("see-team-description", "Describe a team from the ongoing game")]
+    public async Task SeeTeamDescription(
+        [Summary("Team", "The team to describe")]
+        [Autocomplete(typeof(OngoingGameTeamsAutocomplete))]
+        string team,
+
+        [Summary("Private", "Whether the response should be sent privately")]
+        bool @private = true)
+    {
+        bool teamParsed = Enum.TryParse(team, true, out Teams enumTeam);
+
+        if (!teamParsed)
+        {
+            await RespondAsync("Team isn't a valid team", ephemeral: true);
+            return;
+        }
+
+        var playersResult = simulator.GetPlayersFromGame(enumTeam);
+
+        if (!playersResult.IsSuccessful)
+        {
+            await RespondAsync("There isn't an ongoing game", ephemeral: true);
+            return;
+        }
+
+        var playersOnField = playersResult.Item
+            .Where(temp => temp.IsOnField)
+            .Select(temp => temp.Number.ToString())
+            .ToArray();
+
+        var replacementPlayers = playersResult.Item
+            .Where(temp => !temp.IsOnField && temp.CanJoinField)
+            .Select(temp => temp.Number.ToString())
+            .ToArray();
+
+        var outPlayers = playersResult.Item
+            .Where(temp => !temp.IsOnField && !temp.CanJoinField)
+            .Select(temp => temp.Number.ToString())
+            .ToArray();
+
+        StringBuilder sb = new();
+
+        if (playersOnField.Length > 0)
+        {
+            sb.AppendLine($"The team has {playersOnField.Length} players on the field. They are: " +
+                $"{string.Join(", ", playersOnField)}.\n");
+        }
+        else sb.AppendLine("The team has no players on the field");
+
+        if (replacementPlayers.Length > 0)
+        {
+            sb.AppendLine($"The team has {replacementPlayers.Length} replacement players available. They " +
+                $"are: {string.Join(", ", replacementPlayers)}.\n");
+        }
+        else sb.AppendLine("The team has no replacement players available.\n");
+
+        if (outPlayers.Length > 0)
+        {
+            sb.AppendLine($"The team has {outPlayers.Length} players who have left the game. They " +
+                $"are: {string.Join(", ", outPlayers)}.");
+        }
+        else sb.AppendLine("The team has no players who have left the game.");
+
+        await RespondAsync(sb.ToString(), ephemeral: @private);
     }
 }
