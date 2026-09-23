@@ -19,6 +19,7 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
     private IChampionshipCrudService _champService = null!;
     private ITeamCrudService _teamService = null!;
     private IGameCrudService _gameService = null!;
+    private IChampionshipOddsCalculator _champOddsCalculator = null!;
     private ITestOutputHelper _output = output;
     private AppDbContext _db = null!;
     private SqliteConnection _connection = null!;
@@ -58,6 +59,7 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
             .Returns(new GameSimulatorFactory());
 
         _oddsCalculator = new GameOddsCalculator(serviceProviderMock.Object);
+        _champOddsCalculator = new ChampionshipOddsCalculator(serviceProviderMock.Object);
 
         await _db.Database.EnsureCreatedAsync();
     }
@@ -106,6 +108,47 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
             $"Tie: {result.Tie}");
     }
 
+    [Fact]
+    public async Task ChampOddsCalculator_Test()
+    {
+        var champ = await SetUpChampionship(Seasons.Season3);
+        await SetUpFourTeams(champ.Id, 100);
+        await _gameService.GenerateRounds(champ.Id);
+
+        var updatedChampResult = await _champService.GetByIdAsync(champ.Id);
+        Assert.True(updatedChampResult.IsSuccessful);
+
+        foreach (var game in updatedChampResult.Item.Games)
+        {
+            await _oddsCalculator.GetOddsAsync(game.Id);
+        }
+
+        var oddsResult = await _champOddsCalculator.GetOddsAsync(champ.Id);
+
+        if (!oddsResult.IsSuccessful)
+        {
+            _output.WriteLine($"{oddsResult.Error}: {oddsResult.Message}");
+        }
+
+        Assert.True(oddsResult.IsSuccessful);
+
+        _output.WriteLine("First place odds:");
+        foreach (var winOdd in oddsResult.Item
+            .FirstPlaceOdds
+            .OrderByDescending(temp => temp.Chance))
+        {
+            _output.WriteLine($"- {winOdd.Country}: {winOdd.Chance}");
+        }
+
+        _output.WriteLine("Last place odds:");
+        foreach (var lastPlaceOdd in oddsResult.Item
+            .LastPlaceOdds
+            .OrderByDescending(temp => temp.Chance))
+        {
+            _output.WriteLine($"- {lastPlaceOdd.Country}: {lastPlaceOdd.Chance}");
+        }
+    }
+
     #region Helpers
 
     private async Task<ChampionshipResponse> SetUpChampionship(Seasons season = Seasons.Season1)
@@ -138,8 +181,8 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
         TeamAddRequest request = new(champId,
             "RafaX9",
             "Brazil",
-            statBudget - 2, 1, 1,
-            //Insight: 68, Physique: 27, Technique: 0,
+            //statBudget - 2, 1, 1,
+            Insight: 30, Physique: 20, Technique: 50,
             Coaches.General);
         var result = await _teamService.AddAsync(request);
         if (!result.IsSuccessful) throw new Exception();
@@ -151,8 +194,8 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
         TeamAddRequest request = new(champId,
             "Terrs34",
             "Ireland",
-            10, statBudget - 20, 10,
-            //Insight: 45, Physique: 25, Technique: 25,
+            //10, statBudget - 20, 10,
+            Insight: 31, Physique: 36, Technique: 33,
             Coaches.General);
         var result = await _teamService.AddAsync(request);
         if (!result.IsSuccessful) throw new Exception();
@@ -164,8 +207,8 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
         TeamAddRequest request = new(champId,
             "ChelseaFan",
             "Singapore",
-            10, 10, statBudget - 20,
-            //Insight: 30, Physique: 30, Technique: 35,
+            //10, 10, statBudget - 20,
+            Insight: 32, Physique: 14, Technique: 54,
             Coaches.General);
         var result = await _teamService.AddAsync(request);
         if (!result.IsSuccessful) throw new Exception();
@@ -175,9 +218,9 @@ public class GameOddsCalculatorTests(ITestOutputHelper output) : IAsyncLifetime
     private async Task<TeamResponse> SetUpTeamD(Guid champId, int statBudget)
     {
         TeamAddRequest request = new(champId,
-            "Emerald_Remotist",
-            "Turkey",
-            Insight: 20, Physique: 31, Technique: 44,
+            "Onko342",
+            "Taiwan",
+            Insight: 19, Physique: 21, Technique: 60,
             Coaches.General);
         var result = await _teamService.AddAsync(request);
         if (!result.IsSuccessful) throw new Exception();
