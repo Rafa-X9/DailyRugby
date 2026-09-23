@@ -65,27 +65,31 @@ public class GameOddsCalculator(IServiceProvider serviceProvider)
 
     private void Simulate()
     {
+        Game clone = new()
+        {
+            CurrentMinute = -1,
+            CurrentState = GameState.Started,
+            TeamAScore = 0,
+            TeamBScore = 0,
+            Teams = _game.Teams
+        };
+
         for (int repetition = 0; repetition < _repetitions; repetition++)
         {
-            _game.CurrentMinute = -1;
-            _game.CurrentState = GameState.Started;
-            _game.TeamAScore = 0;
-            _game.TeamBScore = 0;
-
             var simulator = _factory.GetGameSimulator(_game.Championship.Season);
 
             for (int minute = 0; minute < 80; minute++)
             {
-                simulator.SimulateNextMinute(_game);
+                simulator.SimulateNextMinute(clone);
             }
 
             _result.TotalSimulations++;
 
-            if (_game.TeamAScore > _game.TeamBScore)
+            if (clone.TeamAScore > clone.TeamBScore)
             {
                 _result.TeamAWins++;
             }
-            else if (_game.TeamAScore < _game.TeamBScore)
+            else if (clone.TeamAScore < clone.TeamBScore)
             {
                 _result.TeamBWins++;
             }
