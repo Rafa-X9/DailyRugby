@@ -290,4 +290,19 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
     {
         await Task.Delay(TimeSpan.FromSeconds(5));
     }
+
+    public Result<IReadOnlyList<Player>> GetPlayersFromGame(Teams team)
+    {
+        if (_ongoingGame is null)
+        {
+            return Result<IReadOnlyList<Player>>.Failure("There isn't an ongoing game",
+                Errors.Invalid);
+        }
+
+        var players = team == Teams.TeamA ?
+            _ongoingGame.Teams[0].Players
+            : _ongoingGame.Teams[1].Players;
+
+        return Result<IReadOnlyList<Player>>.Success(players);
+    }
 }

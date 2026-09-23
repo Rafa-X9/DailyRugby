@@ -13,4 +13,6 @@ public interface IGameSimulatorManager
     Task<IList<Schedule>> SeeScheduledGamesAsync(Guid champId, bool futureOnly = true);
 
     Result AddCheer(CheerAddRequest request);
+
+    Result<IReadOnlyList<Player>> GetPlayersFromGame(Teams team);
 }
