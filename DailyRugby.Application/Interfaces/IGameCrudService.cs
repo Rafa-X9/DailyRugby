@@ -25,4 +25,6 @@ public interface IGameCrudService
     Task<Result<TeamGameResponse>> SetCoachAsync(Guid gameId, Teams team, Coaches coach);
 
     Task<Result<TeamGameResponse>> SetCakeAsync(Guid gameId, Teams team, string cake);
+
+    Task<Result<TeamGameResponse>> SetMoraleBoostAsync(Guid gameId, Teams team, bool hasMoraleBoost);
 }

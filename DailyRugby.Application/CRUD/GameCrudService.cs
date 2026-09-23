@@ -331,6 +331,26 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
         return Result<TeamGameResponse>.Success(teamGame.ToTeamGameResponse());
     }
 
+    public async Task<Result<TeamGameResponse>> SetMoraleBoostAsync(Guid gameId, Teams team, bool hasMoraleBoost)
+    {
+        var game = await db.Games
+            .Include(temp => temp.Teams.OrderBy(t => t.Team.Country))
+                .ThenInclude(temp => temp.Team)
+            .FirstOrDefaultAsync(temp => temp.Id == gameId);
+
+        if (game is null)
+        {
+            return Result<TeamGameResponse>.Failure("Id not found", Errors.NotFound);
+        }
+
+        var teamGame = team == Teams.TeamA ? game.Teams[0] : game.Teams[1];
+        teamGame.HasMoraleBoost = hasMoraleBoost;
+
+        await db.SaveChangesAsync();
+
+        return Result<TeamGameResponse>.Success(teamGame.ToTeamGameResponse());
+    }
+
     public async Task<Result<TeamGameResponse>> SetTacticAsync(Guid gameId, Teams team, Tactics tactic)
     {
         var game = await db.Games
