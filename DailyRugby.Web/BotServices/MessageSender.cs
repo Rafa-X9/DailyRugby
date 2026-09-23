@@ -12,6 +12,10 @@ public class MessageSender
     private bool _hasInitialized = false;
     private IMessageChannel _channel = null!;
     private readonly MessageProvider _messageProvider;
+    private readonly List<PendingInjuries> _pendingInjuries = [];
+
+    private sealed record PendingInjuries(Guid PlayerId,
+        InjuryRiskMessage Message);
 
     public MessageSender(IGameSimulatorManager simulator,
         IConfiguration configuration,
@@ -398,47 +402,125 @@ public class MessageSender
             //-------
 
             case GameEventType.TeamAPlayerRisksInjury:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - A player from " +
-                    $"{gameEvent.Game.Teams[0].Team.Country} was slapped on the face by " +
-                    $"Will Smith and needed to leave the game while the doctors assess if " +
-                    $"he can continue. This is #{gameEvent.PlayerInvolved?.Number.ToString()
-                    ?? "UNKOWN"}.");
+                var injuryRiskMessage = _messageProvider
+                    .GetInjuryRiskMessage(gameEvent.Game.Teams[0].Team.Country);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - {injuryRiskMessage
+                    .Description} This is #{gameEvent.PlayerInvolved?.Number.ToString() ?? 
+                    "UNKNOWN"}.");
+
+                if (gameEvent.PlayerInvolved is not null)
+                {
+                    _pendingInjuries.Add(new(gameEvent.PlayerInvolved.Id, injuryRiskMessage));
+                }
+
                 break;
 
             case GameEventType.TeamBPlayerRisksInjury:
-                await _channel.SendMessageAsync($"{gameEvent.Minute}' - A player from " +
-                    $"{gameEvent.Game.Teams[1].Team.Country} was slapped on the face by " +
-                    $"Will Smith and needed to leave the game while the doctors assess if " +
-                    $"he can continue. This is #{gameEvent.PlayerInvolved?.Number.ToString()
-                    ?? "UNKOWN"}.");
+                injuryRiskMessage = _messageProvider
+                    .GetInjuryRiskMessage(gameEvent.Game.Teams[1].Team.Country);
+
+                await _channel.SendMessageAsync($"{gameEvent.Minute}' - {injuryRiskMessage
+                    .Description} This is #{gameEvent.PlayerInvolved?.Number.ToString() ??
+                    "UNKNOWN"}.");
+
+                if (gameEvent.PlayerInvolved is not null)
+                {
+                    _pendingInjuries.Add(new(gameEvent.PlayerInvolved.Id, injuryRiskMessage));
+                }
+
                 break;
 
             case GameEventType.TeamAPlayerNonSeriousInjury:
-                await _channel.SendMessageAsync($"The injured player " +
-                    $"from {gameEvent.Game.Teams[0].Team.Country} was deemed to have deserved " +
-                    $"the slap, so he was sent back to the field. This is #{gameEvent
-                    .PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. He is back on the game.");
+
+                var injury = _pendingInjuries
+                    .FirstOrDefault(temp => gameEvent.PlayerInvolved is not null
+                        && temp.PlayerId == gameEvent.PlayerInvolved.Id);
+
+                if (injury is null)
+                {
+                    await _channel.SendMessageAsync($"A player from {gameEvent.Game.Teams[0]
+                        .Team.Country} who had left the field to assess an injury was found " +
+                        "to not have a serious injury. He returns to the field.");
+                    return;
+                }
+
+                var player = gameEvent.Game.Teams[0].Players.First(temp => temp.Id == injury.PlayerId);
+
+                _pendingInjuries.Remove(injury);
+                await _channel.SendMessageAsync($"{injury.Message.DescriptionRecovered} This is " +
+                    $"#{player.Number}. He is back on field.");
+
                 break;
 
             case GameEventType.TeamBPlayerNonSeriousInjury:
-                await _channel.SendMessageAsync($"The injured player " +
-                    $"from {gameEvent.Game.Teams[1].Team.Country} was deemed to have deserved " +
-                    $"the slap, so he was sent back to the field. This is #{gameEvent
-                    .PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. He is back on the game.");
+                
+                injury = _pendingInjuries
+                    .FirstOrDefault(temp => gameEvent.PlayerInvolved is not null
+                        && temp.PlayerId == gameEvent.PlayerInvolved.Id);
+
+                if (injury is null)
+                {
+                    await _channel.SendMessageAsync($"A player from {gameEvent.Game.Teams[1]
+                        .Team.Country} who had left the field to assess an injury was found " +
+                        "to not have a serious injury. He returns to the field.");
+                    return;
+                }
+
+                player = gameEvent.Game.Teams[1].Players.First(temp => temp.Id == injury.PlayerId);
+
+                _pendingInjuries.Remove(injury);
+                await _channel.SendMessageAsync($"{injury.Message.DescriptionRecovered} This is " +
+                    $"#{player.Number}. He is back on field.");
+
                 break;
 
             case GameEventType.TeamAPlayerSeriousInjury:
-                await _channel.SendMessageAsync($"The injured player " +
-                    $"from {gameEvent.Game.Teams[0].Team.Country} was slapped so hard he died. " +
-                    $"This is #{gameEvent.PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. He is " +
-                    $"replaced by #{gameEvent.ReplacementPlayer?.Number.ToString() ?? "UNKNOWN"}.");
+
+                injury = _pendingInjuries
+                    .FirstOrDefault(temp => gameEvent.PlayerInvolved is not null
+                        && temp.PlayerId == gameEvent.PlayerInvolved.Id);
+
+                if (injury is null)
+                {
+                    await _channel.SendMessageAsync($"A player from {gameEvent.Game.Teams[0]
+                        .Team.Country} who had left the field to assess an injury was found " +
+                        $"to have a serious injury. He is replaced by #{gameEvent.ReplacementPlayer
+                        ?.Number.ToString() ?? "UNKNOWN"}");
+                    return;
+                }
+
+                player = gameEvent.Game.Teams[0].Players.First(temp => temp.Id == injury.PlayerId);
+
+                _pendingInjuries.Remove(injury);
+                await _channel.SendMessageAsync($"{injury.Message.DescriptionRecovered} This is " +
+                    $"#{player.Number}. He is replaced by #{gameEvent.ReplacementPlayer?.Number
+                    .ToString() ?? "UNKNOWN"}.");
+
                 break;
 
             case GameEventType.TeamBPlayerSeriousInjury:
-                await _channel.SendMessageAsync($"The injured player " +
-                    $"from {gameEvent.Game.Teams[1].Team.Country} was slapped so hard he died. " +
-                    $"This is #{gameEvent.PlayerInvolved?.Number.ToString() ?? "UNKOWN"}. He is " +
-                    $"replaced by #{gameEvent.ReplacementPlayer?.Number.ToString() ?? "UNKNOWN"}.");
+
+                injury = _pendingInjuries
+                    .FirstOrDefault(temp => gameEvent.PlayerInvolved is not null
+                        && temp.PlayerId == gameEvent.PlayerInvolved.Id);
+
+                if (injury is null)
+                {
+                    await _channel.SendMessageAsync($"A player from {gameEvent.Game.Teams[1]
+                        .Team.Country} who had left the field to assess an injury was found " +
+                        $"to have a serious injury. He is replaced by #{gameEvent.ReplacementPlayer
+                        ?.Number.ToString() ?? "UNKNOWN"}");
+                    return;
+                }
+
+                player = gameEvent.Game.Teams[1].Players.First(temp => temp.Id == injury.PlayerId);
+
+                _pendingInjuries.Remove(injury);
+                await _channel.SendMessageAsync($"{injury.Message.DescriptionRecovered} This is " +
+                    $"#{player.Number}. He is replaced by #{gameEvent.ReplacementPlayer?.Number
+                    .ToString() ?? "UNKNOWN"}.");
+
                 break;
 
             //-------------

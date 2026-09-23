@@ -186,6 +186,24 @@ public class MessageProvider
         return _randomEvents[index]
             .Replace("{teamA}", team);
     }
+
+    public InjuryRiskMessage GetInjuryRiskMessage(string team)
+    {
+        int index = _random.Next(0, _injuryRiskMessages.Count);
+        var layout = _injuryRiskMessages[index];
+
+        return layout with
+        {
+            Description = layout.Description
+                .Replace("{teamA}", team),
+
+            DescriptionNotRecovered = layout.DescriptionNotRecovered
+                .Replace("{teamA}", team),
+            
+            DescriptionRecovered = layout.DescriptionRecovered
+                .Replace("{teamA}", team)
+        };
+    }
 }
 
 public sealed record TryAttemptMessage(string Description,
