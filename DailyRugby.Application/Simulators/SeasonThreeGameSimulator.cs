@@ -148,26 +148,36 @@ public class SeasonThreeGameSimulator : ISpecificGameSimulator
             .Add(_teamBStats.GetPenaltyKickAttemptChance(_teamAStats),
                 () => HandlePenaltyKickAttempt(_teamBStats, game, false))
 
-            .Add(SeasonThreeStats.GetAlienAbductionChance(),
-                () => HandlePlayerAbduction(game.Teams[0], game, true))
-            .Add(SeasonThreeStats.GetAlienAbductionChance(),
-                () => HandlePlayerAbduction(game.Teams[1], game, false))
-
-            .Add(_teamAStats.GetInjurySufferChance(_teamBStats),
-                () => HandlePlayerInjuryRisk(game.Teams[0], game, true))
-            .Add(_teamBStats.GetInjurySufferChance(_teamAStats),
-                () => HandlePlayerInjuryRisk(game.Teams[1], game, false))
-
-            .Add(_teamAStats.GetOffenceCommitChance(_teamBStats),
-                () => HandleOffence(game.Teams[0], game, true))
-            .Add(_teamBStats.GetOffenceCommitChance(_teamAStats),
-                () => HandleOffence(game.Teams[1], game, false))
-
             .AddFallback(() => new GameEvent(game.CurrentMinute,
                 GameEventType.Nothing,
                 game.TeamAScore,
                 game.TeamBScore,
                 game));
+
+        if (game.Teams[0].Players.Any(temp => temp.IsOnField))
+        {
+            eventList.Add(SeasonThreeStats.GetAlienAbductionChance(),
+                () => HandlePlayerAbduction(game.Teams[0], game, true))
+
+
+            .Add(_teamAStats.GetInjurySufferChance(_teamBStats),
+                () => HandlePlayerInjuryRisk(game.Teams[0], game, true))
+
+            .Add(_teamAStats.GetOffenceCommitChance(_teamBStats),
+                () => HandleOffence(game.Teams[0], game, true));
+        }
+
+        if (game.Teams[1].Players.Any(temp => temp.IsOnField))
+        {
+            eventList.Add(SeasonThreeStats.GetAlienAbductionChance(),
+                () => HandlePlayerAbduction(game.Teams[1], game, false))
+
+            .Add(_teamBStats.GetInjurySufferChance(_teamAStats),
+                () => HandlePlayerInjuryRisk(game.Teams[1], game, false))
+
+            .Add(_teamBStats.GetOffenceCommitChance(_teamAStats),
+                () => HandleOffence(game.Teams[1], game, false));
+        }
 
         return eventList.Draw();
     }
