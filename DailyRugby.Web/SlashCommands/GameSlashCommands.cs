@@ -141,11 +141,15 @@ public class GameSlashCommands(IGameCrudService gameService,
             $"- {game.TeamA.Coach} coach\n" +
             $"- {game.TeamA.Tactic} tactic\n" +
             $"- {game.TeamA.Cake?.Name ?? "no"} cake\n" +
+            $"- {(game.TeamA.HasMoraleBoost ? "has morale boost" : "doesn't have morale boost")}\n" +
             $"\n" +
             $"**{game.TeamB.Team.Country}**:\n" +
             $"- {game.TeamB.Coach} coach\n" +
             $"- {game.TeamB.Tactic} tactic\n" +
-            $"- {game.TeamB.Cake?.Name ?? "no"} cake\n", ephemeral: true);
+            $"- {game.TeamB.Cake?.Name ?? "no"} cake\n" + 
+            $"- {(game.TeamA.HasMoraleBoost ? "has morale boost" : "doesn't have morale boost")}",
+            
+            ephemeral: true);
     }
 
     [SlashCommand("schedule-game", "Schedules a game")]
