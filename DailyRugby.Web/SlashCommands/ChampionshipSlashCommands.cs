@@ -13,7 +13,8 @@ public class ChampionshipSlashCommands
     (IChampionshipCrudService champService,
     IGameCrudService gameService,
     IScheduleGetter scheduleGetter,
-    IJsonGetter jsonGetter)
+    IJsonGetter jsonGetter,
+    IGameOddsCalculator gameOddsCalculator)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("add-championship", "Creates a championship")]
@@ -406,5 +407,54 @@ public class ChampionshipSlashCommands
         using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
         await FollowupWithFileAsync(memoryStream, "championship.json", "Here is the JSON file");
+    }
+
+    [SlashCommand("calculate-all-odds", "Calculates the odds for all games in a championship")]
+    public async Task CalculateAllOdds(
+        [Summary("Championship", "The championship to calculate all odds")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string champId)
+    {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
+
+        await DeferAsync(ephemeral: true);
+
+        bool idParsed = Guid.TryParse(champId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        var champResult = await champService.GetByIdAsync(id);
+
+        if (!champResult.IsSuccessful)
+        {
+            await FollowupAsync($"{champResult.Error}: {champResult.Message}", ephemeral: true);
+            return;
+        }
+
+        int count = 0;
+        foreach (var game in champResult.Item.Games)
+        {
+            var result = await gameOddsCalculator.GetOddsAsync(game.Id, false);
+
+            if (!result.IsSuccessful)
+            {
+                await FollowupAsync($"Getting odds for {game.TeamA.Team.Country} vs " +
+                    $"{game.TeamB.Team.Country} for round {game.Round} failed ({result.Error}: " +
+                    $"{result.Message}). {count} game odds have already been successfully done.",
+                    ephemeral: true);
+                return;
+            }
+
+            count++;
+        }
+
+        await FollowupAsync("Done", ephemeral: true);
     }
 }
