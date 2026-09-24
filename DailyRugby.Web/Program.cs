@@ -72,7 +72,7 @@ class Program
             return Process.GetCurrentProcess().PrivateMemorySize64;
         });
 
-        string? token = Environment.GetEnvironmentVariable("Bot_Inutil_Token");
+        string? token = Environment.GetEnvironmentVariable("DailyRugby_Token");
         if (token is null)
         {
             throw new Exception("Unable to get discord token");
