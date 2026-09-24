@@ -853,7 +853,8 @@
     "{teamA} players gather for a leadership discussion.",
     "{teamA} captain signals a tactical change to teammates.",
     "{teamA} bench players warm up on the sideline.",
-    "{teamA} coaching staff changes the warm-up routine for replacements."
+    "{teamA} coaching staff changes the warm-up routine for replacements.",
+    "{teamA} ran in th-th-the ru-ruck... sorry, it's my first day as a commentator, I'm nervous."
   ],
 
   "conversion success": [
@@ -1536,6 +1537,8 @@
     "Player of {teamA} receives a red card for an intentional act that threatens player safety.",
     "Player of {teamA} receives a red card for a reckless tackle with no regard for safety.",
     "Player of {teamA} receives a red card for serious violent conduct.",
-    "Player of {teamA} receives a red card for dangerous play deemed worthy of permanent dismissal."
+    "Player of {teamA} receives a red card for dangerous play deemed worthy of permanent dismissal.",
+    "Player of {teamA} receives a red card for downvoting comments in r/DailyGames.",
+    "Player of {teamA} receives a red card for not watering the tree in DailyGames discord server."
   ]
 }
