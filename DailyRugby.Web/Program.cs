@@ -49,7 +49,7 @@ class Program
         builder.Services.AddSingleton<IGameSimulatorManager>(
             provider => provider.GetRequiredService<GameSimulatorManager>());
         builder.Services.AddHostedService(provider => provider.GetRequiredService<GameSimulatorManager>());
-        builder.Services.AddTransient<IGameTimer, SpedUpTimer>();
+        builder.Services.AddTransient<IGameTimer, SystemTimer>();
         builder.Services.AddSingleton<MessageSender>();
         builder.Services.AddSingleton<IGameSimulatorFactory, GameSimulatorFactory>();
         builder.Services.AddSingleton<IGameOddsCalculator, GameOddsCalculator>();
