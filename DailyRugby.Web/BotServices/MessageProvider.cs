@@ -187,7 +187,7 @@ public class MessageProvider
             .Replace("{teamA}", team);
     }
 
-    public InjuryRiskMessage GetInjuryRiskMessage(string team)
+    public InjuryRiskMessage GetInjuryRiskMessage(string team, string opponent)
     {
         int index = _random.Next(0, _injuryRiskMessages.Count);
         var layout = _injuryRiskMessages[index];
@@ -195,13 +195,16 @@ public class MessageProvider
         return layout with
         {
             Description = layout.Description
-                .Replace("{teamA}", team),
+                .Replace("{teamA}", team)
+                .Replace("{teamB}", opponent),
 
             DescriptionNotRecovered = layout.DescriptionNotRecovered
-                .Replace("{teamA}", team),
+                .Replace("{teamA}", team)
+                .Replace("{teamB}", opponent),
             
             DescriptionRecovered = layout.DescriptionRecovered
                 .Replace("{teamA}", team)
+                .Replace("{teamB}", opponent)
         };
     }
 }

@@ -452,7 +452,8 @@ public class MessageSender
 
             case GameEventType.TeamAPlayerRisksInjury:
                 var injuryRiskMessage = _messageProvider
-                    .GetInjuryRiskMessage(gameEvent.Game.Teams[0].Team.Country);
+                    .GetInjuryRiskMessage(gameEvent.Game.Teams[0].Team.Country,
+                        gameEvent.Game.Teams[1].Team.Country);
 
                 await _channel.SendMessageAsync($"{gameEvent.Minute}' - {injuryRiskMessage
                     .Description} This is #{gameEvent.PlayerInvolved?.Number.ToString() ??
@@ -467,7 +468,8 @@ public class MessageSender
 
             case GameEventType.TeamBPlayerRisksInjury:
                 injuryRiskMessage = _messageProvider
-                    .GetInjuryRiskMessage(gameEvent.Game.Teams[1].Team.Country);
+                    .GetInjuryRiskMessage(gameEvent.Game.Teams[1].Team.Country,
+                        gameEvent.Game.Teams[0].Team.Country);
 
                 await _channel.SendMessageAsync($"{gameEvent.Minute}' - {injuryRiskMessage
                     .Description} This is #{gameEvent.PlayerInvolved?.Number.ToString() ??
