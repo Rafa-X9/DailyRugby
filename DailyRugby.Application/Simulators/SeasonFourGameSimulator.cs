@@ -874,7 +874,7 @@ public class SeasonFourGameSimulator : ISpecificGameSimulator
         {
             double chance = ((643.0
                 + (5.0 * Insight)
-                - (12.0 * opponent.Insight)
+                - (13.0 * opponent.Insight)
                 + (3.0 * Physique)
                 - (8.0 * opponent.Technique)) / 20.0) / 100.0;
 
