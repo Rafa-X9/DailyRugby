@@ -132,23 +132,7 @@ public class SeasonFourGameSimulator : ISpecificGameSimulator
 
         RandomEventList<GameEvent> eventList = new(new Random());
 
-        eventList
-            .Add(_teamAStats.GetTryAttemptChance(_teamBStats),
-                () => HandleTryAttempt(_teamAStats, game, true))
-            .Add(_teamBStats.GetTryAttemptChance(_teamAStats),
-                () => HandleTryAttempt(_teamBStats, game, false))
-
-            .Add(_teamAStats.GetDropGoalAttemptChance(_teamBStats),
-                () => HandleDropGoalAttempt(_teamAStats, game, true))
-            .Add(_teamBStats.GetDropGoalAttemptChance(_teamAStats),
-                () => HandleDropGoalAttempt(_teamBStats, game, false))
-
-            .Add(_teamAStats.GetPenaltyKickAttemptChance(_teamBStats),
-                () => HandlePenaltyKickAttempt(_teamAStats, game, true))
-            .Add(_teamBStats.GetPenaltyKickAttemptChance(_teamAStats),
-                () => HandlePenaltyKickAttempt(_teamBStats, game, false))
-
-            .AddFallback(() => new GameEvent(game.CurrentMinute,
+        eventList.AddFallback(() => new GameEvent(game.CurrentMinute,
                 GameEventType.Nothing,
                 game.TeamAScore,
                 game.TeamBScore,
@@ -156,9 +140,17 @@ public class SeasonFourGameSimulator : ISpecificGameSimulator
 
         if (game.Teams[0].Players.Any(temp => temp.IsOnField))
         {
-            eventList.Add(SeasonThreeStats.GetAlienAbductionChance(),
-                () => HandlePlayerAbduction(game.Teams[0], game, true))
+            eventList.Add(_teamAStats.GetTryAttemptChance(_teamBStats),
+                () => HandleTryAttempt(_teamAStats, game, true))
 
+            .Add(_teamAStats.GetDropGoalAttemptChance(_teamBStats),
+                () => HandleDropGoalAttempt(_teamAStats, game, true))
+
+            .Add(_teamAStats.GetPenaltyKickAttemptChance(_teamBStats),
+                () => HandlePenaltyKickAttempt(_teamAStats, game, true))
+
+            .Add(SeasonThreeStats.GetAlienAbductionChance(),
+                () => HandlePlayerAbduction(game.Teams[0], game, true))
 
             .Add(_teamAStats.GetInjurySufferChance(_teamBStats),
                 () => HandlePlayerInjuryRisk(game.Teams[0], game, true))
@@ -169,7 +161,16 @@ public class SeasonFourGameSimulator : ISpecificGameSimulator
 
         if (game.Teams[1].Players.Any(temp => temp.IsOnField))
         {
-            eventList.Add(SeasonThreeStats.GetAlienAbductionChance(),
+            eventList.Add(_teamBStats.GetTryAttemptChance(_teamAStats),
+                () => HandleTryAttempt(_teamBStats, game, false))
+
+            .Add(_teamBStats.GetDropGoalAttemptChance(_teamAStats),
+                () => HandleDropGoalAttempt(_teamBStats, game, false))
+
+            .Add(_teamBStats.GetPenaltyKickAttemptChance(_teamAStats),
+                () => HandlePenaltyKickAttempt(_teamBStats, game, false))
+
+            .Add(SeasonThreeStats.GetAlienAbductionChance(),
                 () => HandlePlayerAbduction(game.Teams[1], game, false))
 
             .Add(_teamBStats.GetInjurySufferChance(_teamAStats),
