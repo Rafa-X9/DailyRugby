@@ -473,6 +473,11 @@ public class SeasonFourGameSimulator : ISpecificGameSimulator
 
         int decisionMinute = _random.Next(0, 5);
 
+        if (game.CurrentMinute < 40 && decisionMinute > 40)
+        {
+            decisionMinute = 40;
+        }
+
         double isSeriousChance;
         if (isTeamA) isSeriousChance = _teamAStats!.GetInjuryBeingSeriousChance();
         else isSeriousChance = _teamBStats!.GetInjuryBeingSeriousChance();
