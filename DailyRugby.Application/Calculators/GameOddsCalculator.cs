@@ -80,6 +80,64 @@ public class GameOddsCalculator(IServiceProvider serviceProvider)
         return Result<GameOdds>.Success(result);
     }
 
+    public async Task<Result<GameOdds>> GetSpecificOddsAsync(Guid gameId,
+        Tactics teamATactic, 
+        Tactics teamBTactic,
+        bool teamAHasCake,
+        bool teamBHasCake)
+    {
+        Game? game;
+        using (var scope = serviceProvider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            game = await db.Games
+                .AsNoTracking()
+                .Include(temp => temp.Championship)
+                .Include(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
+                    .ThenInclude(temp => temp.Team)
+                .FirstOrDefaultAsync(temp => temp.Id == gameId);
+        }
+
+        GameOdds result = new() { Id = Guid.NewGuid() };
+
+        if (game is null) return Result<GameOdds>.Failure("Id not found", Errors.NotFound);
+
+        _game = game;
+        _game.Teams[0].Tactic = teamATactic;
+        _game.Teams[1].Tactic = teamBTactic;
+
+        if (teamAHasCake)
+            _game.Teams[0].Cake = new() { IsUsed = false, Name = "Cake " };
+        if (teamBHasCake)
+            _game.Teams[1].Cake = new() { IsUsed = false, Name = "Cake " };
+
+        result.GameId = gameId;
+
+        _factory = serviceProvider.GetRequiredService<IGameSimulatorFactory>();
+
+        var options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = Environment.ProcessorCount
+        };
+
+        var simulationResults = new ConcurrentBag<GameResult>();
+
+        Parallel.For(0, _repetitions, options, i =>
+        {
+            simulationResults.Add(Simulate());
+        });
+
+        result.TotalSimulations = simulationResults.Count;
+        foreach (var gameResult in simulationResults)
+        {
+            if (gameResult == GameResult.TeamAWon) result.TeamAWins++;
+            else if (gameResult == GameResult.TeamBWon) result.TeamBWins++;
+        }
+
+        return Result<GameOdds>.Success(result);
+    }
+
     private GameResult Simulate()
     {
         Game clone = new()
