@@ -4,6 +4,7 @@ using DailyRugby.Domain;
 using DailyRugby.Web.AutoCompletes;
 using DailyRugby.Web.BotServices;
 using Discord.Interactions;
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
 
@@ -14,7 +15,8 @@ public class ChampionshipSlashCommands
     IGameCrudService gameService,
     IScheduleGetter scheduleGetter,
     IJsonGetter jsonGetter,
-    IGameOddsCalculator gameOddsCalculator)
+    IGameOddsCalculator gameOddsCalculator,
+    IChampionshipOddsCalculator champOddsCalculator)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("add-championship", "Creates a championship")]
@@ -456,5 +458,49 @@ public class ChampionshipSlashCommands
         }
 
         await FollowupAsync("Done", ephemeral: true);
+    }
+
+    [SlashCommand("see-championship-odds", "Get the odds for a championship")]
+    public async Task SeeChampionshipOdds(
+        [Summary("Championship", "The championship to calculate all odds")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string champId,
+
+        [Summary("Private", "Whether the reply should be sent privately")]
+        bool @private = true)
+    {
+        await DeferAsync(ephemeral: @private);
+
+        bool idParsed = Guid.TryParse(champId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        var oddResult = await champOddsCalculator.GetOddsAsync(id);
+
+        if (!oddResult.IsSuccessful)
+        {
+            await FollowupAsync($"{oddResult.Error}: {oddResult.Message}", ephemeral: true);
+            return;
+        }
+
+        StringBuilder sb = new();
+        CultureInfo ci = CultureInfo.InvariantCulture;
+
+        sb.AppendLine("First place odds:");
+        foreach (var firstPlaceOdd in oddResult.Item.FirstPlaceOdds)
+        {
+            sb.AppendLine($"- {firstPlaceOdd.Country}: {firstPlaceOdd.Chance.ToString("F2", ci)}");
+        }
+
+        sb.AppendLine("Last place odds:");
+        foreach (var lastPlaceOdd in oddResult.Item.LastPlaceOdds)
+        {
+            sb.AppendLine($"- {lastPlaceOdd.Country}: {lastPlaceOdd.Chance.ToString("F2", ci)}");
+        }
+
+        await FollowupAsync(sb.ToString(), ephemeral: @private);
     }
 }
