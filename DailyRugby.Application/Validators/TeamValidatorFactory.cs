@@ -11,6 +11,7 @@ public class TeamValidatorFactory : ITeamValidatorFactory
         {
             Seasons.Season1 => new SeasonOneTeamValidator(),
             Seasons.Season3 => new SeasonThreeTeamValidator(),
+            Seasons.Season4 => new SeasonFourTeamValidator(),
             _ => throw new NotImplementedException($"There are no validators for " +
                 $"{season}'s teams yet")
         };

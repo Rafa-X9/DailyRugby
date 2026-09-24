@@ -11,6 +11,7 @@ public class GameSimulatorFactory : IGameSimulatorFactory
         {
             Seasons.Season1 => new SeasonOneGameSimulator(),
             Seasons.Season3 => new SeasonThreeGameSimulator(),
+            Seasons.Season4 => new SeasonFourGameSimulator(),
             _ => throw new NotImplementedException($"{season}'s game simulator not yet implemented")
         };
     }

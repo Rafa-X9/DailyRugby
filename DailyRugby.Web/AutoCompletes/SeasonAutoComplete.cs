@@ -14,7 +14,8 @@ public class SeasonAutoComplete : AutocompleteHandler
     {
         List<AutocompleteResult> seasons =
             [new(Seasons.Season1.ToString(), Seasons.Season1.ToString()),
-            new(Seasons.Season3.ToString(), Seasons.Season3.ToString())];
+            new(Seasons.Season3.ToString(), Seasons.Season3.ToString()),
+            new(Seasons.Season4.ToString(), Seasons.Season4.ToString())];
         return AutocompletionResult.FromSuccess(seasons);
     }
 }
