@@ -1,6 +1,7 @@
 ﻿using DailyRugby.Application.Interfaces;
 using DailyRugby.Domain;
 using Discord;
+using System.Globalization;
 using System.Text;
 
 namespace DailyRugby.Web.BotServices;
@@ -13,18 +14,21 @@ public class MessageSender
     private IMessageChannel _channel = null!;
     private readonly MessageProvider _messageProvider;
     private readonly List<PendingInjuries> _pendingInjuries = [];
+    private readonly IGameOddsCalculator _gameOddsCalculator;
 
     private sealed record PendingInjuries(Guid PlayerId,
         InjuryRiskMessage Message);
 
     public MessageSender(IGameSimulatorManager simulator,
         IConfiguration configuration,
+        IGameOddsCalculator gameOddsCalculator,
         MessageProvider messageProvider)
     {
         simulator.GameEventHappened += OnGameEventHappened;
         _configuration = configuration;
         _channelId = ulong.Parse(_configuration["ChannelId"] ?? throw new Exception());
         _messageProvider = messageProvider;
+        _gameOddsCalculator = gameOddsCalculator;
     }
 
     private async void OnGameEventHappened(object? sender, EventArgs e)
@@ -40,7 +44,26 @@ public class MessageSender
         {
             case GameEventType.GameStarted:
                 await AnnounceGameStartAsync(_channel, gameEvent);
+
+                var oddsTask = _gameOddsCalculator.GetOddsAsync(gameEvent.Game.Id, true);
                 await WaitDelay();
+                var oddsResult = await oddsTask;
+                double teamAWins, teamBWins;
+
+                if (oddsResult.IsSuccessful)
+                {
+                    teamAWins = ((double)oddsResult.Item.TeamAWins
+                        / oddsResult.Item.TotalSimulations) * 100;
+
+                    teamBWins = ((double)oddsResult.Item.TeamBWins
+                        / oddsResult.Item.TotalSimulations) * 100;
+
+                    CultureInfo ci = CultureInfo.InvariantCulture;
+
+                    await _channel.SendMessageAsync($"{gameEvent.Game.Teams[0].Team.Country} has " +
+                        $"{teamAWins.ToString("F0", ci)}% chance to win, while {gameEvent.Game.Teams[1]
+                        .Team.Country} has {teamBWins.ToString("F0", ci)}%");
+                }                
 
                 string teamATacticMessage;
 
@@ -89,6 +112,32 @@ public class MessageSender
                 {
                     await WaitDelay();
                     await _channel.SendMessageAsync(cakesMessage.ToString());
+                }
+
+                var specificOddsTask = _gameOddsCalculator.GetSpecificOddsAsync(
+                    gameEvent.Game.Id,
+                    gameEvent.Game.Teams[0].Tactic,
+                    gameEvent.Game.Teams[1].Tactic,
+                    gameEvent.Game.Teams[0].Cake is not null,
+                    gameEvent.Game.Teams[1].Cake is not null);
+
+                await WaitDelay();
+                var specificOdds = await specificOddsTask;
+
+                if (specificOdds.IsSuccessful)
+                {
+                    teamAWins = ((double)specificOdds.Item.TeamAWins
+                        / specificOdds.Item.TotalSimulations) * 100;
+
+                    teamBWins = ((double)specificOdds.Item.TeamBWins
+                        / specificOdds.Item.TotalSimulations) * 100;
+
+                    var ci = CultureInfo.InvariantCulture;
+
+                    await _channel.SendMessageAsync("According to the bookmarkers, this changes the odds " +
+                        $"of the game so now {gameEvent.Game.Teams[0].Team.Country} has {teamAWins
+                        .ToString("F0", ci)}% chance to win and {gameEvent.Game.Teams[1].Team.Country} has " +
+                        $"{teamBWins.ToString("F0", ci)}%.");
                 }
 
                 break;
@@ -406,7 +455,7 @@ public class MessageSender
                     .GetInjuryRiskMessage(gameEvent.Game.Teams[0].Team.Country);
 
                 await _channel.SendMessageAsync($"{gameEvent.Minute}' - {injuryRiskMessage
-                    .Description} This is #{gameEvent.PlayerInvolved?.Number.ToString() ?? 
+                    .Description} This is #{gameEvent.PlayerInvolved?.Number.ToString() ??
                     "UNKNOWN"}.");
 
                 if (gameEvent.PlayerInvolved is not null)
@@ -454,7 +503,7 @@ public class MessageSender
                 break;
 
             case GameEventType.TeamBPlayerNonSeriousInjury:
-                
+
                 injury = _pendingInjuries
                     .FirstOrDefault(temp => gameEvent.PlayerInvolved is not null
                         && temp.PlayerId == gameEvent.PlayerInvolved.Id);
