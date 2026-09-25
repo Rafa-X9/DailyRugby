@@ -9,7 +9,9 @@ using System.Text.Json;
 
 namespace DailyRugby.Web.SlashCommands;
 
-public class TeamSlashCommands(ITeamCrudService teamService, IJsonGetter jsonGetter)
+public class TeamSlashCommands(ITeamCrudService teamService,
+    IJsonGetter jsonGetter,
+    IConfiguration configuration)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("add-team", "Adds a team")]
@@ -26,9 +28,9 @@ public class TeamSlashCommands(ITeamCrudService teamService, IJsonGetter jsonGet
         [Autocomplete(typeof(CoachAutoComplete))]
         string initialCoach)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -103,9 +105,9 @@ public class TeamSlashCommands(ITeamCrudService teamService, IJsonGetter jsonGet
         [Autocomplete(typeof(TeamAutoComplete))]
         string teamId)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -184,9 +186,9 @@ public class TeamSlashCommands(ITeamCrudService teamService, IJsonGetter jsonGet
         [Summary("amount", "The amount to add, can be positive or negative")]
         int amount)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -228,9 +230,9 @@ public class TeamSlashCommands(ITeamCrudService teamService, IJsonGetter jsonGet
         [Autocomplete(typeof(CoachAutoComplete))]
         string coach)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -271,9 +273,9 @@ public class TeamSlashCommands(ITeamCrudService teamService, IJsonGetter jsonGet
         [Autocomplete(typeof(CoachAutoComplete))]
         string coach)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -344,9 +346,9 @@ public class TeamSlashCommands(ITeamCrudService teamService, IJsonGetter jsonGet
         [Summary("amount", "The amount of cakes to add")]
         int amount = 1)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);

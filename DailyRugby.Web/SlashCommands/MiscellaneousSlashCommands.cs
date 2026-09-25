@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace DailyRugby.Web.SlashCommands;
 
-public class MiscellaneousSlashCommands(MessageSender messageSender)
+public class MiscellaneousSlashCommands(MessageSender messageSender, IConfiguration configuration)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("see-ram-usage", "See how much RAM I am using")]
@@ -24,9 +24,9 @@ public class MiscellaneousSlashCommands(MessageSender messageSender)
         [Summary("Message", "The message to send to the channel.")]
         string message = "Test message")
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
 

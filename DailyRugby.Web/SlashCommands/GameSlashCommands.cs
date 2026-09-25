@@ -14,7 +14,8 @@ namespace DailyRugby.Web.SlashCommands;
 public class GameSlashCommands(IGameCrudService gameService,
     IGameSimulatorManager simulator,
     IGameOddsCalculator oddsCalculator,
-    IJsonGetter jsonGetter)
+    IJsonGetter jsonGetter,
+    IConfiguration configuration)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("see-games", "Shows all games from a championship")]
@@ -112,9 +113,9 @@ public class GameSlashCommands(IGameCrudService gameService,
         [Autocomplete(typeof(CurrentRoundAutocomplete))]
         string gameId)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -164,9 +165,9 @@ public class GameSlashCommands(IGameCrudService gameService,
         int hourUtc,
         int minuteUtc)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -230,9 +231,9 @@ public class GameSlashCommands(IGameCrudService gameService,
         [Autocomplete(typeof(TeamAorBAutocomplete))]
         string teamAorB)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -284,9 +285,9 @@ public class GameSlashCommands(IGameCrudService gameService,
         [Autocomplete(typeof(TeamAorBAutocomplete))]
         string teamAorB)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -337,9 +338,9 @@ public class GameSlashCommands(IGameCrudService gameService,
         [Autocomplete(typeof(TeamAorBAutocomplete))]
         string teamAorB)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -383,9 +384,9 @@ public class GameSlashCommands(IGameCrudService gameService,
         [Summary("MoraleBoost", "Whether the team should have a morale boost added or removed")]
         bool hasMoraleBoost)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);

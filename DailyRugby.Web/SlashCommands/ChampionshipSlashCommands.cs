@@ -16,7 +16,8 @@ public class ChampionshipSlashCommands
     IScheduleGetter scheduleGetter,
     IJsonGetter jsonGetter,
     IGameOddsCalculator gameOddsCalculator,
-    IChampionshipOddsCalculator champOddsCalculator)
+    IChampionshipOddsCalculator champOddsCalculator,
+    IConfiguration configuration)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("add-championship", "Creates a championship")]
@@ -28,9 +29,9 @@ public class ChampionshipSlashCommands
         [Autocomplete(typeof(SeasonAutoComplete))]
         string season)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
 
@@ -80,9 +81,9 @@ public class ChampionshipSlashCommands
         [Autocomplete(typeof(ChampionshipAutoComplete))]
         string id)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -110,9 +111,9 @@ public class ChampionshipSlashCommands
         [Autocomplete(typeof(ChampionshipAutoComplete))]
         string champId)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -158,9 +159,9 @@ public class ChampionshipSlashCommands
         [Autocomplete(typeof(ChampionshipAutoComplete))]
         string champId)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -205,9 +206,9 @@ public class ChampionshipSlashCommands
         [Autocomplete(typeof(ChampionshipAutoComplete))]
         string champId)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -236,9 +237,9 @@ public class ChampionshipSlashCommands
         [Autocomplete(typeof(ChampionshipAutoComplete))]
         string champId)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
         await DeferAsync(ephemeral: true);
@@ -417,9 +418,9 @@ public class ChampionshipSlashCommands
         [Autocomplete(typeof(ChampionshipAutoComplete))]
         string champId)
     {
-        if (!this.CheckRolePermission())
+        if (!this.CheckRolePermission(configuration))
         {
-            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            await RespondAsync(this.GetUnauthorizedMessage(configuration), ephemeral: true);
             return;
         }
 
