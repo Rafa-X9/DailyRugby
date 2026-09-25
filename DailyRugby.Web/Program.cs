@@ -78,8 +78,8 @@ class Program
             throw new Exception("Unable to get discord token");
         }
 
-        ulong serverId = ulong.Parse(builder.Configuration["ServerId"] ?? "fail");
-        ulong channelId = ulong.Parse(builder.Configuration["ChannelId"] ?? "fail");
+        ulong serverId = ulong.Parse(builder.Configuration["DailyRugby:ServerId"] ?? "fail");
+        ulong channelId = ulong.Parse(builder.Configuration["DailyRugby:ChannelId"] ?? "fail");
 
         DiscordClient.Log += message =>
         {

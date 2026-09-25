@@ -26,7 +26,7 @@ public class MessageSender
     {
         simulator.GameEventHappened += OnGameEventHappened;
         _configuration = configuration;
-        _channelId = ulong.Parse(_configuration["ChannelId"] ?? throw new Exception());
+        _channelId = ulong.Parse(_configuration["DailyRugby:ChannelId"] ?? throw new Exception());
         _messageProvider = messageProvider;
         _gameOddsCalculator = gameOddsCalculator;
     }
@@ -36,7 +36,21 @@ public class MessageSender
         var gameEvent = (GameEvent)e;
         if (!_hasInitialized)
         {
-            _channel = (IMessageChannel)await Program.DiscordClient.GetChannelAsync(_channelId);
+            bool isThreadParsed = bool.TryParse(_configuration["DailyRugby:IsThread"],
+                out bool isThread);
+
+            if (!isThreadParsed)
+            {
+                throw new Exception("IsThread configuration value is required.");
+            }
+
+            var channel = await Program.DiscordClient.GetChannelAsync(_channelId);
+
+            if (isThread)
+                _channel = (IThreadChannel)await Program.DiscordClient.GetChannelAsync(_channelId);
+            else
+                _channel = (IMessageChannel)await Program.DiscordClient.GetChannelAsync(_channelId);
+            
             _hasInitialized = true;
         }
 
@@ -63,7 +77,7 @@ public class MessageSender
                     await _channel.SendMessageAsync($"{gameEvent.Game.Teams[0].Team.Country} has " +
                         $"{teamAWins.ToString("F0", ci)}% chance to win, while {gameEvent.Game.Teams[1]
                         .Team.Country} has {teamBWins.ToString("F0", ci)}%");
-                }                
+                }
 
                 string teamATacticMessage;
 
