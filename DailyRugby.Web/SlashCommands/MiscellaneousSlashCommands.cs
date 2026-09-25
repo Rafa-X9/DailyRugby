@@ -1,10 +1,12 @@
-﻿using Discord.Interactions;
+﻿using DailyRugby.Web.BotServices;
+using Discord.Interactions;
 using System.Diagnostics;
 using System.Globalization;
 
 namespace DailyRugby.Web.SlashCommands;
 
-public class MiscellaneousSlashCommands : InteractionModuleBase<SocketInteractionContext>
+public class MiscellaneousSlashCommands(MessageSender messageSender)
+    : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("see-ram-usage", "See how much RAM I am using")]
     public async Task SeeRamUsage(
@@ -15,5 +17,20 @@ public class MiscellaneousSlashCommands : InteractionModuleBase<SocketInteractio
         double megaBytes = bytes / 1_000_000.0;
         await RespondAsync($"I am using {megaBytes.ToString("F2", CultureInfo.InvariantCulture)} " +
             $"megabytes of RAM", ephemeral: @private);
+    }
+
+    [SlashCommand("say", "Make me say something in the configured DailyRugby channel")]
+    public async Task Say(
+        [Summary("Message", "The message to send to the channel.")]
+        string message = "Test message")
+    {
+        if (!this.CheckRolePermission())
+        {
+            await RespondAsync(this.UnauthorizedMessage, ephemeral: true);
+            return;
+        }
+
+        await messageSender.SendMessageAsync(message);
+        await RespondAsync("Done", ephemeral: true);
     }
 }

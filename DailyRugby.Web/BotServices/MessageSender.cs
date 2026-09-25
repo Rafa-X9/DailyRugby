@@ -36,22 +36,7 @@ public class MessageSender
         var gameEvent = (GameEvent)e;
         if (!_hasInitialized)
         {
-            bool isThreadParsed = bool.TryParse(_configuration["DailyRugby:IsThread"],
-                out bool isThread);
-
-            if (!isThreadParsed)
-            {
-                throw new Exception("IsThread configuration value is required.");
-            }
-
-            var channel = await Program.DiscordClient.GetChannelAsync(_channelId);
-
-            if (isThread)
-                _channel = (IThreadChannel)await Program.DiscordClient.GetChannelAsync(_channelId);
-            else
-                _channel = (IMessageChannel)await Program.DiscordClient.GetChannelAsync(_channelId);
-            
-            _hasInitialized = true;
+            await SetupChannelAsync();
         }
 
         switch (gameEvent.EventType)
@@ -735,4 +720,30 @@ public class MessageSender
     private string CurrentScore(GameEvent gameEvent)
         => $"Current score: {gameEvent.Game.Teams[0].Team.Country} {gameEvent.TeamAScore} " +
         $"x {gameEvent.TeamBScore} {gameEvent.Game.Teams[1].Team.Country}";
+
+    private async Task SetupChannelAsync()
+    {
+        bool isThreadParsed = bool.TryParse(_configuration["DailyRugby:IsThread"],
+                out bool isThread);
+
+        if (!isThreadParsed)
+        {
+            throw new Exception("IsThread configuration value is required.");
+        }
+
+        var channel = await Program.DiscordClient.GetChannelAsync(_channelId);
+
+        if (isThread)
+            _channel = (IThreadChannel)channel;
+        else
+            _channel = (IMessageChannel)channel;
+
+        _hasInitialized = true;
+    }
+
+    public async Task SendMessageAsync(string message)
+    {
+        if (!_hasInitialized) await SetupChannelAsync();
+        await _channel.SendMessageAsync(message);
+    }
 }
