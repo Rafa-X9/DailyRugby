@@ -16,7 +16,7 @@ public class GameSlashCommands(IGameCrudService gameService,
     IGameOddsCalculator oddsCalculator,
     IJsonGetter jsonGetter,
     IConfiguration configuration)
-    : InteractionModuleBase<SocketInteractionContext>
+    : SlashCommandBase
 {
     [SlashCommand("see-games", "Shows all games from a championship")]
     public async Task SeeGames(

@@ -12,7 +12,7 @@ namespace DailyRugby.Web.SlashCommands;
 public class TeamSlashCommands(ITeamCrudService teamService,
     IJsonGetter jsonGetter,
     IConfiguration configuration)
-    : InteractionModuleBase<SocketInteractionContext>
+    : SlashCommandBase
 {
     [SlashCommand("add-team", "Adds a team")]
     public async Task AddTeam(

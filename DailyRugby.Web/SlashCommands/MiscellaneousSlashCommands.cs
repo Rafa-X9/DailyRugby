@@ -6,7 +6,7 @@ using System.Globalization;
 namespace DailyRugby.Web.SlashCommands;
 
 public class MiscellaneousSlashCommands(MessageSender messageSender, IConfiguration configuration)
-    : InteractionModuleBase<SocketInteractionContext>
+    : SlashCommandBase
 {
     [SlashCommand("see-ram-usage", "See how much RAM I am using")]
     public async Task SeeRamUsage(

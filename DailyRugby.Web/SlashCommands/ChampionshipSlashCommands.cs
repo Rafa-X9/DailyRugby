@@ -18,7 +18,7 @@ public class ChampionshipSlashCommands
     IGameOddsCalculator gameOddsCalculator,
     IChampionshipOddsCalculator champOddsCalculator,
     IConfiguration configuration)
-    : InteractionModuleBase<SocketInteractionContext>
+    : SlashCommandBase
 {
     [SlashCommand("add-championship", "Creates a championship")]
     public async Task AddChampionship(
