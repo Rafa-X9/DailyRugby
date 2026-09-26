@@ -9,6 +9,7 @@ A Discord bot for running and managing **DailyRugby** championships, built with 
 * [Features](#features)
 * [Setup](#setup)
 * [About](#about)
+* [Commands](#commands)
 * [License](#license)
 
 ## Features
@@ -124,6 +125,19 @@ The long-term goal is to make it possible to introduce new seasons without havin
 This version is planned to be used for **DailyRugby's fourth season**.
 
 [Back to table of contents.](#table-of-contents)
+
+## Commands
+
+The bot's slash commands are organized in four categories:
+
+- **Championship:** commands related to reading manipulating a championship.
+- **Team:** commands related to reading and manipulating teams.
+- **Game:** commands related to reading and manipulating games.
+- **Miscellaneous:** commands not directly related to DailyRugby, made to help managing the bot.
+
+Some commands are **admin only**, that is, only members with the admin role (by defauly "Botbouwer") can use them. People without this role trying to use them will receive an error message.
+
+A list of all commands can be found in the [commands documentation](COMMANDS.md).
 
 ## License
 
