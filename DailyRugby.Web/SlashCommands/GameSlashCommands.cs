@@ -613,4 +613,39 @@ public class GameSlashCommands(IGameCrudService gameService,
 
         await RespondAsync(sb.ToString(), ephemeral: @private);
     }
+
+    [SlashCommand("change-game-round", "Changes the round of a game")]
+    public async Task ChangeGameRound(
+        [Summary("Game", "The game to change the round of")]
+        [Autocomplete(typeof(GameAutocomplete))]
+        string gameId,
+        [Summary("Round", "The number of the round to set")]
+        int round)
+    {
+        if (!CheckRolePermission(configuration))
+        {
+            await RespondAsync(GetUnauthorizedMessage(configuration), ephemeral: true);
+            return;
+        }
+        await DeferAsync(ephemeral: true);
+
+        bool idParsed = Guid.TryParse(gameId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        var result = await gameService.SetGameRoundAsync(id, round);
+
+        if (!result.IsSuccessful)
+        {
+            await FollowupAsync($"{result.Error}: {result.Message}");
+            return;
+        }
+
+        await FollowupAsync($"{result.Item.TeamA.Team.Country} vs " +
+            $"{result.Item.TeamB.Team.Country} has been successfully " +
+            $"set to the {result.Item.Round} round.");
+    }
 }

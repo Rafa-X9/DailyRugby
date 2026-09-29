@@ -20,6 +20,8 @@ public interface IGameCrudService
 
     Task<Result<IList<GameResponse>>> GetByTeamIdAsync(Guid teamId);
 
+    Task<Result<GameResponse>> SetGameRoundAsync(Guid gameId, int round);
+
     Task<Result<TeamGameResponse>> SetTacticAsync(Guid gameId, Teams team, Tactics tactic);
 
     Task<Result<TeamGameResponse>> SetCoachAsync(Guid gameId, Teams team, Coaches coach);

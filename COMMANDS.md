@@ -292,6 +292,17 @@ Parameters:
 
 ## Game commands
 
+### `/change-game-round` (*admin-only*)
+
+Changes the round of a game. Use this for manually changing the order of games.
+
+Parameters:
+
+| Parameter | Type | Default | Autocomplete | Description |
+| --------- | ---- | ------- | ------------ | ----------- |
+| `Game` | `text` | — | A list of all games | The game |
+| `Round` | `int` | — | — | The round |
+
 ### `/cheer` 
 
 Schedules a cheer for a team in the ongoing game. Anyone can cheer up to three times per game. After cheering, the user must wait two minutes before cheering again. In the scheduled time, the bot will announce that the user is cheering alongside their yell if one is provided, and give the respective team a small bonus.
