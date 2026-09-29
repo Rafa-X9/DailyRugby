@@ -13,9 +13,14 @@ public class GameAutocomplete : AutocompleteHandler
         IParameterInfo parameter,
         IServiceProvider services)
     {
+        string search = autocompleteInteraction.Data.Current.Value?.ToString() ?? string.Empty;
+
         var gameService = services.GetRequiredService<IGameCrudService>();
         var games = (await gameService.GetAllAsync())
-            .Where(temp => temp.CurrentState == GameState.NotScheduled)
+            .Where(temp => temp.CurrentState == GameState.NotScheduled
+                && (string.IsNullOrWhiteSpace(search) || 
+                    $"{temp.TeamA.Team.Country} vs {temp.TeamB.Team.Country}"
+                    .Contains(search, StringComparison.OrdinalIgnoreCase)))
             .OrderBy(temp => temp.Id)
             .Select(temp => new AutocompleteResult(
                 $"{temp.TeamA.Team.Country} vs {temp.TeamB.Team.Country}, round {temp.Round}",
