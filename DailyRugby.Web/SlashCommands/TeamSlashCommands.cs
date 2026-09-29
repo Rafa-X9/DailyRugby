@@ -23,7 +23,7 @@ public class TeamSlashCommands(ITeamCrudService teamService,
         string playerUsername,
         [Summary("country", "The team's country")]
         string country,
-        int insight, int physique, int technique,
+        int technique, int insight, int physique,
         [Summary("initialCoach", "The team's initial coach")]
         [Autocomplete(typeof(CoachAutoComplete))]
         string initialCoach)
