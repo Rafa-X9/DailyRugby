@@ -159,11 +159,13 @@ public class GameSlashCommands(IGameCrudService gameService,
         [Summary("game", "The game to schedule")]
         [Autocomplete(typeof(CurrentRoundAutocomplete))]
         string gameId,
-        int yearUtc,
-        int monthUtc,
-        int dayUtc,
-        int hourUtc,
-        int minuteUtc)
+        int year,
+        int month,
+        int day,
+        int hour,
+        int minute,
+        [Summary("Timezone", "The IANA timezone the date and time are in (default: Amsterdam)")]
+        string timezone = "Europe/Amsterdam")
     {
         if (!this.CheckRolePermission(configuration))
         {
@@ -179,9 +181,14 @@ public class GameSlashCommands(IGameCrudService gameService,
             return;
         }
 
-        DateTime dateTime = new(yearUtc, monthUtc, dayUtc, hourUtc, minuteUtc, 0);
+        TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timezone);
 
-        var result = await simulator.ScheduleGameAsync(id, dateTime);
+        DateTime dateTime = new(year, month, day, hour, minute, 0);
+
+        DateTime unspecifiedDateTime = DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified);
+        DateTime utcDateTime = TimeZoneInfo.ConvertTimeToUtc(unspecifiedDateTime, timeZoneInfo);
+
+        var result = await simulator.ScheduleGameAsync(id, utcDateTime);
 
         if (!result.IsSuccessful)
         {
