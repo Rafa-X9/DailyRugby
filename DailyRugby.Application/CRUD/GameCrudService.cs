@@ -1,5 +1,6 @@
 ﻿using DailyRugby.Application.DTOs;
 using DailyRugby.Application.Interfaces;
+using DailyRugby.Application.Utilitaries;
 using DailyRugby.Domain;
 using DailyRugby.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,19 @@ public class GameCrudService(AppDbContext db) : IGameCrudService
                 await db.Games
                     .Where(temp => temp.ChampionshipId == champId)
                     .ExecuteDeleteAsync();
+
+                var ids = champ.Teams.Select(temp => temp.Id).ToList();
+                await db.Teams
+                    .Where(temp => ids.Contains(temp.Id))
+                    .ExecuteUpdateAsync(setters => setters
+                        .SetProperty(temp => temp.WinCount, 0)
+                        .SetProperty(temp => temp.TieCount, 0)
+                        .SetProperty(temp => temp.LossCount, 0)
+                        .SetProperty(temp => temp.PointsScored, 0)
+                        .SetProperty(temp => temp.PointsTaken, 0)
+                        .SetProperty(temp => temp.ScoredTriesCount, 0)
+                        .SetProperty(temp => temp.SufferedTriesCount, 0));
+
                 champ.State = ChampionshipState.NotStarted;
                 await db.SaveChangesAsync();
                 return await GenerateRounds(champId, false);
