@@ -180,6 +180,8 @@ while (true)
 
         foreach (var section in sections)
         {
+            section.Commands.Sort((t1, t2) => t1.SlashCommand.CompareTo(t2.SlashCommand));
+
             document.AppendLine();
             document.AppendLine($"## {section.Name} commands");
 
