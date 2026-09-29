@@ -295,18 +295,19 @@ Parameters:
 
 ### `/schedule-game` (*admin-only*)
 
-Schedules the date and time a game will start. The date and time must be in UTC. **Note:** only one game can happen at a time.
+Schedules the date and time a game will start. By default, the bot assumes Amsterdam's timezone, but you can specify it. **Note**: only one game can happen at a time.
 
 Parameters:
 
 | Parameter | Type | Default | Autocomplete | Description |
 | --------- | ---- | ------- | ------------ | ----------- |
 | `Game` | `text` | — | A list of the UUIDs of all games in the main championship's current round, displaying the game's teams and round | The UUID of the game |
-| `YearUtc` | `int` | — | — | The year, in UTC |
-| `MonthUtc` | `int` | — | — | The month, in UTC |
-| `DayUtc` | `int` | — | — | The day, in UTC |
-| `HourUtc` | `int` | — | — | The hour, in UTC |
-| `MinuteUtc` | `int` | — | — | The minute, in UTC |
+| `Year` | `int` | — | — | The year |
+| `Month` | `int` | — | — | The month |
+| `Day` | `int` | — | — | The day |
+| `Hour` | `int` | — | — | The hour |
+| `Minute` | `int` | — | — | The minute |
+| `Timezone` | `text` | `"Europe/Amsterdam"` | — | The IANA timezone the date and time are in; by default it's Amsterdam's |
 
 ### `/see-current-round` 
 
