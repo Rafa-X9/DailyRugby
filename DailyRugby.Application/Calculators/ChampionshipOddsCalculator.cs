@@ -142,6 +142,101 @@ public class ChampionshipOddsCalculator(IServiceProvider serviceProvider) : ICha
         return Result<ChampionshipOdds>.Success(odds);
     }
 
+    public async Task<Result<ChampionshipOdds>> RecalculateOddsAsync(Guid champId)
+    {
+        Championship? championship;
+        List<GameOdds> gameOdds;
+
+        using (var scope = serviceProvider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            await db.ChampionshipOdds
+                .Where(temp => temp.ChampionshipId == champId)
+                .ExecuteDeleteAsync();
+
+            championship = await db.Championships
+                    .AsNoTracking()
+                        .Include(temp => temp.Games)
+                            .ThenInclude(temp => temp.Teams.OrderBy(t => t.Team.Country))
+                                .ThenInclude(temp => temp.Team)
+                        .Include(temp => temp.Games)
+                            .ThenInclude(temp => temp.Teams.OrderBy(t => t.Team.Country))
+                                .ThenInclude(temp => temp.Cake)
+                        .Include(temp => temp.Teams)
+                    .FirstOrDefaultAsync(temp => temp.Id == champId);
+
+            if (championship is null)
+            {
+                return Result<ChampionshipOdds>.Failure("Championship Id not found",
+                    Errors.NotFound);
+            }
+
+            var gameIds = championship.Games
+                .Where(temp => temp.CurrentState != GameState.Finished)
+                .Select(temp => temp.Id)
+                .ToList();
+
+            gameOdds = await db.GameOdds
+                .AsNoTracking()
+                .Where(temp => gameIds.Contains(temp.GameId))
+                .ToListAsync();
+
+            if (gameOdds.Count != gameIds.Count)
+            {
+                return Result<ChampionshipOdds>.Failure("All games' odds must have been " +
+                    "finished to get championship's odds", Errors.Invalid);
+            }
+        }
+
+        Dictionary<string, int> firstPlaces = [];
+        Dictionary<string, int> lastPlaces = [];
+
+        for (int i = 0; i < _repetitions; i++)
+        {
+            (string first, string last) = Simulate(championship, gameOdds);
+
+            if (firstPlaces.ContainsKey(first))
+                firstPlaces[first]++;
+            else
+                firstPlaces[first] = 1;
+
+            if (lastPlaces.ContainsKey(last))
+                lastPlaces[last]++;
+            else
+                lastPlaces[last] = 1;
+        }
+
+        List<TeamChampOdds> firstPlaceChances = [];
+        foreach (var pair in firstPlaces)
+        {
+            firstPlaceChances.Add(new(pair.Key, PercentageOf(pair.Value, _repetitions)));
+        }
+
+        List<TeamChampOdds> lastPlaceChances = [];
+        foreach (var pair in lastPlaces)
+        {
+            lastPlaceChances.Add(new(pair.Key, PercentageOf(pair.Value, _repetitions)));
+        }
+
+        ChampionshipOdds odds = new()
+        {
+            ChampionshipId = championship.Id,
+            Id = Guid.CreateVersion7(),
+            FirstPlaceOddsJson = JsonSerializer.Serialize(firstPlaceChances),
+            LastPlaceOddsJson = JsonSerializer.Serialize(lastPlaceChances)
+        };
+
+        using (var scope = serviceProvider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            db.ChampionshipOdds.Add(odds);
+            await db.SaveChangesAsync();
+        }
+
+        return Result<ChampionshipOdds>.Success(odds);
+    }
+
     private (string first, string last) Simulate(Championship championship, List<GameOdds> gameOdds)
     {
         var champCopy = new Championship()

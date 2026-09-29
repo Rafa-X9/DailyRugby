@@ -47,6 +47,16 @@ Parameters:
 | --------- | ---- | ------- | ------------ | ----------- |
 | `Championship` | `text` | — | A list of the UUIDs of all created championships, displaying the championship's name | The UUID of the championship |
 
+### `/reset-championship-odds` (*admin-only*)
+
+Recalculates the odds of a championship. It's recommended to use this after restarting a championship.
+
+Parameters:
+
+| Parameter | Type | Default | Autocomplete | Description |
+| --------- | ---- | ------- | ------------ | ----------- |
+| `Championship` | `text` | — | A list of the UUIDs of all created championships, displaying the championship's name | The UUID of the championship |
+
 ### `/restart-championship` (*admin-only*)
 
 Deletes all games inside a championship and regenerates its rounds. This can't be undone.

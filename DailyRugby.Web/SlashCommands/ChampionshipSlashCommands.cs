@@ -4,6 +4,7 @@ using DailyRugby.Domain;
 using DailyRugby.Web.AutoCompletes;
 using DailyRugby.Web.BotServices;
 using Discord.Interactions;
+using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
@@ -503,5 +504,52 @@ public class ChampionshipSlashCommands
         }
 
         await FollowupAsync(sb.ToString(), ephemeral: @private);
+    }
+
+    [SlashCommand("reset-championship-odds", "Recalculates the odds of a championship")]
+    public async Task ResetChampionshipOdds(
+        [Summary("Championship", "The championship to rcalculate the odds")]
+        [Autocomplete(typeof(ChampionshipAutoComplete))]
+        string champId)
+    {
+        if (!CheckRolePermission(configuration))
+        {
+            await RespondAsync(GetUnauthorizedMessage(configuration), ephemeral: true);
+            return;
+        }
+
+        await DeferAsync(ephemeral: true);
+
+        bool idParsed = Guid.TryParse(champId, out Guid id);
+        if (!idParsed)
+        {
+            await FollowupAsync("Id isn't a valid Guid", ephemeral: true);
+            return;
+        }
+
+        var oddsResult = await champOddsCalculator.RecalculateOddsAsync(id);
+
+        if (!oddsResult.IsSuccessful)
+        {
+            await FollowupAsync($"{oddsResult.Error}: {oddsResult.Message}");
+            return;
+        }
+
+        StringBuilder sb = new();
+        CultureInfo ci = CultureInfo.InvariantCulture;
+
+        sb.AppendLine("First place odds:");
+        foreach (var firstPlaceOdd in oddsResult.Item.FirstPlaceOdds)
+        {
+            sb.AppendLine($"- {firstPlaceOdd.Country}: {firstPlaceOdd.Chance.ToString("F2", ci)}");
+        }
+
+        sb.AppendLine("Last place odds:");
+        foreach (var lastPlaceOdd in oddsResult.Item.LastPlaceOdds)
+        {
+            sb.AppendLine($"- {lastPlaceOdd.Country}: {lastPlaceOdd.Chance.ToString("F2", ci)}");
+        }
+
+        await FollowupAsync(sb.ToString(), ephemeral: true);
     }
 }
