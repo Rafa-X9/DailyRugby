@@ -18,11 +18,11 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
     private ISpecificGameSimulator? _currentSimulator = null;
     private Game? _ongoingGame = null;
 
-    public Result AddCheer(CheerAddRequest request)
+    public Result<CheerResponse> AddCheer(CheerAddRequest request)
     {
         if (_currentSimulator is null || _ongoingGame is null)
         {
-            return Result.Failure("There isn't an ongoing game", Errors.Invalid);
+            return Result<CheerResponse>.Failure("There isn't an ongoing game", Errors.Invalid);
         }
 
         Cheer cheer = new()

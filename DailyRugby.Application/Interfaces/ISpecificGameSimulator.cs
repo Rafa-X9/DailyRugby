@@ -1,4 +1,5 @@
-﻿using DailyRugby.Domain;
+﻿using DailyRugby.Application.DTOs;
+using DailyRugby.Domain;
 using DailyRugby.Shared;
 
 namespace DailyRugby.Application.Interfaces;
@@ -9,5 +10,5 @@ public interface ISpecificGameSimulator
 
     Task SaveGameAsync(GameEvent gameEvent, AppDbContext db);
 
-    Result AddCheer(Cheer cheer, Game game);
+    Result<CheerResponse> AddCheer(Cheer cheer, Game game);
 }

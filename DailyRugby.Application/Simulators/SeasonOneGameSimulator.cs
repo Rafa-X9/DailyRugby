@@ -1,4 +1,5 @@
-﻿using DailyRugby.Application.Interfaces;
+﻿using DailyRugby.Application.DTOs;
+using DailyRugby.Application.Interfaces;
 using DailyRugby.Application.Utilitaries;
 using DailyRugby.Domain;
 using DailyRugby.Shared;
@@ -14,8 +15,8 @@ public class SeasonOneGameSimulator : ISpecificGameSimulator
     private Stats? _teamBStats;
     private Stack<(GameEventType EventType, Action<Game> GameAction)>? _stack;
 
-    public Result AddCheer(Cheer cheer, Game game)
-        => Result.Failure("Season 1 does not have cheers", Errors.Invalid);
+    public Result<CheerResponse> AddCheer(Cheer cheer, Game game)
+        => Result<CheerResponse>.Failure("Season 1 does not have cheers", Errors.Invalid);
 
     public async Task SaveGameAsync(GameEvent gameEvent, AppDbContext db)
     {

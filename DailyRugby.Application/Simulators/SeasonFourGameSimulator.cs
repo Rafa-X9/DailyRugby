@@ -1,4 +1,5 @@
-﻿using DailyRugby.Application.Interfaces;
+﻿using DailyRugby.Application.DTOs;
+using DailyRugby.Application.Interfaces;
 using DailyRugby.Application.Utilitaries;
 using DailyRugby.Domain;
 using DailyRugby.Shared;
@@ -16,28 +17,34 @@ public class SeasonFourGameSimulator : ISpecificGameSimulator
     private SeasonThreeStats? _teamAStats;
     private SeasonThreeStats? _teamBStats;
 
-    public Result AddCheer(Cheer cheer, Game game)
+    public Result<CheerResponse> AddCheer(Cheer cheer, Game game)
     {
         if (cheer.Yell.Length > 1000)
         {
-            return Result.Failure("Yell is too long", Errors.Invalid);
+            return Result<CheerResponse>.Failure("Yell is too long", Errors.Invalid);
         }
 
-        if (_cheers.Count(temp => temp.Cheer.UserId == cheer.UserId) >= 3)
+        int cheerCount = _cheers.Count(temp => temp.Cheer.UserId == cheer.UserId);
+
+        if (cheerCount >= 3)
         {
-            return Result.Failure("You already cheered 3 times", Errors.Invalid);
+            return Result<CheerResponse>.Failure("You already cheered 3 times", Errors.Invalid);
         }
 
         if (_cheers.Any(temp => temp.Cheer.UserId == cheer.UserId
             && !temp.Resolved))
         {
-            return Result.Failure("You are already cheering; please wait 2 game minutes " +
+            return Result<CheerResponse>.Failure("You are already cheering; please wait 2 game minutes " +
                 "before cheering again", Errors.Invalid);
         }
 
         cheer.StartMinute = game.CurrentMinute + 1;
         _cheers.Add(new(false, cheer));
-        return Result.Success();
+
+        return Result<CheerResponse>.Success(new(cheer.UserId,
+            cheer.ForTeamA,
+            2 - cheerCount,
+            cheer.Yell));
     }
 
     public async Task SaveGameAsync(GameEvent gameEvent, AppDbContext db)

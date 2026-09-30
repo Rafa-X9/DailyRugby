@@ -509,7 +509,8 @@ public class GameSlashCommands(IGameCrudService gameService,
             return;
         }
 
-        await RespondAsync("Your cheer has been scheduled", ephemeral: true);
+        await RespondAsync($"Your cheer has been scheduled! You have " +
+            $"{result.Item.CheersLeft} cheers left.", ephemeral: true);
     }
 
     [SlashCommand("see-current-round-json", "Get the current round as JSON")]
