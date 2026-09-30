@@ -12,4 +12,6 @@ public interface IGameOddsCalculator
         Tactics teamBTactic,
         bool teamAHasCake,
         bool teamBHasCake);
+
+    Task<Result<List<GameOdds>>> RecalculateAllOddsAsync(Guid champId);
 }

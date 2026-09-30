@@ -138,6 +138,80 @@ public class GameOddsCalculator(IServiceProvider serviceProvider)
         return Result<GameOdds>.Success(result);
     }
 
+    public async Task<Result<List<GameOdds>>> RecalculateAllOddsAsync(Guid champId)
+    {
+        Championship? champ;
+        using (var scope = serviceProvider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            champ = await db.Championships
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Include(temp => temp.Games)
+                    .ThenInclude(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
+                        .ThenInclude(temp => temp.Team)
+                .FirstOrDefaultAsync(temp => temp.Id == champId);
+
+            if (champ is null)
+            {
+                return Result<List<GameOdds>>.Failure("Id not found", Errors.NotFound);
+            }
+
+            var gameIds = champ.Games.Select(temp => temp.Id).ToList();
+
+            await db.GameOdds
+                .Where(temp => gameIds.Contains(temp.GameId))
+                .ExecuteDeleteAsync();
+        }
+
+        List<GameOdds> allOdds = [];
+        _factory = serviceProvider.GetRequiredService<IGameSimulatorFactory>();
+
+        var options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = Environment.ProcessorCount
+        };
+
+        foreach (var game in champ.Games)
+        {
+            game.Championship = champ;
+
+            GameOdds result = new() { Id = Guid.NewGuid() };
+
+            _game = game;
+            result.GameId = game.Id;
+
+            _game.Teams[0].Tactic = Tactics.None;
+            _game.Teams[1].Tactic = Tactics.None;
+
+            var simulationResults = new ConcurrentBag<GameResult>();
+
+            Parallel.For(0, _repetitions, options, i =>
+            {
+                simulationResults.Add(Simulate());
+            });
+
+            result.TotalSimulations = simulationResults.Count;
+            foreach (var gameResult in simulationResults)
+            {
+                if (gameResult == GameResult.TeamAWon) result.TeamAWins++;
+                else if (gameResult == GameResult.TeamBWon) result.TeamBWins++;
+            }
+
+            allOdds.Add(result);
+        }
+
+        using (var scope = serviceProvider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            db.GameOdds.AddRange(allOdds);
+            await db.SaveChangesAsync();
+        }
+
+        return Result<List<GameOdds>>.Success(allOdds);
+    }
+
     private GameResult Simulate()
     {
         Game clone = new()

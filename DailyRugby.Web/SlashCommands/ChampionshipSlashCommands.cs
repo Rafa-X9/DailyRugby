@@ -434,29 +434,12 @@ public class ChampionshipSlashCommands
             return;
         }
 
-        var champResult = await champService.GetByIdAsync(id);
+        var result = await gameOddsCalculator.RecalculateAllOddsAsync(id);
 
-        if (!champResult.IsSuccessful)
+        if (!result.IsSuccessful)
         {
-            await FollowupAsync($"{champResult.Error}: {champResult.Message}", ephemeral: true);
+            await FollowupAsync($"{result.Error}: {result.Message}");
             return;
-        }
-
-        int count = 0;
-        foreach (var game in champResult.Item.Games)
-        {
-            var result = await gameOddsCalculator.GetOddsAsync(game.Id, false);
-
-            if (!result.IsSuccessful)
-            {
-                await FollowupAsync($"Getting odds for {game.TeamA.Team.Country} vs " +
-                    $"{game.TeamB.Team.Country} for round {game.Round} failed ({result.Error}: " +
-                    $"{result.Message}). {count} game odds have already been successfully done.",
-                    ephemeral: true);
-                return;
-            }
-
-            count++;
         }
 
         await FollowupAsync("Done", ephemeral: true);
