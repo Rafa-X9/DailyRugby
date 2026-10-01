@@ -6,14 +6,15 @@ using DailyRugby.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace DailyRugby.Application.Simulators;
 
 public class GameSimulatorManager(IServiceProvider serviceProvider,
-    IGameTimer timer)
+    IGameTimer timer,
+    ILogger<GameSimulatorManager> logger)
     : BackgroundService, IGameSimulatorManager
 {
-    private readonly PriorityQueue<Schedule, DateTime> _schedules = new();
     public event EventHandler? GameEventHappened;
     private ISpecificGameSimulator? _currentSimulator = null;
     private Game? _ongoingGame = null;
@@ -77,8 +78,6 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
             db.Schedules.Add(schedule);
 
             await db.SaveChangesAsync();
-
-            _schedules.Enqueue(schedule, schedule.DateTimeUtc);
         }
 
         return Result.Success();
@@ -98,34 +97,40 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using (var scope = serviceProvider.CreateScope())
-        {
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            List<Schedule> schedules = await db.Schedules
-                .AsNoTracking()
-                .Include(temp => temp.Game)
-                    .ThenInclude(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
-                        .ThenInclude(temp => temp.Team)
-                .Include(temp => temp.Game)
-                    .ThenInclude(temp => temp.Championship)
-                .AsSplitQuery()
-                .ToListAsync(stoppingToken);
-
-            foreach (var schedule in schedules)
-            {
-                _schedules.Enqueue(schedule, schedule.DateTimeUtc);
-            }
-        }
-
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (_schedules.Count == 0)
+            List<Schedule> schedules;
+
+            using (var scope = serviceProvider.CreateScope())
+            {
+                try
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                    schedules = await db.Schedules
+                        .AsNoTracking()
+                        .Include(temp => temp.Game)
+                            .ThenInclude(temp => temp.Teams.OrderBy(temp => temp.Team.Country))
+                                .ThenInclude(temp => temp.Team)
+                        .Include(temp => temp.Game)
+                            .ThenInclude(temp => temp.Championship)
+                        .OrderBy(temp => temp.DateTimeUtc)
+                        .AsSplitQuery()
+                        .ToListAsync(stoppingToken);
+                }
+                catch (Exception ex) 
+                {
+                    logger.LogError("Error happened: {ErrorMessage}", ex.Message);
+                    continue; 
+                }
+            }
+
+            if (schedules.Count == 0)
             {
                 await WaitDelay();
                 continue;
             }
 
-            var earliestGame = _schedules.Peek();
+            var earliestGame = schedules[0];
             if (earliestGame.DateTimeUtc <= DateTime.UtcNow)
             {
                 Game game;
@@ -133,10 +138,10 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
                 using (var scope = serviceProvider.CreateScope())
                 {
                     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    _schedules.Dequeue();
+
                     await db.Schedules
                         .Where(temp => temp.Id == earliestGame.Id)
-                        .ExecuteDeleteAsync();
+                        .ExecuteDeleteAsync(stoppingToken);
 
                     game = await db.Games
                         .AsNoTracking()
@@ -151,6 +156,7 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
                 }
                 await SimulateGameAsync(game);
             }
+            else await WaitDelay();
         }
     }
 
@@ -286,9 +292,9 @@ public class GameSimulatorManager(IServiceProvider serviceProvider,
         _currentSimulator = null;
     }
 
-    private async Task WaitDelay()
+    private static async Task WaitDelay()
     {
-        await Task.Delay(TimeSpan.FromSeconds(5));
+        await Task.Delay(TimeSpan.FromSeconds(15));
     }
 
     public Result<IReadOnlyList<Player>> GetPlayersFromGame(Teams team)
