@@ -14,6 +14,8 @@ All commands are registered here alongside their description and a list of their
 
 * [Miscellaneous commands](#miscellaneous-commands)
 
+* [Database commands](#database-commands)
+
 ## Championship commands
 
 ### `/add-championship` (*admin-only*)
@@ -473,5 +475,29 @@ Parameters:
 | Parameter | Type | Default | Autocomplete | Description |
 | --------- | ---- | ------- | ------------ | ----------- |
 | `Private` | `bool` | `true` | — | Whether the reply should be sent privately or not |
+
+[Back to table of contents](#table-of-contents)
+
+## Database commands
+
+### `/backup-database` (*admin-only*)
+
+Makes a backup of the database in the given folder.
+
+Parameters:
+
+| Parameter | Type | Default | Autocomplete | Description |
+| --------- | ---- | ------- | ------------ | ----------- |
+| `Path` | `text` | — | — | The backup's folder |
+
+### `/restore-database` (*admin-only*)
+
+Deletes the current database and restores the latest backup.
+
+Parameters:
+
+| Parameter | Type | Default | Autocomplete | Description |
+| --------- | ---- | ------- | ------------ | ----------- |
+| `Path` | `text` | — | — | The backup's folder |
 
 [Back to table of contents](#table-of-contents)
