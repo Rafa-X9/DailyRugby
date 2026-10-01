@@ -65,6 +65,15 @@ class Program
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             db.Database.Migrate();
+
+            using var commandConnection = new SqliteConnection(
+                app.Configuration.GetConnectionString("Sqlite"));
+
+            commandConnection.Open();
+
+            using var command = commandConnection.CreateCommand();
+            command.CommandText = "PRAGMA journal_mode=DELETE;";
+            command.ExecuteNonQuery();
         }
 
         app.MapGet("/", () =>
