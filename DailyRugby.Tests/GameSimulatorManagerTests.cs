@@ -1,4 +1,5 @@
-﻿using DailyRugby.Application.CRUD;
+﻿using Microsoft.Extensions.Logging;
+using DailyRugby.Application.CRUD;
 using DailyRugby.Application.DTOs;
 using DailyRugby.Application.Interfaces;
 using DailyRugby.Application.Simulators;
@@ -50,7 +51,8 @@ public class GameSimulatorManagerTests : IAsyncLifetime
             .Returns(_db);
         
         _simulatorManager = new GameSimulatorManager(serviceProviderMock.Object,
-            new InstantTimer());
+            new InstantTimer(),
+            new Mock<ILogger<GameSimulatorManager>>().Object);
 
         await _db.Database.EnsureCreatedAsync();
     }

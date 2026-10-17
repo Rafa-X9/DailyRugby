@@ -192,6 +192,112 @@ public class SeasonFourGameSimulator : ISpecificGameSimulator
 
     public static void CreatePlayers(TeamGame team)
     {
+
+        //add/remove a slash to/from the end of the following line to switch algorithm
+        /**
+
+        int minimum = 4
+        + (team.HasMoraleBoost ? 1 : 0)
+        + (team.Cake is not null ? 1 : 0);
+
+        int technique = team.Team.Technique;
+        int insight = team.Team.Insight;
+        int physique = team.Team.Physique;
+
+        int teamTotal = technique + insight + physique;
+
+        if (technique < 0 || insight < 0 || physique < 0 ||
+            teamTotal < minimum * 15)
+        {
+            throw new InvalidOperationException(
+                "The team does not have enough valid stats.");
+        }
+
+        var random = Random.Shared;
+
+        // 0 = technique, 1 = insight, 2 = physique.
+        var scores = new List<int>(teamTotal);
+
+        scores.AddRange(Enumerable.Repeat(0, technique));
+        scores.AddRange(Enumerable.Repeat(1, insight));
+        scores.AddRange(Enumerable.Repeat(2, physique));
+
+        // Fisher-Yates shuffle.
+        for (int i = scores.Count - 1; i > 0; i--)
+        {
+            int j = random.Next(i + 1);
+            (scores[i], scores[j]) = (scores[j], scores[i]);
+        }
+
+        // Each player's array is [technique, insight, physique].
+        var players = Enumerable
+            .Range(0, 15)
+            .Select(_ => new int[3])
+            .ToList();
+
+        // Python processes scores from the end using pop().
+        for (int scoreIndex = scores.Count - 1;
+             scoreIndex >= 0;
+             scoreIndex--)
+        {
+            var belowMinimum = Enumerable
+                .Range(0, players.Count)
+                .Where(i => players[i].Sum() < minimum)
+                .ToArray();
+
+            int playerIndex = belowMinimum.Length > 0
+                ? belowMinimum[random.Next(belowMinimum.Length)]
+                : random.Next(15);
+
+            players[playerIndex][scores[scoreIndex]]++;
+        }
+
+        // OrderByDescending is stable, like Python's sort.
+        var sortedPlayers = players
+            .OrderByDescending(player => player.Sum())
+            .ToArray();
+
+        for (int i = 0; i < 15; i++)
+        {
+            var player = sortedPlayers[i];
+
+            team.Players.Add(new Player(
+                Guid.NewGuid(),
+                i + 1,
+                player[1], // Insight
+                player[2], // Physique
+                player[0], // Technique
+                IsOnField: true));
+        }
+
+        // Uniformly select from all valid stat combinations.
+        var replacementStats = (
+            from t in Enumerable.Range(0, minimum + 1)
+            from ins in Enumerable.Range(0, minimum - t + 1)
+            select new
+            {
+                Technique = t,
+                Insight = ins,
+                Physique = minimum - t - ins
+            })
+            .ToArray();
+
+        for (int i = 15; i < 23; i++)
+        {
+            var stats = replacementStats[
+                random.Next(replacementStats.Length)];
+
+            team.Players.Add(new Player(
+                Guid.NewGuid(),
+                i + 1,
+                stats.Insight,
+                stats.Physique,
+                stats.Technique,
+                IsOnField: false));
+        }
+
+        /*/
+         
         int minimum = 4
             + (team.HasMoraleBoost ? 1 : 0)
             + (team.Cake is not null ? 1 : 0);
@@ -344,6 +450,8 @@ public class SeasonFourGameSimulator : ISpecificGameSimulator
                 playerTechnique,
                 IsOnField: false));
         }
+
+        /***/
     }
 
     private GameEvent HandleTryAttempt(SeasonThreeStats attempter,
