@@ -93,7 +93,7 @@ public class TeamSlashCommands(ITeamCrudService teamService,
         foreach (var team in allTeams)
         {
             sb.AppendLine($"- {team.Country} by {team.PlayerUsername}; " +
-                $"I = {team.Insight}, T = {team.Technique}, P = {team.Physique}, " +
+                $"T = {team.Technique}, I = {team.Insight}, P = {team.Physique}, " +
                 $"Coaches: {string.Join(", ", team.Coaches)}");
         }
         await FollowupAsync(sb.ToString(), ephemeral: @private);
