@@ -46,9 +46,12 @@ class Program
         builder.Services.AddScoped<IJsonGetter, JsonGetter>();
         
         builder.Services.AddSingleton<GameSimulatorManager>();
+
         builder.Services.AddSingleton<IGameSimulatorManager>(
             provider => provider.GetRequiredService<GameSimulatorManager>());
         builder.Services.AddHostedService(provider => provider.GetRequiredService<GameSimulatorManager>());
+        builder.Services.AddHostedService<MemoryTester>();
+
         builder.Services.AddTransient<IGameTimer, SystemTimer>();
         builder.Services.AddSingleton<MessageSender>();
         builder.Services.AddSingleton<IGameSimulatorFactory, GameSimulatorFactory>();
