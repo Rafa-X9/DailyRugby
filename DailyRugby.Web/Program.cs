@@ -50,7 +50,8 @@ class Program
         builder.Services.AddSingleton<IGameSimulatorManager>(
             provider => provider.GetRequiredService<GameSimulatorManager>());
         builder.Services.AddHostedService(provider => provider.GetRequiredService<GameSimulatorManager>());
-        builder.Services.AddHostedService<MemoryTester>();
+        builder.Services.AddSingleton<MemoryTester>();
+        builder.Services.AddHostedService(provider => provider.GetRequiredService<MemoryTester>());
 
         builder.Services.AddTransient<IGameTimer, SystemTimer>();
         builder.Services.AddSingleton<MessageSender>();
