@@ -65,6 +65,7 @@ class Program
         var app = builder.Build();
 
         _ = app.Services.GetRequiredService<MessageSender>();
+        _ = app.Services.GetRequiredService<MemoryTester>();
         using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();

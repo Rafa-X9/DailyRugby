@@ -7,6 +7,7 @@ namespace DailyRugby.Web.BotServices;
 public class MemoryTester : BackgroundService
 {
     private IMessageChannel _channel = null!;
+    private readonly bool _isEnabled;
     private readonly ulong _channelId;
     private readonly bool _isThread;
     private readonly TimeSpan _delay;
@@ -16,6 +17,7 @@ public class MemoryTester : BackgroundService
 
     public MemoryTester(IConfiguration configuration)
     {
+        _isEnabled = bool.Parse(configuration["DailyRugby:MemoryCheck:IsEnabled"] ?? "");
         _channelId = ulong.Parse(configuration["DailyRugby:MemoryCheck:ChannelId"] ?? "");
         _isThread = bool.Parse(configuration["DailyRugby:MemoryCheck:IsThread"] ?? "");
         int minutes = int.Parse(configuration["DailyRugby:MemoryCheck:IntervalMinutes"] ?? "");
@@ -34,6 +36,8 @@ public class MemoryTester : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        if (!_isEnabled) return;
+
         await InitializeAsync();
 
         while (!stoppingToken.IsCancellationRequested)
