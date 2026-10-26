@@ -5,3 +5,4 @@
 **/app.db-shm
 **/app.db-wal
 Publish/
+DailyRugby.Web/SlashCommands/DebugSlashCommands.cs

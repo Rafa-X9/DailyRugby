@@ -75,6 +75,21 @@ public class GameOddsCalculator(IServiceProvider serviceProvider)
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             db.GameOdds.Add(result);
             await db.SaveChangesAsync();
+
+            if (result.TeamAWins <= result.TotalSimulations * 0.4)
+            {
+                await db.TeamGames
+                    .Where(temp => temp.Id == game.Teams[0].Id)
+                    .ExecuteUpdateAsync(setters => setters
+                        .SetProperty(temp => temp.GetsMoraleBoostIfWins, true));
+            }
+            else if (result.TeamBWins <= result.TotalSimulations * 0.4)
+            {
+                await db.TeamGames
+                    .Where(temp => temp.Id == game.Teams[1].Id)
+                    .ExecuteUpdateAsync(setters => setters
+                        .SetProperty(temp => temp.GetsMoraleBoostIfWins, true));
+            }
         }
 
         return Result<GameOdds>.Success(result);
@@ -173,6 +188,9 @@ public class GameOddsCalculator(IServiceProvider serviceProvider)
             MaxDegreeOfParallelism = Environment.ProcessorCount
         };
 
+        List<Guid> teamGamesToAddMoraleBoostIfWins = [];
+        List<Guid> teamGamesToRemoveMoraleBoostIfWins = [];
+
         foreach (var game in champ.Games)
         {
             game.Championship = champ;
@@ -199,6 +217,16 @@ public class GameOddsCalculator(IServiceProvider serviceProvider)
                 else if (gameResult == GameResult.TeamBWon) result.TeamBWins++;
             }
 
+            if (result.TeamAWins <= result.TotalSimulations * 0.4)
+                teamGamesToAddMoraleBoostIfWins.Add(game.Teams[0].Id);
+            else
+                teamGamesToRemoveMoraleBoostIfWins.Add(game.Teams[0].Id);
+
+            if (result.TeamBWins <= result.TotalSimulations * 0.4)
+                teamGamesToAddMoraleBoostIfWins.Add(game.Teams[1].Id);
+            else
+                teamGamesToRemoveMoraleBoostIfWins.Add(game.Teams[1].Id);
+
             allOdds.Add(result);
         }
 
@@ -207,6 +235,16 @@ public class GameOddsCalculator(IServiceProvider serviceProvider)
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             db.GameOdds.AddRange(allOdds);
             await db.SaveChangesAsync();
+
+            await db.TeamGames
+                .Where(temp => teamGamesToAddMoraleBoostIfWins.Contains(temp.Id))
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(temp => temp.GetsMoraleBoostIfWins, true));
+
+            await db.TeamGames
+                .Where(temp => teamGamesToRemoveMoraleBoostIfWins.Contains(temp.Id))
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(temp => temp.GetsMoraleBoostIfWins, false));
         }
 
         return Result<List<GameOdds>>.Success(allOdds);

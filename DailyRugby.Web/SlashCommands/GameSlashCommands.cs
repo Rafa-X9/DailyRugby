@@ -144,12 +144,14 @@ public class GameSlashCommands(IGameCrudService gameService,
             $"- {game.TeamA.Tactic} tactic\n" +
             $"- {game.TeamA.Cake?.Name ?? "no"} cake\n" +
             $"- {(game.TeamA.HasMoraleBoost ? "has morale boost" : "doesn't have morale boost")}\n" +
+            $"- {(game.TeamA.GetsMoraleBoostIfWins ? "gets morale boost if wins" : "doesn't get morale boost if wins")}\n" +
             $"\n" +
             $"**{game.TeamB.Team.Country}**:\n" +
             $"- {game.TeamB.Coach} coach\n" +
             $"- {game.TeamB.Tactic} tactic\n" +
             $"- {game.TeamB.Cake?.Name ?? "no"} cake\n" + 
-            $"- {(game.TeamB.HasMoraleBoost ? "has morale boost" : "doesn't have morale boost")}",
+            $"- {(game.TeamB.HasMoraleBoost ? "has morale boost" : "doesn't have morale boost")}\n" +
+            $"- {(game.TeamB.GetsMoraleBoostIfWins ? "gets morale boost if wins" : "doesn't get morale boost if wins")}",
             
             ephemeral: true);
     }
